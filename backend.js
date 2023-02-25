@@ -377,8 +377,24 @@ function readCart(requestQuery, response){
     response.end(JSON.stringify(responseMessage));
 };
 function createCart(response){
-    console.log("prueba");
-    saveDatabase(cartDatabaseLocation, {});
+    var cartDatabase = readDatabase(cartDatabaseLocation);
+    var cartCodes = Object.keys(cartDatabase);
+    var currentDate = new Date();
+    var createdCartCode = 0;
+    for (var cartCode of cartCodes){
+        if (parseInt(cartCode) > createdCartCode){
+            createdCartCode = parseInt(cartCode);
+        }
+    }
+    createdCartCode = createdCartCode + 1;
+    cartDatabase[createdCartCode.toString()] = {products: {},
+                                     deletedProducts: {},
+                                     cartCreationYear: currentDate.getFullYear(), 
+                                     cartCreationMonth: currentDate.getMonth() + 1,
+                                     cartCreationDay: currentDate.getDate(),
+                                     cartCreationHour: currentDate.getHours(),
+                                     cartCreationMinute: currentDate.getMinutes()};
+    saveDatabase(cartDatabaseLocation, cartDatabase);
     var responseMessage = {createdCartCode: 1, error: false, responseID: 7};
     response.end(JSON.stringify(responseMessage));
 };
