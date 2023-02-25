@@ -377,7 +377,8 @@ function readCart(requestQuery, response){
     response.end(JSON.stringify(responseMessage));
 };
 function createCart(response){
-    
+    console.log("prueba");
+    //saveDatabase(cartDatabaseLocation, cartDatabase);
     var responseMessage = {createdCartCode: 1, error: false, responseID: 7};
     response.end(JSON.stringify(responseMessage));
 };
