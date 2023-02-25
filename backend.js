@@ -745,6 +745,7 @@ function setFrontendInformation(requestQuery, response){
 
 function loadCustomerInformation(requestQuery, response){
     var orderDatabase = readDatabase(orderDatabaseLocation);
+    console.log(orderDatabase);
     var orderCodes = Object.keys(orderDatabase);
     var customerExists = false;
     for (var orderCode of orderCodes){
