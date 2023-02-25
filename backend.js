@@ -1,13 +1,12 @@
 /* SETUP PARAMETERS */ 
-var http = require('http');
 var url = require('url');
 var JSONDatabase = require('fs');
 var express = require('express');
+var backend = express();
 var bodyParser = require('body-parser');
 var cors = require('cors');
 
-var connectionPort = 8080;
-var connectionHost = 'localhost';
+var connectionPort = process.env.PORT || 3030;
 var userDatabaseLocation = 'userDatabase.json';
 var productDatabaseLocation = 'productDatabase.json';
 var cartDatabaseLocation = 'cartDatabase.json';
@@ -15,13 +14,6 @@ var orderDatabaseLocation = 'orderDatabase.json';
 var categoryDatabaseLocation = 'categoryDatabase.json';
 var informationDatabaseLocation = 'informationDatabase.json';
 
-var backend = express();
-var express = require('express');
-
-var bodyParser = require('body-parser');
-var cors = require('cors');
-const { query } = require('express');
-var backend = express();
 backend.use(bodyParser.json());
 backend.use(cors());
 backend.use(express.urlencoded({ extended: true }));
