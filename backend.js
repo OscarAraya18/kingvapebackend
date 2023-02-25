@@ -378,8 +378,8 @@ function readCart(requestQuery, response){
 };
 function createCart(response){
     
-    var responseMessage = {createdCartCode: createdCartCode, error: false, responseID: 7};
-    response.json(responseMessage);
+    var responseMessage = {createdCartCode: 1, error: false, responseID: 7};
+    response.end(responseMessage);
 };
 function deleteCart(requestQuery, response){
     var cartDatabase = readDatabase(cartDatabaseLocation);
