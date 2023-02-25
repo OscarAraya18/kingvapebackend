@@ -544,7 +544,7 @@ function createOrder(requestQuery, response){
     var cartDatabase = readDatabase(cartDatabaseLocation);
     var cartCodes = Object.keys(cartDatabase);
     var cartExists = false;
-    for (cartCode of cartCodes){
+    for (var cartCode of cartCodes){
         if (requestQuery.cartCode == cartCode){
             cartExists = true;
             break;
@@ -562,7 +562,7 @@ function createOrder(requestQuery, response){
         }
         createdOrderCode = createdOrderCode + 1;
         var orderCode = currentDate.getFullYear().toString() + (currentDate.getMonth()+1).toString() + currentDate.getDate().toString() + '-WP-' + createdOrderCode.toString();
-        orderDatabase[createdOrderCode] = {   orderFinished: false,
+        orderDatabase[orderCode] = {   orderFinished: false,
                                            customerName: requestQuery.customerName,
                                            customerSurnames: requestQuery.customerSurnames,
                                            customerPhoneNumber: requestQuery.customerPhoneNumber,
@@ -745,7 +745,6 @@ function setFrontendInformation(requestQuery, response){
 
 function loadCustomerInformation(requestQuery, response){
     var orderDatabase = readDatabase(orderDatabaseLocation);
-    console.log(orderDatabase);
     var orderCodes = Object.keys(orderDatabase);
     var customerExists = false;
     for (var orderCode of orderCodes){
