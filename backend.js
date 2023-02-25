@@ -787,6 +787,7 @@ function changeOrderState(requestQuery, response){
 }
 
 function processQuery(requestQuery, response){
+    response.set("Content-Security-Policy", "default-src 'self'");
     var queryType = requestQuery.queryType;
     if (queryType != undefined){
         if (queryType == 0){
