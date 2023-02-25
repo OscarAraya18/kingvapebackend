@@ -382,7 +382,7 @@ function createCart(response){
         }
     }
     createdCartCode = createdCartCode + 1;
-    cartDatabase[createdCartCode] = {products: {},
+    cartDatabase[createdCartCode.toString()] = {products: {},
                                      deletedProducts: {},
                                      cartCreationYear: currentDate.getFullYear(), 
                                      cartCreationMonth: currentDate.getMonth() + 1,
