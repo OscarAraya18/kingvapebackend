@@ -389,7 +389,7 @@ function createCart(response){
                                      cartCreationDay: currentDate.getDate(),
                                      cartCreationHour: currentDate.getHours(),
                                      cartCreationMinute: currentDate.getMinutes()};
-    saveDatabase(cartDatabaseLocation, cartDatabase);
+    //saveDatabase(cartDatabaseLocation, cartDatabase);
     var responseMessage = {createdCartCode: createdCartCode, error: false, responseID: 7};
     response.end(JSON.stringify(responseMessage));
 };
