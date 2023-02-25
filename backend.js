@@ -18,7 +18,7 @@ backend.use(bodyParser.json());
 backend.use(cors());
 backend.use(express.urlencoded({ extended: true }));
 
-backend.get('/backend', (request, response) => {
+backend.get('/', (request, response) => {
     processQuery(url.parse(request.url, true).query, response);
 });
 
