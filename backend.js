@@ -776,7 +776,7 @@ function changeOrderState(requestQuery, response){
 }
 
 function processQuery(requestQuery, response){
-    console.log("proceso " + requestQuery);
+    console.log(requestQuery);
     var queryType = requestQuery.queryType;
     if (queryType != undefined){
         if (queryType == 0){
