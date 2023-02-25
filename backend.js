@@ -18,8 +18,13 @@ backend.use(bodyParser.json());
 backend.use(cors());
 backend.use(express.urlencoded({ extended: true }));
 
-backend.use('/', (request, response, next) => {
+backend.get('/', (request, response) => {
     processQuery(url.parse(request.url, true).query, response);
+});
+
+backend.post('/', (request, response) => {
+    console.log(request);
+    alert(response);
 });
 
 /* DATABASE FUNCTIONS */
@@ -391,7 +396,7 @@ function createCart(response){
                                      cartCreationMinute: currentDate.getMinutes()};
     saveDatabase(cartDatabaseLocation, cartDatabase);
     var responseMessage = {createdCartCode: createdCartCode, error: false, responseID: 7};
-    response.end(JSON.stringify(responseMessage));
+    response.json(responseMessage);
 };
 function deleteCart(requestQuery, response){
     var cartDatabase = readDatabase(cartDatabaseLocation);
