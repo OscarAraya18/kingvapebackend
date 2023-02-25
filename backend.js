@@ -379,7 +379,7 @@ function readCart(requestQuery, response){
 function createCart(response){
     
     var responseMessage = {createdCartCode: 1, error: false, responseID: 7};
-    response.end(responseMessage);
+    response.end(JSON.stringify(responseMessage));
 };
 function deleteCart(requestQuery, response){
     var cartDatabase = readDatabase(cartDatabaseLocation);
