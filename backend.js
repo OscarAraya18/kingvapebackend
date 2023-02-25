@@ -378,15 +378,8 @@ function readCart(requestQuery, response){
 };
 function createCart(response){
     var cartDatabase = readDatabase(cartDatabaseLocation);
-    var cartCodes = Object.keys(cartDatabase);
+    var createdCartCode = Object.keys(cartDatabase).length + 1;
     var currentDate = new Date();
-    var createdCartCode = 0;
-    for (var cartCode of cartCodes){
-        if (parseInt(cartCode) > createdCartCode){
-            createdCartCode = parseInt(cartCode);
-        }
-    }
-    createdCartCode = createdCartCode + 1;
     cartDatabase[createdCartCode.toString()] = {products: {},
                                      deletedProducts: {},
                                      cartCreationYear: currentDate.getFullYear(), 
