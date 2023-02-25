@@ -18,14 +18,10 @@ backend.use(bodyParser.json());
 backend.use(cors());
 backend.use(express.urlencoded({ extended: true }));
 
-backend.get('/', (request, response) => {
+backend.get('/backend', (request, response) => {
     processQuery(url.parse(request.url, true).query, response);
 });
 
-backend.post('/', (request, response) => {
-    console.log(request);
-    alert(response);
-});
 
 /* DATABASE FUNCTIONS */
 function readDatabase(databaseLocation){
