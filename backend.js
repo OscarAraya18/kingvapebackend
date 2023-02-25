@@ -804,8 +804,7 @@ function processQuery(requestQuery, response){
         } else if (queryType == 6){
             readCart(requestQuery, response);
         } else if (queryType == 7){
-            readAllProduct(response);
-            //createCart(response);
+            createCart(response);
         } else if (queryType == 8){
             deleteCart(requestQuery, response);
         } else if (queryType == 9){
