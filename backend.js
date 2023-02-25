@@ -390,7 +390,7 @@ function createCart(response){
                                      cartCreationHour: currentDate.getHours(),
                                      cartCreationMinute: currentDate.getMinutes()};*/
     //saveDatabase(cartDatabaseLocation, cartDatabase);
-    var responseMessage = {createdCartCode: 1, error: false, responseID: 7};
+    var responseMessage = {error: false, responseID: 7};
     response.end(JSON.stringify(responseMessage));
 };
 function deleteCart(requestQuery, response){
