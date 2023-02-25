@@ -27,7 +27,7 @@ function readDatabase(databaseLocation){
     return JSON.parse(JSONDatabase.readFileSync(databaseLocation));
 };
 function saveDatabase(databaseLocation, JSONToSave){
-    JSONDatabase.writeFile(databaseLocation, JSON.stringify(JSONToSave));
+    JSONDatabase.writeFile(databaseLocation, JSON.stringify(JSONToSave), () => {})
 };
 
 /* TRIGGER FUNCTIONS */
