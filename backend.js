@@ -372,7 +372,7 @@ function readCart(requestQuery, response){
     response.end(JSON.stringify(responseMessage));
 };
 function createCart(response){
-    var cartDatabase = readDatabase(cartDatabaseLocation);
+    /*var cartDatabase = readDatabase(cartDatabaseLocation);
     var cartCodes = Object.keys(cartDatabase);
     var currentDate = new Date();
     var createdCartCode = 0;
@@ -382,7 +382,7 @@ function createCart(response){
         }
     }
     createdCartCode = createdCartCode + 1;
-    /*cartDatabase[createdCartCode.toString()] = {products: {},
+    cartDatabase[createdCartCode.toString()] = {products: {},
                                      deletedProducts: {},
                                      cartCreationYear: currentDate.getFullYear(), 
                                      cartCreationMonth: currentDate.getMonth() + 1,
@@ -390,7 +390,7 @@ function createCart(response){
                                      cartCreationHour: currentDate.getHours(),
                                      cartCreationMinute: currentDate.getMinutes()};*/
     //saveDatabase(cartDatabaseLocation, cartDatabase);
-    var responseMessage = {createdCartCode: createdCartCode, error: false, responseID: 7};
+    var responseMessage = {createdCartCode: 1, error: false, responseID: 7};
     response.end(JSON.stringify(responseMessage));
 };
 function deleteCart(requestQuery, response){
