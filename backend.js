@@ -27,7 +27,7 @@ function readDatabase(databaseLocation){
     return JSON.parse(JSONDatabase.readFileSync(databaseLocation));
 };
 function saveDatabase(databaseLocation, JSONToSave){
-    JSONDatabase.writeFileSync(databaseLocation, JSON.stringify(JSONToSave));
+    JSONDatabase.writeFile(databaseLocation, JSON.stringify(JSONToSave));
 };
 
 /* TRIGGER FUNCTIONS */
@@ -372,7 +372,7 @@ function readCart(requestQuery, response){
     response.end(JSON.stringify(responseMessage));
 };
 function createCart(response){
-    /*var cartDatabase = readDatabase(cartDatabaseLocation);
+    var cartDatabase = readDatabase(cartDatabaseLocation);
     var cartCodes = Object.keys(cartDatabase);
     var currentDate = new Date();
     var createdCartCode = 0;
@@ -388,8 +388,8 @@ function createCart(response){
                                      cartCreationMonth: currentDate.getMonth() + 1,
                                      cartCreationDay: currentDate.getDate(),
                                      cartCreationHour: currentDate.getHours(),
-                                     cartCreationMinute: currentDate.getMinutes()};*/
-    //saveDatabase(cartDatabaseLocation, cartDatabase);
+                                     cartCreationMinute: currentDate.getMinutes()};
+    saveDatabase(cartDatabaseLocation, cartDatabase);
     var responseMessage = {error: false, responseID: 7};
     response.end(JSON.stringify(responseMessage));
 };
