@@ -537,7 +537,10 @@ function readOrder(requestQuery, response){
     response.end(JSON.stringify(responseMessage));
 };
 function createOrder(requestQuery, response){
+    console.log(requestQuery)
+
     var cartDatabase = readDatabase(cartDatabaseLocation);
+    console.log(cartDatabase)
     var cartCodes = Object.keys(cartDatabase);
     var cartExists = false;
     for (var cartCode of cartCodes){
@@ -547,6 +550,7 @@ function createOrder(requestQuery, response){
         }
     }
     if (cartExists){
+        console.log("carrito existe")
         var orderDatabase = readDatabase(orderDatabaseLocation);
         var createdOrderCode = Object.keys(orderDatabase).length + 1;
         var orderCode = currentDate.getFullYear().toString() + (currentDate.getMonth()+1).toString() + currentDate.getDate().toString() + '-WP-' + createdOrderCode.toString();
