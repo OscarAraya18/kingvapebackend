@@ -846,8 +846,4 @@ function processQuery(requestQuery, response){
     }
 };
 
-var main = express();
-main.use('/backend', backend);
-exports.main = functions.https.onRequest(main);
-
 backend.listen(connectionPort);
