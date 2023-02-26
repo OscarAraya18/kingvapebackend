@@ -25,7 +25,9 @@ backend.get('/', (request, response) => {
 
 /* DATABASE FUNCTIONS */
 function readDatabase(databaseLocation){
-    return JSON.parse(JSONDatabase.readFileSync(databaseLocation));
+    JSONDatabase.readFile(databaseLocation, 'utf8', (databaseAsString) => {
+        return JSON.parse(databaseAsString);
+    })
 };
 function saveDatabase(databaseLocation, JSONToSave){
     JSONDatabase.writeFile(databaseLocation, JSON.stringify(JSONToSave), () => {})
