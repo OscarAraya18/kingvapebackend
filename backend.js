@@ -333,6 +333,7 @@ function updateProduct(requestQuery, response){
                                                                 hasImage: false};
                 }
             }
+            console.log(productDatabase);
             saveDatabase(productDatabaseLocation, productDatabase);
             triggerUpdateProduct(requestQuery.productCode);
             var responseMessage = {error: false, responseID: 4};
@@ -548,7 +549,6 @@ function createOrder(requestQuery, response){
         }
     }
     if (cartExists){
-        console.log("carrito existe")
         var orderDatabase = readDatabase(orderDatabaseLocation);
         var createdOrderCode = Object.keys(orderDatabase).length + 1;
         var orderCode = currentDate.getFullYear().toString() + (currentDate.getMonth()+1).toString() + currentDate.getDate().toString() + '-WP-' + createdOrderCode.toString();
@@ -604,7 +604,14 @@ function deleteOrder(requestQuery, response){
     response.end(JSON.stringify(responseMessage));
 };
 function deleteAllOrder(response){
-    saveDatabase(orderDatabaseLocation, {});
+    var orderDatabase = readDatabase(orderDatabaseLocation);
+    var orderCodes = Object.keys(orderDatabase);
+    for (var orderCode of orderCodes){
+        if (orderDatabase[orderCode]['orderFinished']){
+            delete orderDatabase[orderCode];
+        }
+    }
+    saveDatabase(orderDatabaseLocation, orderDatabase);
     var responseMessage = {error: false, responseID: 15};
     response.end(JSON.stringify(responseMessage));
 };
@@ -775,7 +782,6 @@ function changeOrderState(requestQuery, response){
 }
 
 function processQuery(requestQuery, response){
-    console.log(requestQuery);
     var queryType = requestQuery.queryType;
     if (queryType != undefined){
         if (queryType == 0){
