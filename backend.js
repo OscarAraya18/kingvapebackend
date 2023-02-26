@@ -57,7 +57,11 @@ function triggerDeleteProduct(deletedProductCode){
 };
 function triggerUpdateProduct(updatedProductCode){
     var cartDatabase = readDatabase(cartDatabaseLocation);
+    console.log("pasa1")
+
     var productDatabase = readDatabase(productDatabaseLocation);
+    console.log("pasa2")
+
     var cartCodes = Object.keys(cartDatabase);
     for (cartCode of cartCodes){
         currentCartProductCodes = Object.keys(cartDatabase[cartCode]['products']);
@@ -333,7 +337,6 @@ function updateProduct(requestQuery, response){
                                                                 hasImage: false};
                 }
             }
-            console.log(productDatabase);
             saveDatabase(productDatabaseLocation, productDatabase);
             triggerUpdateProduct(requestQuery.productCode);
             var responseMessage = {error: false, responseID: 4};
