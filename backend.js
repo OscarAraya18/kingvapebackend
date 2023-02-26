@@ -537,10 +537,8 @@ function readOrder(requestQuery, response){
     response.end(JSON.stringify(responseMessage));
 };
 function createOrder(requestQuery, response){
-    console.log(requestQuery)
-
+    var currentDate = new Date();
     var cartDatabase = readDatabase(cartDatabaseLocation);
-    console.log(cartDatabase)
     var cartCodes = Object.keys(cartDatabase);
     var cartExists = false;
     for (var cartCode of cartCodes){
