@@ -548,15 +548,7 @@ function createOrder(requestQuery, response){
     }
     if (cartExists){
         var orderDatabase = readDatabase(orderDatabaseLocation);
-        var orderCodes = Object.keys(orderDatabase);
-        var currentDate = new Date();
-        var createdOrderCode = 0;
-        for (orderCode of orderCodes){
-            if (orderCode > createdOrderCode){
-                createdOrderCode = orderCode;
-            }
-        }
-        createdOrderCode = createdOrderCode + 1;
+        var createdOrderCode = Object.keys(orderDatabase).length + 1;
         var orderCode = currentDate.getFullYear().toString() + (currentDate.getMonth()+1).toString() + currentDate.getDate().toString() + '-WP-' + createdOrderCode.toString();
         orderDatabase[orderCode] = {   orderFinished: false,
                                            customerName: requestQuery.customerName,
