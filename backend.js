@@ -582,12 +582,12 @@ function createOrder(requestQuery, response){
                                            orderCreationMinute: currentDate.getMinutes(),
                                            orderProducts: cartDatabase[requestQuery.cartCode]['products']};
         var responseMessage = {error: false, responseID: 13, orderCode: orderCode};
+        delete cartDatabase[requestQuery.cartCode];
+        saveDatabase(cartDatabaseLocation, cartDatabase);
+        saveDatabase(orderDatabaseLocation, orderDatabase);
     } else {
         var responseMessage = {error: true, responseID: 13};
     }
-    delete cartDatabase[requestQuery.cartCode];
-    saveDatabase(cartDatabaseLocation, cartDatabase);
-    saveDatabase(orderDatabaseLocation, orderDatabase);
     response.end(JSON.stringify(responseMessage));
 };
 function deleteOrder(requestQuery, response){
