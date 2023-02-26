@@ -25,9 +25,7 @@ backend.get('/', (request, response) => {
 
 /* DATABASE FUNCTIONS */
 function readDatabase(databaseLocation){
-    JSONDatabase.readFile(databaseLocation, 'utf8', (databaseAsString) => {
-        return JSON.parse(databaseAsString);
-    })
+    return JSON.parse(JSONDatabase.readFileSync(databaseLocation));
 };
 function saveDatabase(databaseLocation, JSONToSave){
     JSONDatabase.writeFile(databaseLocation, JSON.stringify(JSONToSave), () => {})
@@ -57,12 +55,8 @@ function triggerDeleteProduct(deletedProductCode){
     }
     saveDatabase(cartDatabaseLocation, cartDatabase);
 };
-function triggerUpdateProduct(updatedProductCode){
+function triggerUpdateProduct(updatedProductCode, productDatabase){
     var cartDatabase = readDatabase(cartDatabaseLocation);
-    console.log("pasa1")
-
-    var productDatabase = readDatabase(productDatabaseLocation);
-    console.log("pasa2")
 
     var cartCodes = Object.keys(cartDatabase);
     for (cartCode of cartCodes){
@@ -340,7 +334,7 @@ function updateProduct(requestQuery, response){
                 }
             }
             saveDatabase(productDatabaseLocation, productDatabase);
-            triggerUpdateProduct(requestQuery.productCode);
+            triggerUpdateProduct(requestQuery.productCode, productDatabase);
             var responseMessage = {error: false, responseID: 4};
         } else {
             var responseMessage = {error: true, responseID: 4.1};
