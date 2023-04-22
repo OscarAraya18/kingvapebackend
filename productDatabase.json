@@ -1,1 +1,1080 @@
-{"B16":{"productName":"Brush negro","productCategories":["Mesh"],"productDescription":"NA","productPrice":1650,"byMeters":true,"productImages":null,"productColor":"000000FF","hasImage":false},"B16azul":{"productName":"Brush azul marino","productCategories":["Brush"],"productDescription":"NA","productPrice":1650,"byMeters":true,"productImages":null,"productColor":"3A15E6","hasImage":false},"M17-N":{"productName":"Mesh negro","productCategories":["Mesh"],"productDescription":"NA","productPrice":1600,"byMeters":true,"productImages":null,"productColor":"000000","hasImage":false},"GDW":{"productName":"Prueba","productCategories":["Brush","Mesh"],"productDescription":"fsf","productPrice":1600,"byMeters":true,"productImages":null,"productColor":"68BD8B","hasImage":false}}
+{
+    "B16-000000": {
+        "productName": "BRUSH NEGRO",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH LISO NEGRO",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "000000",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "B16-100": {
+        "productName": "BRUSH BLANCO",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH LISO BLANCO",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "FEFCFC",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "B16-101": {
+        "productName": "BRUSH BLANCO HUESO",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH LISO BLANCO HUESO",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "FFFFF0FF",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "B16-102": {
+        "productName": "BRUSH BEIGE",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH LISO BEIGE",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "D1B7A1FF",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "B16-104": {
+        "productName": "BRUHS CAFE OSCURO",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH LISO CAFE OSCURO",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "5D4037FF",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "B16-103": {
+        "productName": "BRUSH CAFE CLARO",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH LISO CAFE CLARO",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "B9916EFF",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "B16-105": {
+        "productName": "BRUSH MENTA",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH LISO MENTA",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "96CFBEFF",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "B16-106": {
+        "productName": "BRUSH ROJO CEREZA ",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH LISO ROJO CEREZA ",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "FF0000FF",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "B16-107": {
+        "productName": "BRUSH ROSADO",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH LISO ROSADO ",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "FFC1D2FF",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "B16-108": {
+        "productName": "BRUSH ROSADO CLARO",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH LISO ROSADO CLARO",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "FFDDE6FF",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "B16-109": {
+        "productName": "BRUSH LISO LILA ",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH LISO LILA  ",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "CCA9DDFF",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "B16-110": {
+        "productName": "BRUSH MORADO",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH LISO MORADO",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "7D4895",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "B16-111": {
+        "productName": "BRUSH VERDE MUSGO",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH LISO VERDE MUSGO",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "6B7031FF",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "B16-112": {
+        "productName": "BRUSH VERDE ",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH LISO VERDE",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "3D7952FF",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "B16-113": {
+        "productName": "BRUSH CORAL",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH LISO CORAL",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "DC8071",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "B16-114": {
+        "productName": "BRUSH MOSTAZA",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH LISO MOSTAZA",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "CB9A01FF",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "B16-115": {
+        "productName": "BRUSH AMARILLO",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH LISO AMARILLO",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "F3D242",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "B16-116": {
+        "productName": "BRUSH AMARILLO CLARO",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH LISO AMARILLO CLARO",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "FDF9C4FF",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "B16-117": {
+        "productName": "BRUSH AZUL REY",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH LISO AZUL REY",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "3400FF",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "B16-118": {
+        "productName": "BRUSH AZUL ESCOLAR",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH AZUL ESCOLAR",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "102C65",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "B16-119": {
+        "productName": "BRUSH CELESTE CLARO",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH LISO CELESTE CLARO ",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "C9E9FCFF",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "B16-120": {
+        "productName": "BRUSH CELESTE OSCURO",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH LISO CELESTE OSCURO",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "C6DAE7FF",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "B16-121": {
+        "productName": "BRUSH TERRACOTA",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH LISO TERRACOTA",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "C9511DFF",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "B16-122": {
+        "productName": "BRUSH TERRACOTA OSCURO",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH LISO TERRACOTA OSCURO",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "A0400F",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "B16-123": {
+        "productName": "BRUSH VINO",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH LISO VINO",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "6C132BFF",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "B16-124": {
+        "productName": "BRUSH VINO OSCURO",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH LISO VINO OSCURO",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "380106FF",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "B16-125": {
+        "productName": "BRUSH AZUL ZAFIRO MEDIO",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH LISO AZUL ZAFIRO MEDIO",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "5D77ADFF",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "B16-126": {
+        "productName": "BRUSH VERDE BOTELLA",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH LISO VERDE BOTELLA",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "063F24",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "B16-127": {
+        "productName": "BRUSH AZUL GASOLINA",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH LISO AZUL GASOLINA",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "004E4FFF",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "S20-CA100": {
+        "productName": "BRUSH ESTAMPADO CARA FONDO BLANCO",
+        "productCategories": [
+            "BRUSH ESTAMPADO"
+        ],
+        "productDescription": "BRUSH ESTAMPADO",
+        "productPrice": 2100,
+        "byMeters": true,
+        "productImages": "https://res.cloudinary.com/dpjlzvcem/image/upload/v1678681194/Brush estampado/S20-CA100_zrw4ui.jpg",
+        "productColor": null,
+        "hasImage": true,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "S20-C150": {
+        "productName": "BRUSH ESTAMPADO CARA COLORES",
+        "productCategories": [
+            "BRUSH ESTAMPADO"
+        ],
+        "productDescription": "BRUSH ESPAMPADO",
+        "productPrice": 2100,
+        "byMeters": true,
+        "productImages": "https://res.cloudinary.com/dpjlzvcem/image/upload/v1678681194/Brush estampado/S20-C150_ef2pd3.jpg",
+        "productColor": null,
+        "hasImage": true,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "S20-T151": {
+        "productName": "BRUSH ESTAMPADO CARA G",
+        "productCategories": [
+            "BRUSH ESTAMPADO"
+        ],
+        "productDescription": "BRUSH ESTAMPADO",
+        "productPrice": 2100,
+        "byMeters": true,
+        "productImages": "https://res.cloudinary.com/dpjlzvcem/image/upload/v1678681195/Brush estampado/S20-T151_vcno3p.jpg",
+        "productColor": null,
+        "hasImage": true,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "S20-T153": {
+        "productName": "BRUSH ESTAMPADO ONDAS COLORES",
+        "productCategories": [
+            "BRUSH ESTAMPADO"
+        ],
+        "productDescription": "BRUSH ESTAMPADO",
+        "productPrice": 2100,
+        "byMeters": true,
+        "productImages": "https://res.cloudinary.com/dpjlzvcem/image/upload/v1678681195/Brush estampado/S20-T153_hfvd2u.jpg",
+        "productColor": null,
+        "hasImage": true,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "S20-H160F": {
+        "productName": "BRUSH ESTAMPADO HOJAS FUCSIA",
+        "productCategories": [
+            "BRUSH ESTAMPADO"
+        ],
+        "productDescription": "BRUSH ESTAMPADO",
+        "productPrice": 2100,
+        "byMeters": true,
+        "productImages": "https://res.cloudinary.com/dpjlzvcem/image/upload/v1678682478/Brush estampado/H160-F_iwbszj.jpg",
+        "productColor": null,
+        "hasImage": true,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "S20-H160M": {
+        "productName": "BRUSH ESTAMPADO HOJA MORADA",
+        "productCategories": [
+            "BRUSH ESTAMPADO"
+        ],
+        "productDescription": "BRUSH ESTAMPADO",
+        "productPrice": 2100,
+        "byMeters": true,
+        "productImages": "https://res.cloudinary.com/dpjlzvcem/image/upload/v1678682478/Brush estampado/H160-M_nrk5eo.jpg",
+        "productColor": null,
+        "hasImage": true,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "S20-CA160V": {
+        "productName": "BRUSH ESTAMPADO CARA VERDE",
+        "productCategories": [
+            "BRUSH ESTAMPADO"
+        ],
+        "productDescription": "BRUSH ESTAMPADO",
+        "productPrice": 2100,
+        "byMeters": true,
+        "productImages": "https://res.cloudinary.com/dpjlzvcem/image/upload/v1678682478/Brush estampado/CA160-V_vyljjf.jpg",
+        "productColor": null,
+        "hasImage": true,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "S20-CA160F": {
+        "productName": "BRUSH ESTAMPADO FUCSIA",
+        "productCategories": [
+            "BRUSH ESTAMPADO"
+        ],
+        "productDescription": "BRUSH ESTAMPADO",
+        "productPrice": 2100,
+        "byMeters": true,
+        "productImages": "https://res.cloudinary.com/dpjlzvcem/image/upload/v1678682478/Brush estampado/CA160-F_d8ofa5.jpg",
+        "productColor": null,
+        "hasImage": true,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "S20-160": {
+        "productName": "BRUSH ESTAMPADO MUNECAS",
+        "productCategories": [
+            "BRUSH ESTAMPADO"
+        ],
+        "productDescription": "BRUSH ESTAMPADO",
+        "productPrice": 2100,
+        "byMeters": true,
+        "productImages": "https://res.cloudinary.com/dpjlzvcem/image/upload/v1678683278/Brush estampado/M160_rqrdjj.jpg",
+        "productColor": null,
+        "hasImage": true,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "S20-161BE": {
+        "productName": "BRUSH ESTAMPADO MUNECA BEIGE",
+        "productCategories": [
+            "BRUSH ESTAMPADO"
+        ],
+        "productDescription": "BRUSH ESTAMPADO",
+        "productPrice": 2100,
+        "byMeters": true,
+        "productImages": "https://res.cloudinary.com/dpjlzvcem/image/upload/v1678729319/Brush estampado/M160-BE_pyjvpd.jpg",
+        "productColor": null,
+        "hasImage": true,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "S20-161B": {
+        "productName": "BRUSH ESTAMPADO MUNECAS",
+        "productCategories": [
+            "BRUSH ESTAMPADO"
+        ],
+        "productDescription": "BRUSH ESTAMPADO",
+        "productPrice": 2100,
+        "byMeters": true,
+        "productImages": "https://res.cloudinary.com/dpjlzvcem/image/upload/v1678683278/Brush estampado/M160-B_f3yf4a.jpg",
+        "productColor": null,
+        "hasImage": true,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "S20-CA100BE": {
+        "productName": "BRUSH ESTAMPADO CN/FBEIGE",
+        "productCategories": [
+            "BRUSH ESTAMPADO"
+        ],
+        "productDescription": "BRUSH ESTAMPADO",
+        "productPrice": 2100,
+        "byMeters": true,
+        "productImages": "https://res.cloudinary.com/dpjlzvcem/image/upload/v1678730818/Brush estampado/CA100-BE_b4z8wp.jpg",
+        "productColor": null,
+        "hasImage": true,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "S20-CAFU": {
+        "productName": "BRUSH ESTAMPADO CN/FUCSIA",
+        "productCategories": [
+            "BRUSH ESTAMPADO"
+        ],
+        "productDescription": "BRUSH ESTAMPADO",
+        "productPrice": 2100,
+        "byMeters": true,
+        "productImages": "https://res.cloudinary.com/dpjlzvcem/image/upload/v1678730818/Brush estampado/CA100-FU_mi23ef.jpg",
+        "productColor": null,
+        "hasImage": true,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "S20-CA100RN": {
+        "productName": "BRUSH ESTAMPADO CN/F ROSANEON",
+        "productCategories": [
+            "BRUSH ESTAMPADO"
+        ],
+        "productDescription": "BRUSH ESTAMPADO",
+        "productPrice": 2100,
+        "byMeters": true,
+        "productImages": "https://res.cloudinary.com/dpjlzvcem/image/upload/v1678730818/Brush estampado/CA100-RN_ubbdll.jpg",
+        "productColor": null,
+        "hasImage": true,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "S20-CA100CA": {
+        "productName": "BRUSH ESTAMPADO CN- F CAFE",
+        "productCategories": [
+            "BRUSH ESTAMPADO"
+        ],
+        "productDescription": "BRUSH ESTAMPADO",
+        "productPrice": 2100,
+        "byMeters": true,
+        "productImages": "https://res.cloudinary.com/dpjlzvcem/image/upload/v1678731715/Brush estampado/CA100-CA_poltpg.jpg",
+        "productColor": null,
+        "hasImage": true,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "S20-AN152BE": {
+        "productName": "BRUSH ESTAMPADO ANIMAL PRINT",
+        "productCategories": [
+            "BRUSH ESTAMPADO"
+        ],
+        "productDescription": "BRUSH ESTAMPADO",
+        "productPrice": 2100,
+        "byMeters": true,
+        "productImages": "https://res.cloudinary.com/dpjlzvcem/image/upload/v1678741954/Brush estampado/AN152-BE_sxzgil.jpg",
+        "productColor": null,
+        "hasImage": true,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "S20-AN150CA": {
+        "productName": "BRUS ESTAMPADO ANIMAL CAFE",
+        "productCategories": [
+            "BRUSH ESTAMPADO"
+        ],
+        "productDescription": "BRUSH ESTAMPADO",
+        "productPrice": 2100,
+        "byMeters": true,
+        "productImages": "https://res.cloudinary.com/dpjlzvcem/image/upload/v1678741954/Brush estampado/AN150-CA_bb62m7.jpg",
+        "productColor": null,
+        "hasImage": true,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "S20-150BE": {
+        "productName": "BRUSH ESTAMPADO ANIMAL PRINT",
+        "productCategories": [
+            "BRUSH ESTAMPADO"
+        ],
+        "productDescription": "BRUSH ESTAMPADO",
+        "productPrice": 2100,
+        "byMeters": true,
+        "productImages": "https://res.cloudinary.com/dpjlzvcem/image/upload/v1678741954/Brush estampado/AN150-BE_rhxsfu.jpg",
+        "productColor": null,
+        "hasImage": true,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "S20-151BE": {
+        "productName": "BRUSH ESTAMPADO ANIMAL PRINT ",
+        "productCategories": [
+            "BRUSH ESTAMPADO"
+        ],
+        "productDescription": "BRUSH ESTAMPADO",
+        "productPrice": 2100,
+        "byMeters": true,
+        "productImages": "https://res.cloudinary.com/dpjlzvcem/image/upload/v1678741954/Brush estampado/AN151-BE_ieqmyp.jpg",
+        "productColor": null,
+        "hasImage": true,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "S20-CH100": {
+        "productName": "BRUSH ESTAMPADO CADENAS F NEGRO",
+        "productCategories": [
+            "BRUSH ESTAMPADO"
+        ],
+        "productDescription": "BRUSH ESTAMPADO",
+        "productPrice": 2100,
+        "byMeters": true,
+        "productImages": "https://res.cloudinary.com/dpjlzvcem/image/upload/v1678908169/Brush estampado/CH100_o4jq1j.jpg",
+        "productColor": null,
+        "hasImage": true,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "S20-CH101": {
+        "productName": "BRUSH ESTAMPADO CADENAS F BLANCO",
+        "productCategories": [
+            "BRUSH ESTAMPADO"
+        ],
+        "productDescription": "BRUSH ESTAMPADO",
+        "productPrice": 2100,
+        "byMeters": true,
+        "productImages": "https://res.cloudinary.com/dpjlzvcem/image/upload/v1678910477/Brush estampado/CH101_zzd0kg.jpg",
+        "productColor": null,
+        "hasImage": true,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "S20-AN175B": {
+        "productName": "BRUSH ESTAMPADO ZEBRA",
+        "productCategories": [
+            "BRUSH ESTAMPADO"
+        ],
+        "productDescription": "BRUSH ESTAMPADO",
+        "productPrice": 2100,
+        "byMeters": true,
+        "productImages": "https://res.cloudinary.com/dpjlzvcem/image/upload/v1678910757/Brush estampado/AN175B_dvc1s9.jpg",
+        "productColor": null,
+        "hasImage": true,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "S20-F103": {
+        "productName": "BRUSH ESTAMPADO FLOR MINI AZUL",
+        "productCategories": [
+            "BRUSH ESTAMPADO"
+        ],
+        "productDescription": "BRUSH ESTAMPADO",
+        "productPrice": 2100,
+        "byMeters": true,
+        "productImages": "https://res.cloudinary.com/dpjlzvcem/image/upload/v1678912304/Brush estampado/F103_jnkkro.jpg",
+        "productColor": null,
+        "hasImage": true,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "S20-F104": {
+        "productName": "BRUSH ESTAMPADO FLOR MINI BLANCO",
+        "productCategories": [
+            "BRUSH ESTAMPADO"
+        ],
+        "productDescription": "BRUSH ESTAMPADO",
+        "productPrice": 2100,
+        "byMeters": true,
+        "productImages": "https://res.cloudinary.com/dpjlzvcem/image/upload/v1678912304/Brush estampado/F104_gi52wq.jpg",
+        "productColor": null,
+        "hasImage": true,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "S20-F178": {
+        "productName": "BRUSH ESTAMPADO MINI FLOR CELESTE",
+        "productCategories": [
+            "BRUSH ESTAMPADO"
+        ],
+        "productDescription": "BRUSH ESTAMPADO",
+        "productPrice": 2100,
+        "byMeters": true,
+        "productImages": "https://res.cloudinary.com/dpjlzvcem/image/upload/v1678912497/Brush estampado/F178_yfishl.jpg",
+        "productColor": null,
+        "hasImage": true,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "S20-F177": {
+        "productName": "BRUSH ESTAMPADO FLOR MINI",
+        "productCategories": [
+            "BRUSH ESTAMPADO"
+        ],
+        "productDescription": "BRUSH ESTAMPADO",
+        "productPrice": 2100,
+        "byMeters": true,
+        "productImages": "https://res.cloudinary.com/dpjlzvcem/image/upload/v1678912496/Brush estampado/F177_upwqee.jpg",
+        "productColor": null,
+        "hasImage": true,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "S20-F175": {
+        "productName": "BRUSH ESPAMADO FLOR MINI LILA",
+        "productCategories": [
+            "BRUSH ESTAMPADO"
+        ],
+        "productDescription": "BRUSH ESTAPADO",
+        "productPrice": 2100,
+        "byMeters": true,
+        "productImages": "https://res.cloudinary.com/dpjlzvcem/image/upload/v1678912496/Brush estampado/F175_srkxwx.jpg",
+        "productColor": null,
+        "hasImage": true,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "S20-F176": {
+        "productName": "BRUSH ESTAMPADO FLOR MINI CORAL",
+        "productCategories": [
+            "BRUSH ESTAMPADO"
+        ],
+        "productDescription": "BRUSH ESTAPADO",
+        "productPrice": 2100,
+        "byMeters": true,
+        "productImages": "https://res.cloudinary.com/dpjlzvcem/image/upload/v1678912494/Brush estampado/F176_j8i5di.jpg",
+        "productColor": null,
+        "hasImage": true,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "S20-CA100TD": {
+        "productName": "BRUSH ESTAMPADOP CARAS F TIE DYE",
+        "productCategories": [
+            "BRUSH ESTAMPADO"
+        ],
+        "productDescription": "BRUSH ESTAMPADO",
+        "productPrice": 2100,
+        "byMeters": true,
+        "productImages": "https://res.cloudinary.com/dpjlzvcem/image/upload/v1678913163/Brush estampado/CA100TD_ynqows.jpg",
+        "productColor": null,
+        "hasImage": true,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "S20-MA100": {
+        "productName": "BRUSH ESTAMPADO MARMOL PASTEL",
+        "productCategories": [
+            "BRUSH ESTAMPADO"
+        ],
+        "productDescription": "BRUSH ESTAMPADO",
+        "productPrice": 2100,
+        "byMeters": true,
+        "productImages": "https://res.cloudinary.com/dpjlzvcem/image/upload/v1678918888/Brush estampado/MA100_kjl4jj.jpg",
+        "productColor": null,
+        "hasImage": true,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "S20-CA105": {
+        "productName": "BRUSH ESTAMPADO CARAS CELESTES",
+        "productCategories": [
+            "BRUSH ESTAMPADO"
+        ],
+        "productDescription": "BRUSH ESTAMPADO",
+        "productPrice": 2100,
+        "byMeters": true,
+        "productImages": "https://res.cloudinary.com/dpjlzvcem/image/upload/v1678921513/Brush estampado/CA105_rc6iqg.jpg",
+        "productColor": null,
+        "hasImage": true,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "S20-F179": {
+        "productName": "BRUSH ESTAMPADO FLORES PEQ",
+        "productCategories": [
+            "BRUSH ESTAMPADO"
+        ],
+        "productDescription": "BRUSH ESTAMPADO FLORES",
+        "productPrice": 2100,
+        "byMeters": true,
+        "productImages": "https://res.cloudinary.com/dpjlzvcem/image/upload/v1681157290/Brush estampado/F178_oa05jl.jpg",
+        "productColor": null,
+        "hasImage": true,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "B16-128": {
+        "productName": "BRUSH LISO PALO ROSA OSCURO",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH LISO PALO ROSA OSCURO",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "CD7A85FF",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "B16-129": {
+        "productName": "BRUSH LISO PALO ROSA CLARO",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH LISO PALO ROSA CLARO",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "D79A9F",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "B16-130": {
+        "productName": "BRUSH LISO ROJO ",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH LISO ROJO ",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "C0000F",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "B16-131": {
+        "productName": "BRUSH LISO ROSA NEÓN ",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH LISO ROSA NEÓN ",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "FF69B4",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "B16-132": {
+        "productName": "BRUSH LISO CORAL NEÓN",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH LISO CORAL NEÓN",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "FE4E4E",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "B16-133": {
+        "productName": "BRUSH LISO GRIS OSCURO ",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH LISO GRIS OSCURO",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "616161",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "B16-134": {
+        "productName": "BRUSH LISO GRIS CLARO ",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH LISO GRIS CLARO ",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "BDBDBD",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "B16-135": {
+        "productName": "BRUSH LISO SAUGE ",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH LISO SAUGE ",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "B5B69F",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "B16-136": {
+        "productName": "BRUSH LISO SAUGE OSCURO ",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH LISO SAUGE OSCURO",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "919371",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "B16-137": {
+        "productName": "BRUSH LISO VERDE NEÓN ",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH LISO SAUGE OSCURO",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "1EFF05",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "B16-138": {
+        "productName": "BRUSH LISO LILA OSCURO ",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH LISO LILA OSCURO ",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "AB9BC3",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "B16-139": {
+        "productName": "BRUSH LISO LILA PASTEL ",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH LISO LILA PASTEL ",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "D6CEE2",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "B16-140": {
+        "productName": "BRUSH LISO VERDE NAVIDAD",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH LISO VERDE NAVIDAD",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "4DA64DFF",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "B16-141": {
+        "productName": "BRUSH LISO AZUL ZAFIRO CLARO ",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH LISO AZUL ZAFIRO CLARO",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "9AB0D1",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "B16-142": {
+        "productName": "BRUSH LISO AZUL ZAFIRO OSCURO",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH LISO AZUL ZAFIRO OSCURO",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "0D3E69",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    },
+    "B16-143": {
+        "productName": "BRUSH LISO VERDE OLIVA PASTEL ",
+        "productCategories": [
+            "BRUSH LISO"
+        ],
+        "productDescription": "BRUSH LISO VERDE OLIVA PASTEL ",
+        "productPrice": 1650,
+        "byMeters": true,
+        "productImages": null,
+        "productColor": "DCEDC8",
+        "hasImage": false,
+        "isAvailable": "Si",
+        "availableDate": "2023-01-01"
+    }
+}

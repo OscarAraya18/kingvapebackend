@@ -49,7 +49,8 @@ function triggerDeleteProduct(deletedProductCode){
                                                                              productCategories: cartDatabase[cartCode]['products'][deletedProductCode]['productCategories'],
                                                                              productDescription: cartDatabase[cartCode]['products'][deletedProductCode]['productDescription'],
                                                                              productPrice: cartDatabase[cartCode]['products'][deletedProductCode]['productPrice'],
-                                                                             productImages: cartDatabase[cartCode]['products'][deletedProductCode]['productImages']};
+                                                                             productImages: cartDatabase[cartCode]['products'][deletedProductCode]['productImages'],
+                                                                            };
             delete cartDatabase[cartCode]['products'][deletedProductCode];
         }
     }
@@ -215,6 +216,8 @@ function createProduct(requestQuery, response){
                                                                 byMeters: false,
                                                                 productImages: requestQuery.productImages,
                                                                 productColor: null,
+                                                                isAvailable: "Si",
+                                                                availableDate: "2023-01-01",
                                                                 hasImage: true};
                 } else {
                     productDatabase[requestQuery.productCode] = { productName: requestQuery.productName,
@@ -224,6 +227,8 @@ function createProduct(requestQuery, response){
                                                                 byMeters: true,
                                                                 productImages: requestQuery.productImages,
                                                                 productColor: null,
+                                                                isAvailable: "Si",
+                                                                availableDate: "2023-01-01",
                                                                 hasImage: true};
                     }
             } else {
@@ -235,6 +240,8 @@ function createProduct(requestQuery, response){
                                                                 byMeters: false,
                                                                 productImages: null,
                                                                 productColor: requestQuery.productColor,
+                                                                isAvailable: "Si",
+                                                                availableDate: "2023-01-01",
                                                                 hasImage: false};
                 } else {
                     productDatabase[requestQuery.productCode] = { productName: requestQuery.productName,
@@ -244,6 +251,8 @@ function createProduct(requestQuery, response){
                                                                 byMeters: true,
                                                                 productImages: null,
                                                                 productColor: requestQuery.productColor,
+                                                                isAvailable: "Si",
+                                                                availableDate: "2023-01-01",
                                                                 hasImage: false};
                 }
             }
@@ -301,6 +310,8 @@ function updateProduct(requestQuery, response){
                                                                 byMeters: false,
                                                                 productImages: requestQuery.productImages,
                                                                 productColor: null,
+                                                                isAvailable: requestQuery.isAvailable,
+                                                                availableDate: requestQuery.availableDate,
                                                                 hasImage: true};
                 } else {
                     productDatabase[requestQuery.productCode] = { productName: requestQuery.productName,
@@ -310,6 +321,8 @@ function updateProduct(requestQuery, response){
                                                                 byMeters: true,
                                                                 productImages: requestQuery.productImages,
                                                                 productColor: null,
+                                                                isAvailable: requestQuery.isAvailable,
+                                                                availableDate: requestQuery.availableDate,
                                                                 hasImage: true};
                     }
             } else {
@@ -321,6 +334,8 @@ function updateProduct(requestQuery, response){
                                                                 byMeters: false,
                                                                 productImages: null,
                                                                 productColor: requestQuery.productColor,
+                                                                isAvailable: requestQuery.isAvailable,
+                                                                availableDate: requestQuery.availableDate,
                                                                 hasImage: false};
                 } else {
                     productDatabase[requestQuery.productCode] = { productName: requestQuery.productName,
@@ -330,6 +345,8 @@ function updateProduct(requestQuery, response){
                                                                 byMeters: true,
                                                                 productImages: null,
                                                                 productColor: requestQuery.productColor,
+                                                                isAvailable: requestQuery.isAvailable,
+                                                                availableDate: requestQuery.availableDate,
                                                                 hasImage: false};
                 }
             }
