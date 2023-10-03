@@ -1,0 +1,42 @@
+{
+  "50660694075": {
+    "contactName": "Oscar",
+    "contactPhoneNumber": "50660694075",
+    "contactID": "12312",
+    "contactEmail": "osaron@gmail.com",
+    "contactLocation": {
+      "latitude": "123",
+      "longitude": "123"
+    },
+    "workLocation": {
+      "latitude": "123",
+      "longitude": "123"
+    },
+    "otherLocation": {
+      "latitude": "123",
+      "longitude": "123"
+    },
+    "contactLocationDetails": "Casa azul",
+    "contactNote": "Llegar en las tardes"
+  },
+  "86828012": {
+    "contactName": "Jeffry",
+    "contactPhoneNumber": "50660694075",
+    "contactID": "12312",
+    "contactEmail": "",
+    "contactLocation": {
+      "latitude": "123",
+      "longitude": "123"
+    },
+    "workLocation": {
+      "latitude": "123",
+      "longitude": "123"
+    },
+    "otherLocation": {
+      "latitude": "123",
+      "longitude": "123"
+    },
+    "contactLocationDetails": "Casa azul",
+    "contactNote": "Llegar en las tardes"
+  }
+}
