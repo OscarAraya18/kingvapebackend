@@ -10,17 +10,18 @@ const url = require('url');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const http = require('http');
-
 const express = require('express');
+const WebSocket = require('ws');
+
 const backendHttpRequestServer = express();
 backendHttpRequestServer.use(cors());
 backendHttpRequestServer.use(bodyParser.json({limit: '50mb'}));
 backendHttpRequestServer.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 
-const WebSocket = require('ws');
-const server = http.createServer(express);
+const server = http.createServer(backendHttpRequestServer);
 const backendWebsocketServerConnection = new WebSocket.Server({server});
-server.listen(constants.backendHttpRequestServerConnectionPort);
+
+backendHttpRequestServer.listen(constants.backendHttpRequestServerConnectionPort);
 
 
 backendHttpRequestServer.post('/agentLogin', (request, response) => {
