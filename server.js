@@ -10,8 +10,8 @@ const url = require('url');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const http = require('http');
-const express = require('express');
 
+const express = require('express');
 const backendHttpRequestServer = express();
 backendHttpRequestServer.use(cors());
 backendHttpRequestServer.use(bodyParser.json({limit: '50mb'}));
@@ -19,12 +19,9 @@ backendHttpRequestServer.use(bodyParser.urlencoded({limit: '50mb', extended: tru
 backendHttpRequestServer.listen(constants.backendHttpRequestServerConnectionPort);
 
 const WebSocket = require('ws');
-
-const backendHttpWebsocketServer = express();
-backendHttpWebsocketServer.use(cors());
-const server = http.createServer(backendHttpWebsocketServer);
+const server = http.createServer(express);
 const backendWebsocketServerConnection = new WebSocket.Server({server});
-server.listen(constants.backendWebsocketServerConnectionPort);
+server.listen(constants.backendHttpRequestServerConnectionPort);
 
 
 backendHttpRequestServer.post('/agentLogin', (request, response) => {
