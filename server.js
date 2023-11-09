@@ -20,7 +20,7 @@ backendHttpRequestServer.use(bodyParser.json({limit: '50mb'}));
 backendHttpRequestServer.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 
 const server = http.createServer(backendHttpRequestServer);
-const backendWebsocketServerConnection = new WebSocket.Server({server});
+const backendWebsocketServerConnection = new WebSocket.Server({server, verifyClient: (info, cb) => cb(true) });
 
 backendHttpRequestServer.listen(constants.backendHttpRequestServerConnectionPort);
 
