@@ -7,55 +7,163 @@ const agentsManagementFunctions = require('./agentsManagementFunctions.js');
 const axios = require('axios');
 const https = require('follow-redirects').https;
 
-const fs = require('fs');
 const { exec } = require("child_process");
 const databaseManagementFunctions = require('./databaseManagementFunctions.js');
 
+const fs = require('fs');
+const FormData = require('form-data');
+const uuidv4 = require('uuid');
+const sharp = require('sharp');
+sharp.cache({files : 0});
+
 module.exports = {
 
-    sendWhatsappTextMessage: function(requestQuery, frontendResponse, websocketConnection){
-        var httpOptionsToSendWhatsappTextMessage = {'method': 'POST', 'hostname': 'graph.facebook.com', 'path': '/' + constants.credentials.apiVersion + '/' + constants.credentials.phoneNumberID + '/messages', 'headers': {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + constants.credentials.apiKey}};
-        var httpDataToSendWhatsappTextMessage = JSON.stringify({'messaging_product': 'whatsapp', 'to': requestQuery['recipientPhoneNumber'], 'text': {'body': requestQuery['messageContent']}});
-        var httpRequestToSendWhatsappTextMessage = https.request(httpOptionsToSendWhatsappTextMessage, function (httpResponseToSendWhatsappTextMessage) {
-            var httpResponsePartsToSendWhatsappTextMessage = [];
-            httpResponseToSendWhatsappTextMessage.on('data', function (httpResponsePartToSendWhatsappTextMessage) {httpResponsePartsToSendWhatsappTextMessage.push(httpResponsePartToSendWhatsappTextMessage);});
-            httpResponseToSendWhatsappTextMessage.on('end', function (httpResponsePartToSendWhatsappTextMessage) {
-                httpResponsePartsToSendWhatsappTextMessage.push(httpResponsePartToSendWhatsappTextMessage);
-                var activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
-                if (activeConversationID == null){
-                    const newConversationID = conversationsManagementFunctions.createConversation(requestQuery['recipientPhoneNumber'], '');
-                    agentsManagementFunctions.assignNewConversationToAgentWithLessActiveConversations(newConversationID, requestQuery['agentID']);
+  uploadWhatsappAudioFile: async function(whatsappAudioMessageFile){
+    return new Promise(async (uploadWhatsappAudioFilePromiseResolve) => {
+      const uploadWhatsappAudioMessageURL = `https://graph.facebook.com/${constants.credentials.apiVersion}/${constants.credentials.phoneNumberID}/media`;
+      const originalAudioName = `${uuidv4.v4()}-${Date.now()}.mp3`;
+      const convertedAudioName = `${uuidv4.v4()}-${Date.now()}.mp3`;
+      var whatsappAudioMessageFileBuffer = Buffer.from(whatsappAudioMessageFile, 'base64');
+      fs.writeFileSync(originalAudioName, whatsappAudioMessageFileBuffer);
+      ffmpeg().input(originalAudioName).toFormat('mp3').on('end', () => {
+        fs.unlink(originalAudioName, async (errorWhenDeletingOriginalAudioFile) => {
+          if (!errorWhenDeletingOriginalAudioFile) {
+            var whatsappAudioMessageFile = fs.readFileSync(convertedAudioName);
+            whatsappAudioMessageFile = whatsappAudioMessageFile.toString('base64');
+            const temporaryAudioStream = fs.createReadStream(convertedAudioName);
+            const uploadWhatsappAudioMessageParameters = new FormData();
+            uploadWhatsappAudioMessageParameters.append('messaging_product', 'whatsapp');
+            uploadWhatsappAudioMessageParameters.append('type', 'audio/mp3');
+            uploadWhatsappAudioMessageParameters.append('file', temporaryAudioStream);
+            const uploadWhatsappAudioMessageHeaders = uploadWhatsappAudioMessageParameters.getHeaders();
+            uploadWhatsappAudioMessageHeaders['Authorization'] = `Bearer ${constants.credentials.apiKey}`;
+            axios.post(uploadWhatsappAudioMessageURL, uploadWhatsappAudioMessageParameters, {headers: uploadWhatsappAudioMessageHeaders}).then(async (httpResponse) => {
+              fs.unlink(convertedAudioName, async (errorWhenDeletingConvertedAudio) => {
+                if (!errorWhenDeletingConvertedAudio) {
+                  const whatsappAudioMessageFileID = httpResponse.data.id;
+                  uploadWhatsappAudioFilePromiseResolve({success: true, result: {whatsappAudioMessageFileID: whatsappAudioMessageFileID, whatsappAudioMessageFile: whatsappAudioMessageFile}});
                 }
-                activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
-                var textMessage = '';
-                if (requestQuery['sendedProduct'] == '1'){
-                    textMessage = requestQuery['messageContent'].split('*').join('');
-                } else {
-                    textMessage = requestQuery['messageContent']
-                }
-                const messageInformation = 
-                {
-                    messageID: '',
-                    owner: 'agent',
-                    messageSentDate: generalFunctions.getCurrentDateAsStringWithFormat(),
-                    messageSentHour: generalFunctions.getCurrentHourAsStringWithFormat(),
-                    messageDeliveryDate: null,
-                    messageDeliveryHour: null,
-                    messageReadDate: null,
-                    messageReadHour: null,
-                    messageStatus: 'sent',
-                    messageType: 'text',
-                    messageContent: textMessage,
-                    dateObject: new Date().toString()
-                }
-                websocketManagementFunctions.sendWhatsappMessage(websocketConnection, activeConversationID, messageInformation);
-                conversationsManagementFunctions.addMessageToConversation(activeConversationID, messageInformation);
-                frontendResponse.end();
+              });
+            })
+            .catch(() => {
             });
-            httpResponseToSendWhatsappTextMessage.on('error', function (error) {console.error(error);});
+          } else {
+          }
         });
-        httpRequestToSendWhatsappTextMessage.write(httpDataToSendWhatsappTextMessage);
-        httpRequestToSendWhatsappTextMessage.end();
+      })
+      .on('error', () => {
+      })
+      .save(convertedAudioName);
+    });
+  },
+  sendWhatsappAudioMessage: async function(requestQuery, websocketConnection){
+    const whatsappAudioMessageFile = requestQuery.audioFile;
+    const whatsappConversationRecipientPhoneNumber = requestQuery.recipientPhoneNumber;
+    const uploadWhatsappAudioFileResult = await this.uploadWhatsappAudioFile(whatsappAudioMessageFile);
+    if (uploadWhatsappAudioFileResult.success){
+      const whatsappAudioMessageFileID = uploadWhatsappAudioFileResult.result.whatsappAudioMessageFileID;
+      const whatsappAudioMessageFile = uploadWhatsappAudioFileResult.result.whatsappAudioMessageFile;
+      var sendWhatsappMessageData = 
+      {
+        'messaging_product': 'whatsapp',
+        'to': whatsappConversationRecipientPhoneNumber,
+        'type': 'audio',
+        'audio': {'id': whatsappAudioMessageFileID}
+      };
+      sendWhatsappMessageData = JSON.stringify(sendWhatsappMessageData);
+      const sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
+      if (sendWhatsappMessageResult.success){
+        const whatsappGeneralMessageID = sendWhatsappMessageResult.result;
+        const whatsappAudioMessageID = whatsappGeneralMessageID;
+        const whatsappGeneralMessageOwnerPhoneNumber = null;
+        const selectOrCreateActiveWhatsappConversationIDResult = await whatsappDatabaseManagementFunctions.selectOrCreateActiveWhatsappConversationID(whatsappConversationRecipientPhoneNumber);
+        if (selectOrCreateActiveWhatsappConversationIDResult.success){
+          const whatsappConversationID = selectOrCreateActiveWhatsappConversationIDResult.result;
+          const createWhatsappGeneralMessageResult = await whatsappDatabaseManagementFunctions.createWhatsappGeneralMessage(whatsappConversationID, whatsappAudioMessageID, whatsappGeneralMessageRepliedMessageID, whatsappGeneralMessageOwnerPhoneNumber);
+          if (createWhatsappGeneralMessageResult.success){
+            const whatsappGeneralMessageIndex = createWhatsappGeneralMessageResult.result.whatsappGeneralMessageIndex;
+            const whatsappGeneralMessageCreationDateTime = createWhatsappGeneralMessageResult.result.whatsappGeneralMessageCreationDateTime;
+            const createWhatsappAudioMessageResult = await whatsappDatabaseManagementFunctions.createWhatsappAudioMessage(whatsappAudioMessageID, whatsappAudioMessageFileID); 
+            if (createWhatsappAudioMessageResult.success){
+              const websocketMessageContent = 
+              {
+                success: true,
+                result: 
+                {
+                  whatsappConversationID: whatsappConversationID,
+                  whatsappGeneralMessageID: whatsappGeneralMessageID,
+                  whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
+                  whatsappGeneralMessageRepliedMessageID: whatsappGeneralMessageRepliedMessageID,
+                  whatsappGeneralMessageCreationDateTime: whatsappGeneralMessageCreationDateTime,
+                  whatsappGeneralMessageOwnerPhoneNumber: whatsappGeneralMessageOwnerPhoneNumber,
+                  whatsappAudioMessageID: whatsappAudioMessageID,
+                  whatsappAudioMessageContent: 
+                  {
+                    whatsappAudioMessageFileID: whatsappAudioMessageFileID,
+                    whatsappAudioMessageFile: whatsappAudioMessageFile
+                  }
+                }
+              };
+              websocketConnection.sendWebsocketMessage('/whatsapp/sendMessage/single/audio', websocketMessageContent);
+            } else {
+              websocketConnection.sendWebsocketMessage('/whatsapp/sendMessage/single/audio', createWhatsappAudioMessageResult.result);         
+            }
+          } else {
+            websocketConnection.sendWebsocketMessage('/whatsapp/sendMessage/single/audio', createWhatsappGeneralMessageResult.result);         
+          }
+        } else {
+          websocketConnection.sendWebsocketMessage('/whatsapp/sendMessage/single/audio', selectOrCreateActiveWhatsappConversationIDResult.result);         
+        }
+      } else {
+        websocketConnection.sendWebsocketMessage('/whatsapp/sendMessage/single/audio', sendWhatsappMessageResult.result);         
+      }
+    } else {
+      websocketConnection.sendWebsocketMessage('/whatsapp/sendMessage/single/audio', uploadWhatsappAudioFileResult.result);
+    }
+  },
+
+    sendWhatsappTextMessage: function(requestQuery, websocketConnection){
+      var httpOptionsToSendWhatsappTextMessage = {'method': 'POST', 'hostname': 'graph.facebook.com', 'path': '/' + constants.credentials.apiVersion + '/' + constants.credentials.phoneNumberID + '/messages', 'headers': {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + constants.credentials.apiKey}};
+      var httpDataToSendWhatsappTextMessage = JSON.stringify({'messaging_product': 'whatsapp', 'to': requestQuery['recipientPhoneNumber'], 'text': {'body': requestQuery['messageContent']}});
+      var httpRequestToSendWhatsappTextMessage = https.request(httpOptionsToSendWhatsappTextMessage, function (httpResponseToSendWhatsappTextMessage) {
+        var httpResponsePartsToSendWhatsappTextMessage = [];
+        httpResponseToSendWhatsappTextMessage.on('data', function (httpResponsePartToSendWhatsappTextMessage) {httpResponsePartsToSendWhatsappTextMessage.push(httpResponsePartToSendWhatsappTextMessage);});
+        httpResponseToSendWhatsappTextMessage.on('end', function (httpResponsePartToSendWhatsappTextMessage) {
+            httpResponsePartsToSendWhatsappTextMessage.push(httpResponsePartToSendWhatsappTextMessage);
+            var activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
+            if (activeConversationID == null){
+                const newConversationID = conversationsManagementFunctions.createConversation(requestQuery['recipientPhoneNumber'], '');
+                agentsManagementFunctions.assignNewConversationToAgentWithLessActiveConversations(newConversationID, requestQuery['agentID']);
+            }
+            activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
+            var textMessage = '';
+            if (requestQuery['sendedProduct'] == '1'){
+                textMessage = requestQuery['messageContent'].split('*').join('');
+            } else {
+                textMessage = requestQuery['messageContent']
+            }
+            const messageInformation = 
+            {
+                messageID: '',
+                owner: 'agent',
+                messageSentDate: generalFunctions.getCurrentDateAsStringWithFormat(),
+                messageSentHour: generalFunctions.getCurrentHourAsStringWithFormat(),
+                messageDeliveryDate: null,
+                messageDeliveryHour: null,
+                messageReadDate: null,
+                messageReadHour: null,
+                messageStatus: 'sent',
+                messageType: 'text',
+                messageContent: textMessage,
+                dateObject: new Date().toString()
+            }
+            websocketManagementFunctions.sendWhatsappMessage(websocketConnection, activeConversationID, messageInformation);
+            conversationsManagementFunctions.addMessageToConversation(activeConversationID, messageInformation);
+        });
+        httpResponseToSendWhatsappTextMessage.on('error', function (error) {console.error(error);});
+      });
+      httpRequestToSendWhatsappTextMessage.write(httpDataToSendWhatsappTextMessage);
+      httpRequestToSendWhatsappTextMessage.end();
     },
 
     sendWhatsappMassMessage: function(requestQuery, frontendResponse){
@@ -123,61 +231,110 @@ module.exports = {
             }
             websocketManagementFunctions.sendWhatsappMessage(websocketConnection, activeConversationID, messageInformation);
             conversationsManagementFunctions.addMessageToConversation(activeConversationID, messageInformation);
-            frontendResponse.end();
         });
     },
 
+    testing: async function(sendWhatsappMessageData){
+      return new Promise((sendWhatsappMessagePromiseResolve) => {
+        const sendWhatsappMessageURL = 
+        `https://graph.facebook.com/v17.0/` +
+        `${constants.credentials.phoneNumberID}/messages`;
+        const sendWhatsappMessageHeaders = {'Content-Type': 'application/json', 'Authorization': `Bearer ${constants.credentials.apiKey}`};
+        axios.post(sendWhatsappMessageURL, sendWhatsappMessageData, {headers: sendWhatsappMessageHeaders}).then((response) => {
+          const whatsappMessageID = response.data.messages[0].id;
+          sendWhatsappMessagePromiseResolve(whatsappMessageID);
+        })
+        .catch((error) => {
+          // MANAGE ERROR
+          console.log(error);
+        });
+  
+      });
+    },
+    uploadWhatsappImageFile: async function(whatsappImageMessageFile){
+      return new Promise(async (uploadWhatsappImageFilePromiseResolve) => {
+        const uploadWhatsappImageMessageURL = `https://graph.facebook.com/v17.0/${constants.credentials.phoneNumberID}/media`;
+        const temporaryImageName = `${uuidv4.v4()}-${Date.now()}.png`;
+        const temporaryImageBuffer = Buffer.from(whatsappImageMessageFile, 'base64');
+        fs.writeFileSync(temporaryImageName, temporaryImageBuffer);
+        const temporaryImageStream = fs.createReadStream(temporaryImageName);
+        const uploadWhatsappImageMessageParameters = new FormData();
+        uploadWhatsappImageMessageParameters.append('messaging_product', 'whatsapp');
+        uploadWhatsappImageMessageParameters.append('type', 'image/png');
+        uploadWhatsappImageMessageParameters.append('file', temporaryImageStream);
+        const uploadWhatsappImageMessageHeaders = uploadWhatsappImageMessageParameters.getHeaders();
+        uploadWhatsappImageMessageHeaders['Authorization'] = `Bearer ${constants.credentials.apiKey}`;
+        axios.post(uploadWhatsappImageMessageURL, uploadWhatsappImageMessageParameters, {headers:  uploadWhatsappImageMessageHeaders}).then(async (httpResponse) => {
+          fs.unlink(temporaryImageName, async (errorWhenDeletingTemporaryImage) => {
+            if (errorWhenDeletingTemporaryImage) {
+              // MANAGE ERROR
+            } else {
+              const whatsappImageMessageID = httpResponse.data.id;
+              uploadWhatsappImageFilePromiseResolve(whatsappImageMessageID);
+            }
+          });
+        })
+        .catch((httpError) => {
+          // MANAGE ERROR
+        });
+      });
+    },
+    downloadWhatsappImageFile: async function(whatsappImageMessageURL){
+      return new Promise(async (downloadWhatsappImageFilePromiseResolve) => {
+        axios.get(whatsappImageMessageURL, {responseType: 'arraybuffer'}).then(async (response) => {
+          const downloadedWhatsappImageFile = (await sharp(response.data).png().toBuffer()).toString('base64');
+          downloadWhatsappImageFilePromiseResolve(downloadedWhatsappImageFile);
+        });
+      });
+    },
     sendWhatsappMediaMessageURL: async function(requestQuery, frontendResponse, websocketConnection){
-        var types = {
-            'application/pdf': 'document',
-            'image/png': 'image',
-            'video/3gp': 'video',
-            'image/webp': 'sticker'
-        }
-        exec(`curl -X  POST "https://graph.facebook.com/v17.0/` + constants.credentials.phoneNumberID + `/messages" -H "Authorization: Bearer `+constants.credentials.apiKey+`" -H "Content-Type: application/json" -d "{messaging_product: 'whatsapp', recipient_type: 'individual', to: '`+requestQuery['recipientPhoneNumber']+`', type: '` + types[requestQuery['mediaType']] + `', ` + types[requestQuery['mediaType']] + ` : {link: '` +requestQuery['mediaURL']+`'}}"`, (error, stdout, stderr) => {
-            if (error) {
-                //console.log(`error: ${error.message}`);
-                return;
-            }
-            if (stderr) {
-                //console.log(`stderr: ${stderr}`);
-                //return;
-            }
-            console.log(`stdout: ${stdout}`);
+      const downloadedWhatsappImageFile = await this.downloadWhatsappImageFile(requestQuery.mediaURL);
+      const whatsappImageMessageFileID = await this.uploadWhatsappImageFile(downloadedWhatsappImageFile);
 
-            var activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
-            if (activeConversationID == null){
-                conversationsManagementFunctions.createConversation(requestQuery['recipientPhoneNumber'], '');
-            }
-            activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
-            const messageInformation = 
-            {
-                messageID: '',
-                owner: 'agent',
-                messageSentDate: generalFunctions.getCurrentDateAsStringWithFormat(),
-                messageSentHour: generalFunctions.getCurrentHourAsStringWithFormat(),
-                messageDeliveryDate: null,
-                messageDeliveryHour: null,
-                messageReadDate: null,
-                messageReadHour: null,
-                messageStatus: 'sent',
-                messageType: types[requestQuery['mediaType']],
-                messageContent: 
-                {
-                    'isBase64': '0',
-                    'mediaExtension': requestQuery['mediaType'],
-                    'mediaContent': requestQuery['mediaURL']
-                },
-                dateObject: new Date().toString()
+      var sendWhatsappMessageData = 
+      {
+        'messaging_product': 'whatsapp',
+        'to': requestQuery['recipientPhoneNumber'], 
+        'type': 'image', 
+        'image': {'id': whatsappImageMessageFileID}
+      };
+      console.log(sendWhatsappMessageData);
+      sendWhatsappMessageData = JSON.stringify(sendWhatsappMessageData);
+      await this.testing(sendWhatsappMessageData);
 
-            }
-            websocketManagementFunctions.sendWhatsappMessage(websocketConnection, activeConversationID, messageInformation);
-            conversationsManagementFunctions.addMessageToConversation(activeConversationID, messageInformation);
-            frontendResponse.end();
-        });
+      var activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
+      if (activeConversationID == null){
+          conversationsManagementFunctions.createConversation(requestQuery['recipientPhoneNumber'], '');
+      }
+      activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
+      const messageInformation = 
+      {
+          messageID: '',
+          owner: 'agent',
+          messageSentDate: generalFunctions.getCurrentDateAsStringWithFormat(),
+          messageSentHour: generalFunctions.getCurrentHourAsStringWithFormat(),
+          messageDeliveryDate: null,
+          messageDeliveryHour: null,
+          messageReadDate: null,
+          messageReadHour: null,
+          messageStatus: 'sent',
+          messageType: 'image',
+          messageContent: 
+          {
+              'isBase64': '0',
+              'mediaExtension': requestQuery['mediaType'],
+              'mediaContent': requestQuery['mediaURL']
+          },
+          dateObject: new Date().toString()
+
+      }
+      websocketManagementFunctions.sendWhatsappMessage(websocketConnection, activeConversationID, messageInformation);
+      conversationsManagementFunctions.addMessageToConversation(activeConversationID, messageInformation);
+      frontendResponse.end();
+      
     },
 
-    sendWhatsappMediaMessage: async function(requestQuery, frontendResponse, websocketConnection){
+    sendWhatsappMediaMessage: async function(requestQuery, websocketConnection){
         var extensions = {
             'application/pdf': '.pdf',
             'image/png': '.png',
@@ -274,8 +431,80 @@ module.exports = {
         */
     },
 
+    receiveWhatsappStoreMessage: function(storeName, storeNumber, messageInformation, messageID, frontendResponse, websocketConnection){
+      try {
+        const messageContent = messageInformation['text']['body'].split('\n');
+        const clientNumber = messageContent[0].split('NUMERO: ')[1];
+        const clientName = messageContent[1].split('NOMBRE: ')[1];
+        const clientOrder = messageContent[2].split('PEDIDO: ')[1];
+        const clientID = messageContent[3].split('CEDULA: ')[1];
+
+        const sucursalesDatabase = databaseManagementFunctions.readDatabase(constants.routes.sucursalesDatabase);
+        if (clientNumber in sucursalesDatabase){
+          
+        } else {
+          const infoToSave = 
+          {
+            'messageID': messageID,
+            'storeName': storeName,
+            'recipientPhoneNumber': clientNumber,
+            'recipientProfileName': clientName,
+            'clientOrder': clientOrder,
+            'clientID': clientID,
+            'startDate': generalFunctions.getCurrentDateAsStringWithFormat(), 
+            'startHour': generalFunctions.getCurrentHourAsStringWithFormat()
+          }
+          sucursalesDatabase[clientNumber] = infoToSave;
+          databaseManagementFunctions.saveDatabase(constants.routes.sucursalesDatabase, sucursalesDatabase);
+          websocketManagementFunctions.receiveStoreMessage(websocketConnection, infoToSave);
+        }
+      } catch {
+        var httpOptionsToSendWhatsappTextMessage = {'method': 'POST', 'hostname': 'graph.facebook.com', 'path': '/' + constants.credentials.apiVersion + '/' + constants.credentials.phoneNumberID + '/messages', 'headers': {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + constants.credentials.apiKey}};
+        var httpDataToSendWhatsappTextMessage = JSON.stringify({'messaging_product': 'whatsapp', 'to': storeNumber, 'text': {'body': 'FORMATO INCORRECTO'}, 'context': {'message_id':messageID}});
+        var httpRequestToSendWhatsappTextMessage = https.request(httpOptionsToSendWhatsappTextMessage, function (httpResponseToSendWhatsappTextMessage) {
+        var httpResponsePartsToSendWhatsappTextMessage = [];
+        httpResponseToSendWhatsappTextMessage.on('data', function (httpResponsePartToSendWhatsappTextMessage) {httpResponsePartsToSendWhatsappTextMessage.push(httpResponsePartToSendWhatsappTextMessage);});
+        httpResponseToSendWhatsappTextMessage.on('end', function (httpResponsePartToSendWhatsappTextMessage) {
+            httpResponsePartsToSendWhatsappTextMessage.push(httpResponsePartToSendWhatsappTextMessage);
+        });
+        httpResponseToSendWhatsappTextMessage.on('error', function (error) {console.error(error);});
+      });
+      httpRequestToSendWhatsappTextMessage.write(httpDataToSendWhatsappTextMessage);
+      httpRequestToSendWhatsappTextMessage.end();
+        
+      }
+      frontendResponse.end('Mensaje de la sucursal ' + storeName);
+    },
+
     receiveWhatsappMessage: async function(requestToReceiveWhatsappMesage, frontendResponse, websocketConnection){
-        const recipientPhoneNumber = requestToReceiveWhatsappMesage.body['entry'][0]['changes'][0]['value']['messages'][0]['from'];
+      const numeroZapote = 50660694075;
+      const numeroEscazu = 50672527633;
+      const numeroCartago = 50670130555;
+
+      /*
+        Estructura requerida del mensaje (el NOMBRE es opcional, si no tienen el nombre poner SIN NOMBRE)
+        Solo mandar mensajes de texto
+        Respetar la estructura del mensaje!!!
+
+        REDIRIGIR A LA CENTRAL:
+
+        NUMERO: 50660694075
+        NOMBRE: Oscar Araya
+        PEDIDO: Desechable
+        CEDULA: S
+      */
+      
+      const recipientPhoneNumber = requestToReceiveWhatsappMesage.body['entry'][0]['changes'][0]['value']['messages'][0]['from'];
+      var messageID = requestToReceiveWhatsappMesage.body['entry'][0]['changes'][0]['value']['messages'][0]['id'];
+
+      if (recipientPhoneNumber == numeroZapote){
+        this.receiveWhatsappStoreMessage('Zapote', recipientPhoneNumber, requestToReceiveWhatsappMesage.body['entry'][0]['changes'][0]['value']['messages'][0], messageID, frontendResponse, websocketConnection);
+      } else if (recipientPhoneNumber == numeroEscazu){
+        this.receiveWhatsappStoreMessage('Escazu', recipientPhoneNumber, requestToReceiveWhatsappMesage.body['entry'][0]['changes'][0]['value']['messages'][0], messageID, frontendResponse, websocketConnection);
+      } else if (recipientPhoneNumber == numeroCartago){
+        this.receiveWhatsappStoreMessage('Cartago', recipientPhoneNumber, requestToReceiveWhatsappMesage.body['entry'][0]['changes'][0]['value']['messages'][0], messageID, frontendResponse, websocketConnection);
+      
+      } else {
         const recipientProfileName = requestToReceiveWhatsappMesage.body['entry'][0]['changes'][0]['value']['contacts'][0]['profile']['name'];
         var messageID = requestToReceiveWhatsappMesage.body['entry'][0]['changes'][0]['value']['messages'][0]['id'];
         const messageType = requestToReceiveWhatsappMesage.body['entry'][0]['changes'][0]['value']['messages'][0]['type'];
@@ -301,6 +530,7 @@ module.exports = {
             messageInformationToSaveOnDatabase['messageContent'] = null;
             this.sendReceivedWhatsappMessageToAgents(messageInformationToSaveOnDatabase, recipientPhoneNumber, recipientProfileName, frontendResponse, websocketConnection);
         }
+      }
     },
 
     addWhatsappTextMessageInformation: function(messageContentFromWhatsappAPI, messageInformationToSaveOnDatabase, recipientPhoneNumber, recipientProfileName, frontendResponse, websocketConnection){
@@ -368,7 +598,7 @@ module.exports = {
     },
 
     sendReceivedWhatsappMessageToAgents: function(messageInformationToSaveOnDatabase, recipientPhoneNumber, recipientProfileName, frontendResponse, websocketConnection){
-        var activeConversationID = conversationsManagementFunctions.getActiveConversationID(recipientPhoneNumber);
+      var activeConversationID = conversationsManagementFunctions.getActiveConversationID(recipientPhoneNumber);
         var newConversation = false;
         if (activeConversationID == null){
             const newConversationID = conversationsManagementFunctions.createConversation(recipientPhoneNumber, recipientProfileName);
@@ -384,7 +614,7 @@ module.exports = {
         frontendResponse.end('Message "' + messageID + '" received to the conversation "' + activeConversationID + '"');
         if (newConversation == true){
             if (assignedAgentID){
-                this.sendAutomaticWhatsappMediaMessage(recipientPhoneNumber, databaseManagementFunctions.readDatabase(constants.routes.agentsDatabase)[assignedAgentID].welcomeImage, databaseManagementFunctions.readDatabase(constants.routes.agentsDatabase)[assignedAgentID].welcomeMessage, assignedAgentID,  websocketConnection)
+                this.sendAutomaticWhatsappMediaMessage(recipientPhoneNumber, databaseManagementFunctions.readDatabase(constants.routes.agentsDatabase)[assignedAgentID].agentWelcomeImage, databaseManagementFunctions.readDatabase(constants.routes.agentsDatabase)[assignedAgentID].agentWelcomeMessage, assignedAgentID,  websocketConnection)
             } else {
                 this.sendAutomaticWhatsappTextMessage(recipientPhoneNumber, 'Gracias por escribir a KingVape. De momento, todos nuestros agentes se encuentran fuera de servicio. Estimado cliente, lo atenderemos lo más pronto posible, muchas gracias por la espera!', websocketConnection);
                 websocketManagementFunctions.receivePendingConversation(websocketConnection, activeConversationID, recipientPhoneNumber, generalFunctions.getCurrentDateAsStringWithFormat(), generalFunctions.getCurrentHourAsStringWithFormat());
@@ -513,6 +743,86 @@ module.exports = {
         });
         httpRequestToSendWhatsappTextMessage.write(httpDataToSendWhatsappTextMessage);
         httpRequestToSendWhatsappTextMessage.end();
+    },
+
+    sendWhatsappStoreConversationMessage: function(recipientPhoneNumber, agentID, messageID, mediaContent, messageContent, websocketConnection){
+      fs.writeFileSync('a.png', mediaContent.split(',')[1],'base64');
+      exec(`curl -X POST "https://graph.facebook.com/v17.0/` + constants.credentials.phoneNumberID + `/media" -H "Authorization: Bearer `+constants.credentials.apiKey+`" -F "file=@a.png" -F "type=image" -F "messaging_product="whatsapp"`, (error, stdout, stderr) => {
+        exec(`curl -X  POST "https://graph.facebook.com/v17.0/` + constants.credentials.phoneNumberID + `/messages" -H "Authorization: Bearer `+constants.credentials.apiKey+`" -H "Content-Type: application/json" -d "{messaging_product: 'whatsapp', recipient_type: 'individual', to: '`+recipientPhoneNumber+`', type: 'image', image : {id: ` +JSON.parse(stdout).id+`}}"`, (error, stdout, stderr) => {
+          var activeConversationID = conversationsManagementFunctions.getActiveConversationID(recipientPhoneNumber);
+          if (activeConversationID == null){
+            conversationsManagementFunctions.createConversation(recipientPhoneNumber, '');
+          }
+          activeConversationID = conversationsManagementFunctions.getActiveConversationID(recipientPhoneNumber);
+          const messageInformation = 
+          {
+            messageID: '',
+            owner: 'agent',
+            messageSentDate: generalFunctions.getCurrentDateAsStringWithFormat(),
+            messageSentHour: generalFunctions.getCurrentHourAsStringWithFormat(),
+            messageDeliveryDate: null,
+            messageDeliveryHour: null,
+            messageReadDate: null,
+            messageReadHour: null,
+            messageStatus: 'sent',
+            messageType: 'image',
+            messageContent: 
+            {
+              'isBase64': '1',
+              'mediaExtension': '.png',
+              'mediaContent': mediaContent.split(',')[1]
+            },
+            dateObject: new Date().toString()
+          }
+          conversationsManagementFunctions.addMessageToConversation(activeConversationID, messageInformation);
+          var httpOptionsToSendWhatsappTextMessage = {'method': 'POST', 'hostname': 'graph.facebook.com', 'path': '/' + constants.credentials.apiVersion + '/' + constants.credentials.phoneNumberID + '/messages', 'headers': {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + constants.credentials.apiKey}};
+          var httpDataToSendWhatsappTextMessage = JSON.stringify({'messaging_product': 'whatsapp', 'to': recipientPhoneNumber, 'text': {'body': messageContent}});
+          var httpRequestToSendWhatsappTextMessage = https.request(httpOptionsToSendWhatsappTextMessage, function (httpResponseToSendWhatsappTextMessage) {
+            var httpResponsePartsToSendWhatsappTextMessage = [];
+            httpResponseToSendWhatsappTextMessage.on('data', function (httpResponsePartToSendWhatsappTextMessage) {httpResponsePartsToSendWhatsappTextMessage.push(httpResponsePartToSendWhatsappTextMessage);});
+            httpResponseToSendWhatsappTextMessage.on('end', function (httpResponsePartToSendWhatsappTextMessage) {
+              httpResponsePartsToSendWhatsappTextMessage.push(httpResponsePartToSendWhatsappTextMessage);
+              var activeConversationID = conversationsManagementFunctions.getActiveConversationID(recipientPhoneNumber);
+              const messageInformation = 
+              {
+                messageID: '',
+                owner: 'agent',
+                messageSentDate: generalFunctions.getCurrentDateAsStringWithFormat(),
+                messageSentHour: generalFunctions.getCurrentHourAsStringWithFormat(),
+                messageDeliveryDate: null,
+                messageDeliveryHour: null,
+                messageReadDate: null,
+                messageReadHour: null,
+                messageStatus: 'sent',
+                messageType: 'text',
+                messageContent: messageContent,
+                dateObject: new Date().toString()
+              }
+              conversationsManagementFunctions.addMessageToConversation(activeConversationID, messageInformation);
+              conversationsManagementFunctions.deleteStoreConversation(recipientPhoneNumber);
+              agentsManagementFunctions.grabStoreConversation(activeConversationID, agentID, websocketConnection);
+
+              var httpOptionsToSendWhatsappTextMessage = {'method': 'POST', 'hostname': 'graph.facebook.com', 'path': '/' + constants.credentials.apiVersion + '/' + constants.credentials.phoneNumberID + '/messages', 'headers': {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + constants.credentials.apiKey}};
+              var httpDataToSendWhatsappTextMessage = JSON.stringify({'messaging_product': 'whatsapp', 'to': recipientPhoneNumber, 'text': {'body': 'LISTO'}, 'context': {'message_id':messageID}});
+              var httpRequestToSendWhatsappTextMessage = https.request(httpOptionsToSendWhatsappTextMessage, function (httpResponseToSendWhatsappTextMessage) {
+                var httpResponsePartsToSendWhatsappTextMessage = [];
+                httpResponseToSendWhatsappTextMessage.on('data', function (httpResponsePartToSendWhatsappTextMessage) {httpResponsePartsToSendWhatsappTextMessage.push(httpResponsePartToSendWhatsappTextMessage);});
+                httpResponseToSendWhatsappTextMessage.on('end', function (httpResponsePartToSendWhatsappTextMessage) {
+                  httpResponsePartsToSendWhatsappTextMessage.push(httpResponsePartToSendWhatsappTextMessage);
+                });
+                httpResponseToSendWhatsappTextMessage.on('error', function (error) {console.error(error);});
+              });
+              httpRequestToSendWhatsappTextMessage.write(httpDataToSendWhatsappTextMessage);
+              httpRequestToSendWhatsappTextMessage.end();
+
+
+            });
+            httpResponseToSendWhatsappTextMessage.on('error', function (error) {console.error(error);});
+          });
+          httpRequestToSendWhatsappTextMessage.write(httpDataToSendWhatsappTextMessage);
+          httpRequestToSendWhatsappTextMessage.end();
+          });
+      });
     },
 
     sendWhatsappPendingConversationMessage: function(recipientPhoneNumber, mediaContent, messageContent, requestQuery, websocketConnection){

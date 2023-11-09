@@ -1,8 +1,15 @@
 const constants = require('./constants.js');
 const generalFunctions = require('./generalFunctions.js');
 const databaseManagementFunctions = require('./databaseManagementFunctions.js');
+const agentsManagementFunctions = require('./agentsManagementFunctions.js');
 
 module.exports = {
+  deleteStoreConversation: function (recipientPhoneNumber){
+    var storesDatabase = databaseManagementFunctions.readDatabase(constants.routes.sucursalesDatabase);
+    delete storesDatabase[recipientPhoneNumber];
+    databaseManagementFunctions.saveDatabase(constants.routes.sucursalesDatabase, storesDatabase);
+  },
+
     createConversation: function (recipientPhoneNumber, recipientProfileName){
         var conversationsDatabase = databaseManagementFunctions.readDatabase(constants.routes.conversationsDatabase);
         const currentDateAsString = generalFunctions.getCurrentDateAsString();
@@ -140,6 +147,11 @@ module.exports = {
         return allPendingConversations;
     },
 
+    getAllStoreConversations: function(){
+      const storesDatabase = databaseManagementFunctions.readDatabase(constants.routes.sucursalesDatabase);
+      return storesDatabase;
+    },
+
     closeConversation: function (conversationID, conversationStatus, amount){
         var conversationsDatabase = databaseManagementFunctions.readDatabase(constants.routes.conversationsDatabase);
         var agentsDatabase = databaseManagementFunctions.readDatabase(constants.routes.agentsDatabase);
@@ -149,6 +161,7 @@ module.exports = {
         conversationsDatabase[conversationID].endHour = generalFunctions.getCurrentHourAsStringWithFormat();
         conversationsDatabase[conversationID]['status'] = conversationStatus;
         conversationsDatabase[conversationID]['amount'] = amount;
+        conversationsDatabase[conversationID]['endDateObject'] = generalFunctions.getCurrentDateObject();
 
         const index = agentsDatabase[conversationsDatabase[conversationID].assignedAgentID].agentActiveConversations.indexOf(conversationID);
         if (index > -1) { 
@@ -166,6 +179,43 @@ module.exports = {
             totalProfit = totalProfit + parseInt(conversationsDatabase[conversationID].amount);
         }
         return totalProfit;
-    }
+    },
+
+    getFilteredConversations: function (startDate, endDate, agent, status){
+      var conversationsDatabase = databaseManagementFunctions.readDatabase(constants.routes.conversationsDatabase);
+      var agentsDatabase = databaseManagementFunctions.readDatabase(constants.routes.agentsDatabase);
+
+      if ((startDate!=null) && (endDate!=null)){
+        const startDateObject = new Date(startDate);
+        const endDateObject = new Date(endDate);
+        for (var conversationID in conversationsDatabase){
+          if (status == 'Finalizadas'){
+            const conversationEndDateObject = new Date(conversationsDatabase[conversationID]['endDateObject']);
+            if (!((conversationEndDateObject > startDateObject) && (conversationEndDateObject < endDateObject))){
+              delete conversationsDatabase[conversationID];
+            }
+          } else {
+            const conversationStartDateObject = new Date(conversationsDatabase[conversationID]['startDateObject']);
+            if (!((conversationStartDateObject > startDateObject) && (conversationStartDateObject < endDateObject))){
+              delete conversationsDatabase[conversationID];
+            }
+          }
+        }
+      }
+
+      if (agent!=null){
+        var filteredAgentID = '';
+        for (var agentID in agentsDatabase){
+          if (agentsDatabase[agentID]['agentName'] == agent){
+            filteredAgentID = agentID
+          }
+        }
+        for (var conversationID in conversationsDatabase){
+          if (conversationsDatabase[conversationID]['assignedAgentID'] != filteredAgentID){
+            delete conversationsDatabase[conversationID];
+          }
+        }
+      }
+  },
 
 }

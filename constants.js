@@ -6,7 +6,7 @@ module.exports = {
     {
         phoneNumberID: '135985856257321',
         apiVersion: 'v17.0',
-        apiKey: 'EAAD2uKxXdvcBO9l6ZBVifvWWPsP0x8Lq45rBs4AtJBYa01ZCIFx1OeI0zbUS4IXAtr1nkktaBtJqQoBI9ZCrZCS2m2PZBEKmTumOrtaXrlhBd56RxSucR70ZAT0jvmyahzMahNlScUMryT23IltSIJNmSC74twwPkIsYjNIZA4WCHgZC76TW4ExpDRaY2HFoBYJjLktHZAHvP0HQoWGGDZBnUZD',
+        apiKey: 'EAAD2uKxXdvcBO2yusdiAFi68eQbBM91kkAfrFDL1v3WtxdLxQh7ynCcJLMEZAO1dRyV0ZBZAlyYdQYEbEv23ViZCz8OaJCJMIjLKn9lJF3tZBRpJTUj9I6QYNYwuZCZCz3IO5JaUyOw6bumwaERwakAHZB2trYUBj9wGQcdY1S9mW9YkYfCYJ5AZBxZBjbonIZBzGzrMIwLc5His7o22ITv3imE',
     },
 
     routes: 
@@ -18,7 +18,8 @@ module.exports = {
         conversationsDatabase: 'databases/conversations.json',
         agentsDatabase: 'databases/agents.json',
         contactsDatabase: 'databases/contacts.json',
-        favoriteImagesDatabase: 'databases/favoriteImages.json'
+        favoriteImagesDatabase: 'databases/favoriteImages.json',
+        sucursalesDatabase: 'databases/sucursales.json'
     },
 
     fromMonthNameToMonthNumber: 
