@@ -16,7 +16,6 @@ const backendHttpRequestServer = express();
 backendHttpRequestServer.use(cors());
 backendHttpRequestServer.use(bodyParser.json({limit: '50mb'}));
 backendHttpRequestServer.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
-backendHttpRequestServer.listen(constants.backendHttpRequestServerConnectionPort);
 
 const WebSocket = require('ws');
 const server = http.createServer(express);
