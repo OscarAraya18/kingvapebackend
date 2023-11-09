@@ -3,13 +3,15 @@ const whatsappManagementFunctions = require('./whatsappManagementFunctions.js');
 const agentsManagementFunctions = require('./agentsManagementFunctions.js');
 const conversationsManagementFunctions = require('./conversationsManagementFunctions.js');
 const contactsManagementFunctions = require('./contactsManagementFunctions.js');
+const databaseManagementFunctions = require('./databaseManagementFunctions.js');
+const websocketManagementFunctions = require('./websocketManagementFunctions.js');
 
 const url = require('url');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const http = require('http');
-
 const express = require('express');
+
 const backendHttpRequestServer = express();
 backendHttpRequestServer.use(cors());
 backendHttpRequestServer.use(bodyParser.json({limit: '50mb'}));
@@ -17,9 +19,10 @@ backendHttpRequestServer.use(bodyParser.urlencoded({limit: '50mb', extended: tru
 backendHttpRequestServer.listen(constants.backendHttpRequestServerConnectionPort);
 
 const WebSocket = require('ws');
-const databaseManagementFunctions = require('./databaseManagementFunctions.js');
-const websocketManagementFunctions = require('./websocketManagementFunctions.js');
-const server = http.createServer(express);
+
+const backendHttpWebsocketServer = express();
+backendHttpWebsocketServer.use(cors());
+const server = http.createServer(backendHttpWebsocketServer);
 const backendWebsocketServerConnection = new WebSocket.Server({server});
 server.listen(constants.backendWebsocketServerConnectionPort);
 
