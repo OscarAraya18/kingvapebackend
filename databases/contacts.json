@@ -8117,28 +8117,6 @@
       }
     }
   },
-  "": {
-    "contactName": "Raque ESCAZÚ *****",
-    "contactPhoneNumber": "",
-    "contactEmail": "",
-    "contactID": "",
-    "contactLocationDetails": "NA",
-    "contactNote": "NA",
-    "contactLocation": {
-      "CASA": {
-        "latitud": 0,
-        "longitud": 0
-      },
-      "TRABAJO": {
-        "latitud": 0,
-        "longitud": 0
-      },
-      "OTRO": {
-        "latitud": 0,
-        "longitud": 0
-      }
-    }
-  },
   "50688597245": {
     "contactName": "Ari Fishman 88597245",
     "contactPhoneNumber": "50688597245",
