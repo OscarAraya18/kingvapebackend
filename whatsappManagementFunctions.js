@@ -600,7 +600,7 @@ module.exports = {
       var sendWhatsappMessageData = 
       {
         'messaging_product': 'whatsapp',
-        'to': whatsappConversationRecipientPhoneNumber, 
+        'to': recipientPhoneNumber, 
         'type': 'image', 
         'image': {'id': whatsappImageMessageFileID}
       };
