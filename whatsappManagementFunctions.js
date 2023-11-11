@@ -615,8 +615,8 @@ module.exports = {
           const whatsappMessageID = response.data.messages[0].id;
           sendWhatsappMessagePromiseResolve({success: true, result: whatsappMessageID});
         })
-        .catch(() => {
-          sendWhatsappMessagePromiseResolve({success: false, result: 'An unexpected error ocurred when trying to send the Whatsapp message.'});
+        .catch((error) => {
+          console.log(error);
         });
       });
     },
