@@ -191,8 +191,7 @@ module.exports = {
           if (client.readyState === WebSocket.OPEN) {
               const messageToSendByWebsocket = 
               {
-                  ranking: true,
-                  type: 'conversation',
+                  websocketMessageID: 'addConversationCount',
                   agentID: agentID,
               }
               client.send(JSON.stringify(messageToSendByWebsocket));
