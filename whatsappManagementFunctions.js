@@ -506,7 +506,6 @@ module.exports = {
 
     sendWhatsappMessage: async function(sendWhatsappMessageData){
       return new Promise((sendWhatsappMessagePromiseResolve) => {
-        console.log(sendWhatsappMessageData)
         const sendWhatsappMessageURL = `https://graph.facebook.com/${constants.credentials.apiVersion}/${constants.credentials.phoneNumberID}/messages`;
         const sendWhatsappMessageHeaders = {'Content-Type': 'application/json', 'Authorization': `Bearer ${constants.credentials.apiKey}`};
         axios.post(sendWhatsappMessageURL, sendWhatsappMessageData, {headers: sendWhatsappMessageHeaders}).then((response) => {
@@ -634,7 +633,7 @@ module.exports = {
       var sendWhatsappMessageData = 
       {
         'messaging_product': 'whatsapp',
-        'to': recipientPhoneNumber, 
+        'to': parseInt(recipientPhoneNumber), 
         'type': 'image', 
         'image': {'id': whatsappImageMessageFileID}
       };
