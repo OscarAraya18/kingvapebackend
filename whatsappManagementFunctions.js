@@ -622,7 +622,7 @@ module.exports = {
     },
 
     sendAutomaticWhatsappMediaMessage: async function(recipientPhoneNumber, mediaContent, messageContent, assignedAgentID, websocketConnection){
-      const uploadWhatsappImageFileResult = await this.uploadWhatsappImageFile(whatsappImageMessageFile);
+      const uploadWhatsappImageFileResult = await this.uploadWhatsappImageFile(mediaContent);
       const whatsappImageMessageFileID = uploadWhatsappImageFileResult.result.whatsappImageMessageFileID;
       var sendWhatsappMessageData = 
       {
