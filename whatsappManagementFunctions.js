@@ -168,73 +168,6 @@ module.exports = {
         frontendResponse.end();
     },
 
-    sendWhatsappMediaMessageURL: async function(requestQuery, frontendResponse, websocketConnection){
-        var types = {
-            'application/pdf': 'document',
-            'image/png': 'image',
-            'video/3gp': 'video',
-            'image/webp': 'sticker'
-        }
-        exec(`curl -X  POST "https://graph.facebook.com/v17.0/` + constants.credentials.phoneNumberID + `/messages" -H "Authorization: Bearer `+constants.credentials.apiKey+`" -H "Content-Type: application/json" -d "{messaging_product: 'whatsapp', recipient_type: 'individual', to: '`+requestQuery['recipientPhoneNumber']+`', type: '` + types[requestQuery['mediaType']] + `', ` + types[requestQuery['mediaType']] + ` : {link: '` +requestQuery['mediaURL']+`'}}"`, (error, stdout, stderr) => {
-            if (error) {
-                //console.log(`error: ${error.message}`);
-                return;
-            }
-            if (stderr) {
-                //console.log(`stderr: ${stderr}`);
-                //return;
-            }
-            console.log(`stdout: ${stdout}`);
-
-            var activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
-            if (activeConversationID == null){
-                conversationsManagementFunctions.createConversation(requestQuery['recipientPhoneNumber'], '');
-            }
-            activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
-            const messageInformation = 
-            {
-                messageID: '',
-                owner: 'agent',
-                messageSentDate: generalFunctions.getCurrentDateAsStringWithFormat(),
-                messageSentHour: generalFunctions.getCurrentHourAsStringWithFormat(),
-                messageDeliveryDate: null,
-                messageDeliveryHour: null,
-                messageReadDate: null,
-                messageReadHour: null,
-                messageStatus: 'sent',
-                messageType: types[requestQuery['mediaType']],
-                messageContent: 
-                {
-                    'isBase64': '0',
-                    'mediaExtension': requestQuery['mediaType'],
-                    'mediaContent': requestQuery['mediaURL']
-                },
-                dateObject: new Date().toString()
-
-            }
-            websocketManagementFunctions.sendWhatsappMessage(websocketConnection, activeConversationID, messageInformation);
-            conversationsManagementFunctions.addMessageToConversation(activeConversationID, messageInformation);
-        });
-    },
-
-    testing: async function(sendWhatsappMessageData){
-      return new Promise((sendWhatsappMessagePromiseResolve) => {
-        const sendWhatsappMessageURL = 
-        `https://graph.facebook.com/v17.0/` +
-        `${constants.credentials.phoneNumberID}/messages`;
-        const sendWhatsappMessageHeaders = {'Content-Type': 'application/json', 'Authorization': `Bearer ${constants.credentials.apiKey}`};
-        axios.post(sendWhatsappMessageURL, sendWhatsappMessageData, {headers: sendWhatsappMessageHeaders}).then((response) => {
-          const whatsappMessageID = response.data.messages[0].id;
-          sendWhatsappMessagePromiseResolve(whatsappMessageID);
-        })
-        .catch((error) => {
-          // MANAGE ERROR
-          console.log(error);
-        });
-  
-      });
-    },
-    
     downloadWhatsappImageFile: async function(whatsappImageMessageURL){
       return new Promise(async (downloadWhatsappImageFilePromiseResolve) => {
         axios.get(whatsappImageMessageURL, {responseType: 'arraybuffer'}).then(async (response) => {
@@ -242,24 +175,24 @@ module.exports = {
           downloadWhatsappImageFilePromiseResolve(downloadedWhatsappImageFile);
         })
         .catch((error) => {
-          console.log(error);
         });
       });
     },
+
     sendWhatsappMediaMessageURL: async function(requestQuery, frontendResponse, websocketConnection){
       const downloadedWhatsappImageFile = await this.downloadWhatsappImageFile(requestQuery.mediaURL);
-      const whatsappImageMessageFileID = await this.uploadWhatsappImageFile(downloadedWhatsappImageFile);
+      const uploadWhatsappImageFilePromiseResolve = await this.uploadWhatsappImageFile(downloadedWhatsappImageFile);
 
       var sendWhatsappMessageData = 
       {
         'messaging_product': 'whatsapp',
         'to': requestQuery['recipientPhoneNumber'], 
         'type': 'image', 
-        'image': {'id': whatsappImageMessageFileID}
+        'image': {'id': uploadWhatsappImageFilePromiseResolve.result.whatsappImageMessageFileID}
       };
 
       sendWhatsappMessageData = JSON.stringify(sendWhatsappMessageData);
-      await this.testing(sendWhatsappMessageData);
+      await this.sendWhatsappMessage(sendWhatsappMessageData);
 
       var activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
       if (activeConversationID == null){
@@ -592,7 +525,7 @@ module.exports = {
           sendWhatsappMessagePromiseResolve({success: true, result: whatsappMessageID});
         })
         .catch((error) => {
-          console.log(error);
+          console.log(sendWhatsappMessageData.to);
         });
       });
     },
