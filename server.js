@@ -165,6 +165,9 @@ backendHttpRequestServer.post('/sendWhatsappMassMessage', (request, response) =>
 backendHttpRequestServer.post('/getAgentStatus', (request, response) => {
     agentsManagementFunctions.getAgentStatus(request.body, response);
 });
+
+
+
 backendHttpRequestServer.post('/sendWhatsappMedia', (request, response) => {
     whatsappManagementFunctions.sendWhatsappMediaMessage(request.body, response, backendWebsocketServerConnection);
 });
@@ -252,4 +255,13 @@ backendHttpRequestServer.post('/rankingLogin', (request, response) => {
   } else {
     response.end(JSON.stringify({'success': false}));
   }
+});
+
+
+
+
+
+backendHttpRequestServer.post('/getAppStatus', (request, response) => {
+  const applicationDatabase = databaseManagementFunctions.readDatabase(constants.routes.applicationDatabase);
+  response.end(JSON.stringify({'applicationStatus': applicationDatabase['applicationStatus']}));
 });

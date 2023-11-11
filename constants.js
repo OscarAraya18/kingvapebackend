@@ -19,7 +19,8 @@ module.exports = {
         agentsDatabase: 'databases/agents.json',
         contactsDatabase: 'databases/contacts.json',
         favoriteImagesDatabase: 'databases/favoriteImages.json',
-        sucursalesDatabase: 'databases/sucursales.json'
+        sucursalesDatabase: 'databases/sucursales.json',
+        applicationDatabase: 'databases/application.json'
     },
 
     fromMonthNameToMonthNumber: 
