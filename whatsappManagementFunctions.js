@@ -702,6 +702,7 @@ module.exports = {
           conversationsManagementFunctions.deleteStoreConversation(numero);
           agentsManagementFunctions.grabStoreConversation(activeConversationID, agentID, websocketConnection);
 
+          console.log(storeName);
           var tienda = '';
           if (storeName == 'Escazu'){
             tienda = '50670782096';
