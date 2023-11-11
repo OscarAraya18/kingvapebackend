@@ -128,7 +128,7 @@ backendHttpRequestServer.post('/acceptTransfer', (request, response) => {
   websocketManagementFunctions.acceptTransfer(backendWebsocketServerConnection, requestQuery.agentToNotify);
   response.end()
 });
-backendHttpRequestServer.get('/getContacts', (request, response) => {
+backendHttpRequestServer.post('/getContacts', (request, response) => {
   const allContacts = contactsManagementFunctions.getAllContacts();
   const contactLetter = request.body.contactLetter;
   if (contactLetter != 'Otro'){
