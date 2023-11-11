@@ -317,6 +317,10 @@ module.exports = {
         const clientName = messageContent[1].split('NOMBRE: ')[1];
         const clientOrder = messageContent[2].split('PEDIDO: ')[1];
         const clientID = messageContent[3].split('CEDULA: ')[1];
+        
+        console.log(clientOrder  + ' ' + clientID)
+
+        console.log(clientName + ' ' + clientNumber + ' ' + clientOrder + ' ' + clientID)
 
         const sucursalesDatabase = databaseManagementFunctions.readDatabase(constants.routes.sucursalesDatabase);
         if (clientNumber in sucursalesDatabase){
@@ -506,7 +510,6 @@ module.exports = {
 
     sendWhatsappMessage: async function(sendWhatsappMessageData){
       return new Promise((sendWhatsappMessagePromiseResolve) => {
-        console.log()
         const sendWhatsappMessageURL = `https://graph.facebook.com/${constants.credentials.apiVersion}/${constants.credentials.phoneNumberID}/messages`;
         const sendWhatsappMessageHeaders = {'Content-Type': 'application/json', 'Authorization': `Bearer ${constants.credentials.apiKey}`};
         axios.post(sendWhatsappMessageURL, sendWhatsappMessageData, {headers: sendWhatsappMessageHeaders}).then((response) => {
@@ -515,7 +518,8 @@ module.exports = {
           sendWhatsappMessagePromiseResolve({success: true, result: whatsappMessageID});
         })
         .catch((error) => {
-          //console.log('No lo envia');
+          console.log(error);
+          console.log('Hay error');
         });
       });
     },
@@ -628,9 +632,9 @@ module.exports = {
         httpRequestToSendWhatsappTextMessage.end();
     },
 
-    sendWhatsappStoreConversationMessage: async function(recipientPhoneNumber, agentID, messageID, mediaContent, messageContent, websocketConnection){
-      var numero = recipientPhoneNumber.toString();
-      console.log(numero);
+    sendWhatsappStoreConversationMessage: async function(storeName, recipientPhoneNumber, agentID, messageID, mediaContent, messageContent, websocketConnection){
+      var numero = recipientPhoneNumber.replace(/\D/g, '');
+
       const uploadWhatsappImageFileResult = await this.uploadWhatsappImageFile(mediaContent.split(',')[1]);
       const whatsappImageMessageFileID = uploadWhatsappImageFileResult.result.whatsappImageMessageFileID;
       console.log(whatsappImageMessageFileID);
@@ -698,8 +702,16 @@ module.exports = {
           conversationsManagementFunctions.deleteStoreConversation(numero);
           agentsManagementFunctions.grabStoreConversation(activeConversationID, agentID, websocketConnection);
 
+          var tienda = '';
+          if (storeName == 'Escazu'){
+            tienda = '50670782096';
+          } else if (storeName == 'Zapote'){
+            tienda = '50672527633';
+          } else if (storeName == 'Cartago'){
+            tienda = '50670130555';
+          }
           var httpOptionsToSendWhatsappTextMessage = {'method': 'POST', 'hostname': 'graph.facebook.com', 'path': '/' + constants.credentials.apiVersion + '/' + constants.credentials.phoneNumberID + '/messages', 'headers': {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + constants.credentials.apiKey}};
-          var httpDataToSendWhatsappTextMessage = JSON.stringify({'messaging_product': 'whatsapp', 'to': numero, 'text': {'body': 'LISTO'}, 'context': {'message_id':messageID}});
+          var httpDataToSendWhatsappTextMessage = JSON.stringify({'messaging_product': 'whatsapp', 'to': tienda, 'text': {'body': 'LISTO'}, 'context': {'message_id':messageID}});
           var httpRequestToSendWhatsappTextMessage = https.request(httpOptionsToSendWhatsappTextMessage, function (httpResponseToSendWhatsappTextMessage) {
             var httpResponsePartsToSendWhatsappTextMessage = [];
             httpResponseToSendWhatsappTextMessage.on('data', function (httpResponsePartToSendWhatsappTextMessage) {httpResponsePartsToSendWhatsappTextMessage.push(httpResponsePartToSendWhatsappTextMessage);});

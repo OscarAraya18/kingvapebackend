@@ -108,7 +108,8 @@ backendHttpRequestServer.post('/grabStoreConversation', (request, response) => {
   const agentsDatabase = databaseManagementFunctions.readDatabase(constants.routes.agentsDatabase);
   const messageContent = agentsDatabase[request.body.agentID].agentWelcomeMessage;
   const mediaContent = agentsDatabase[request.body.agentID].agentWelcomeImage;
-  whatsappManagementFunctions.sendWhatsappStoreConversationMessage(recipientPhoneNumber, agentID, messageID, mediaContent, messageContent, backendWebsocketServerConnection);
+  const storeName = request.body.storeName;
+  whatsappManagementFunctions.sendWhatsappStoreConversationMessage(storeName, recipientPhoneNumber, agentID, messageID, mediaContent, messageContent, backendWebsocketServerConnection);
   response.end('');
 });
 backendHttpRequestServer.post('/requestTransfer', (request, response) => {
