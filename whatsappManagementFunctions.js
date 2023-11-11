@@ -240,12 +240,15 @@ module.exports = {
         axios.get(whatsappImageMessageURL, {responseType: 'arraybuffer'}).then(async (response) => {
           const downloadedWhatsappImageFile = (await sharp(response.data).png().toBuffer()).toString('base64');
           downloadWhatsappImageFilePromiseResolve(downloadedWhatsappImageFile);
+        })
+        .catch((error) => {
+          console.log(error);
         });
       });
     },
     sendWhatsappMediaMessageURL: async function(requestQuery, frontendResponse, websocketConnection){
       const downloadedWhatsappImageFile = await this.downloadWhatsappImageFile(requestQuery.mediaURL);
-      const whatsappImageMessageFileID = await this.uploadWhatsappImageFile(downloadedWhatsappImageFile.split(',')[1]);
+      const whatsappImageMessageFileID = await this.uploadWhatsappImageFile(downloadedWhatsappImageFile);
 
       var sendWhatsappMessageData = 
       {
