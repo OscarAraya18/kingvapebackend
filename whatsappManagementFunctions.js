@@ -513,7 +513,7 @@ module.exports = {
           sendWhatsappMessagePromiseResolve({success: true, result: whatsappMessageID});
         })
         .catch((error) => {
-          console.log(sendWhatsappMessageData.to);
+          console.log('No lo envia');
         });
       });
     },
