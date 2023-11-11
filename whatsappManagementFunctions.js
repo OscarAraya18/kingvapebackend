@@ -47,7 +47,6 @@ module.exports = {
             })
             .catch(() => {
             });
-          } else {
           }
         });
       })
@@ -70,55 +69,7 @@ module.exports = {
         'type': 'audio',
         'audio': {'id': whatsappAudioMessageFileID}
       };
-      sendWhatsappMessageData = JSON.stringify(sendWhatsappMessageData);
-      const sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
-      if (sendWhatsappMessageResult.success){
-        const whatsappGeneralMessageID = sendWhatsappMessageResult.result;
-        const whatsappAudioMessageID = whatsappGeneralMessageID;
-        const whatsappGeneralMessageOwnerPhoneNumber = null;
-        const selectOrCreateActiveWhatsappConversationIDResult = await whatsappDatabaseManagementFunctions.selectOrCreateActiveWhatsappConversationID(whatsappConversationRecipientPhoneNumber);
-        if (selectOrCreateActiveWhatsappConversationIDResult.success){
-          const whatsappConversationID = selectOrCreateActiveWhatsappConversationIDResult.result;
-          const createWhatsappGeneralMessageResult = await whatsappDatabaseManagementFunctions.createWhatsappGeneralMessage(whatsappConversationID, whatsappAudioMessageID, whatsappGeneralMessageRepliedMessageID, whatsappGeneralMessageOwnerPhoneNumber);
-          if (createWhatsappGeneralMessageResult.success){
-            const whatsappGeneralMessageIndex = createWhatsappGeneralMessageResult.result.whatsappGeneralMessageIndex;
-            const whatsappGeneralMessageCreationDateTime = createWhatsappGeneralMessageResult.result.whatsappGeneralMessageCreationDateTime;
-            const createWhatsappAudioMessageResult = await whatsappDatabaseManagementFunctions.createWhatsappAudioMessage(whatsappAudioMessageID, whatsappAudioMessageFileID); 
-            if (createWhatsappAudioMessageResult.success){
-              const websocketMessageContent = 
-              {
-                success: true,
-                result: 
-                {
-                  whatsappConversationID: whatsappConversationID,
-                  whatsappGeneralMessageID: whatsappGeneralMessageID,
-                  whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
-                  whatsappGeneralMessageRepliedMessageID: whatsappGeneralMessageRepliedMessageID,
-                  whatsappGeneralMessageCreationDateTime: whatsappGeneralMessageCreationDateTime,
-                  whatsappGeneralMessageOwnerPhoneNumber: whatsappGeneralMessageOwnerPhoneNumber,
-                  whatsappAudioMessageID: whatsappAudioMessageID,
-                  whatsappAudioMessageContent: 
-                  {
-                    whatsappAudioMessageFileID: whatsappAudioMessageFileID,
-                    whatsappAudioMessageFile: whatsappAudioMessageFile
-                  }
-                }
-              };
-              websocketConnection.sendWebsocketMessage('/whatsapp/sendMessage/single/audio', websocketMessageContent);
-            } else {
-              websocketConnection.sendWebsocketMessage('/whatsapp/sendMessage/single/audio', createWhatsappAudioMessageResult.result);         
-            }
-          } else {
-            websocketConnection.sendWebsocketMessage('/whatsapp/sendMessage/single/audio', createWhatsappGeneralMessageResult.result);         
-          }
-        } else {
-          websocketConnection.sendWebsocketMessage('/whatsapp/sendMessage/single/audio', selectOrCreateActiveWhatsappConversationIDResult.result);         
-        }
-      } else {
-        websocketConnection.sendWebsocketMessage('/whatsapp/sendMessage/single/audio', sendWhatsappMessageResult.result);         
-      }
-    } else {
-      websocketConnection.sendWebsocketMessage('/whatsapp/sendMessage/single/audio', uploadWhatsappAudioFileResult.result);
+      console.log(JSON.stringify(sendWhatsappMessageData));
     }
   },
 
