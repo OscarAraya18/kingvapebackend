@@ -16,10 +16,11 @@ const uuidv4 = require('uuid');
 const sharp = require('sharp');
 sharp.cache({files : 0});
 
+/*
 const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 const ffmpeg = require('fluent-ffmpeg');
 ffmpeg.setFfmpegPath(ffmpegPath);
-
+*/
 
 module.exports = {
 
