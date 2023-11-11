@@ -128,6 +128,21 @@ backendHttpRequestServer.post('/acceptTransfer', (request, response) => {
   websocketManagementFunctions.acceptTransfer(backendWebsocketServerConnection, requestQuery.agentToNotify);
   response.end()
 });
+backendHttpRequestServer.get('/getContacts', (request, response) => {
+  const allContacts = contactsManagementFunctions.getAllContacts();
+  const contactLetter = request.body.contactLetter;
+  if (contactLetter != 'Otro'){
+    for (var contactPhoneNumber in allContacts){
+      if (allContacts[contactPhoneNumber]['contactName'][0].toUpperCase() != contactLetter){
+        delete allContacts[contactPhoneNumber];
+      }
+    }
+  }
+  response.end(JSON.stringify(allContacts));
+});
+
+
+
 backendHttpRequestServer.get('/getTodaysDashboardInformation', (request, response) => {
   const allClosedConversationsAmount = Object.keys(conversationsManagementFunctions.getConversations()).length;
 
@@ -229,10 +244,8 @@ backendHttpRequestServer.get('/closeConversation', (request, response) => {
     whatsappManagementFunctions.sendAutomaticWhatsappTextMessage(conversationsDatabase[requestQuery['conversationID']].recipientPhoneNumber, 'Lo más importante para nosotros es la atención del cliente. Puede calificarnos accediendo al siguiente enlace: https://kingvapecr.com/pages/feedback', backendWebsocketServerConnection);
     response.end('');
 });
-backendHttpRequestServer.get('/getAllContacts', (request, response) => {
-    const allContacts = contactsManagementFunctions.getAllContacts();
-    response.end(JSON.stringify(allContacts));
-});
+
+
 backendHttpRequestServer.get('/getTotalProfit', (request, response) => {
     const totalProfit = conversationsManagementFunctions.getTotalProfit();
     response.end(JSON.stringify({'totalProfit': totalProfit}));
