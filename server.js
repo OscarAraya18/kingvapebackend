@@ -102,7 +102,6 @@ backendHttpRequestServer.post('/grabPendingConversation', (request, response) =>
   response.end('');
 });
 backendHttpRequestServer.post('/grabStoreConversation', (request, response) => {
-  console.log(request.body);
   const recipientPhoneNumber = request.body.recipientPhoneNumber;
   const agentID = request.body.agentID;
   const messageID = request.body.messageID;

@@ -629,6 +629,7 @@ module.exports = {
     sendWhatsappStoreConversationMessage: async function(recipientPhoneNumber, agentID, messageID, mediaContent, messageContent, websocketConnection){
       const uploadWhatsappImageFileResult = await this.uploadWhatsappImageFile(mediaContent.split(',')[1]);
       const whatsappImageMessageFileID = uploadWhatsappImageFileResult.result.whatsappImageMessageFileID;
+      console.log(whatsappImageMessageFileID);
       var sendWhatsappMessageData = 
       {
         'messaging_product': 'whatsapp',
