@@ -635,20 +635,38 @@ module.exports = {
     sendWhatsappStoreConversationMessage: async function(storeName, recipientPhoneNumber, agentID, messageID, mediaContent, messageContent, websocketConnection){
       var numero = recipientPhoneNumber.replace(/\D/g, '');
 
-      /*
+      console.log(numero);
       const uploadWhatsappImageFileResult = await this.uploadWhatsappImageFile(mediaContent.split(',')[1]);
       const whatsappImageMessageFileID = uploadWhatsappImageFileResult.result.whatsappImageMessageFileID;
       var sendWhatsappMessageData = 
       {
         'messaging_product': 'whatsapp',
         'to': numero, 
-        'type': 'image', 
-        'image': {'id': whatsappImageMessageFileID}
+        "type": "template",
+        "template": {
+          "name": "mensajebienvenida",
+          "language": {
+            "code": "es"
+          },
+          "components":
+          [
+            {
+              "type": "body",
+              "parameters":
+              [
+                {
+                  "type": "text",
+                  "text": messageContent
+                }
+              ]
+            }
+          ]     
+        }
       };
       sendWhatsappMessageData = JSON.stringify(sendWhatsappMessageData);
       const sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
-      */
-
+  
+      /*
       var activeConversationID = conversationsManagementFunctions.getActiveConversationID(numero);
       if (activeConversationID == null){
         conversationsManagementFunctions.createConversation(numero, '');
@@ -730,7 +748,7 @@ module.exports = {
       });
       httpRequestToSendWhatsappTextMessage.write(httpDataToSendWhatsappTextMessage);
       httpRequestToSendWhatsappTextMessage.end();
-          
+      */  
       
     },
 
