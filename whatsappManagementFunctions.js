@@ -234,34 +234,7 @@ module.exports = {
   
       });
     },
-    uploadWhatsappImageFile: async function(whatsappImageMessageFile){
-      return new Promise(async (uploadWhatsappImageFilePromiseResolve) => {
-        const uploadWhatsappImageMessageURL = `https://graph.facebook.com/v17.0/${constants.credentials.phoneNumberID}/media`;
-        const temporaryImageName = `${uuidv4.v4()}-${Date.now()}.png`;
-        const temporaryImageBuffer = Buffer.from(whatsappImageMessageFile, 'base64');
-        fs.writeFileSync(temporaryImageName, temporaryImageBuffer);
-        const temporaryImageStream = fs.createReadStream(temporaryImageName);
-        const uploadWhatsappImageMessageParameters = new FormData();
-        uploadWhatsappImageMessageParameters.append('messaging_product', 'whatsapp');
-        uploadWhatsappImageMessageParameters.append('type', 'image/png');
-        uploadWhatsappImageMessageParameters.append('file', temporaryImageStream);
-        const uploadWhatsappImageMessageHeaders = uploadWhatsappImageMessageParameters.getHeaders();
-        uploadWhatsappImageMessageHeaders['Authorization'] = `Bearer ${constants.credentials.apiKey}`;
-        axios.post(uploadWhatsappImageMessageURL, uploadWhatsappImageMessageParameters, {headers:  uploadWhatsappImageMessageHeaders}).then(async (httpResponse) => {
-          fs.unlink(temporaryImageName, async (errorWhenDeletingTemporaryImage) => {
-            if (errorWhenDeletingTemporaryImage) {
-              // MANAGE ERROR
-            } else {
-              const whatsappImageMessageID = httpResponse.data.id;
-              uploadWhatsappImageFilePromiseResolve(whatsappImageMessageID);
-            }
-          });
-        })
-        .catch((httpError) => {
-          // MANAGE ERROR
-        });
-      });
-    },
+    
     downloadWhatsappImageFile: async function(whatsappImageMessageURL){
       return new Promise(async (downloadWhatsappImageFilePromiseResolve) => {
         axios.get(whatsappImageMessageURL, {responseType: 'arraybuffer'}).then(async (response) => {
