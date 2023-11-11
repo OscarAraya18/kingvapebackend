@@ -629,13 +629,15 @@ module.exports = {
     },
 
     sendWhatsappStoreConversationMessage: async function(recipientPhoneNumber, agentID, messageID, mediaContent, messageContent, websocketConnection){
+      var numero = recipientPhoneNumber.toString();
+      console.log(numero);
       const uploadWhatsappImageFileResult = await this.uploadWhatsappImageFile(mediaContent.split(',')[1]);
       const whatsappImageMessageFileID = uploadWhatsappImageFileResult.result.whatsappImageMessageFileID;
       console.log(whatsappImageMessageFileID);
       var sendWhatsappMessageData = 
       {
         'messaging_product': 'whatsapp',
-        'to': '50660694075', 
+        'to': numero, 
         'type': 'image', 
         'image': {'id': whatsappImageMessageFileID}
       };
@@ -643,11 +645,11 @@ module.exports = {
       const sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
 
 
-      var activeConversationID = conversationsManagementFunctions.getActiveConversationID(recipientPhoneNumber);
+      var activeConversationID = conversationsManagementFunctions.getActiveConversationID(numero);
       if (activeConversationID == null){
-        conversationsManagementFunctions.createConversation(recipientPhoneNumber, '');
+        conversationsManagementFunctions.createConversation(numero, '');
       }
-      activeConversationID = conversationsManagementFunctions.getActiveConversationID(recipientPhoneNumber);
+      activeConversationID = conversationsManagementFunctions.getActiveConversationID(numero);
       const messageInformation = 
       {
         messageID: '',
@@ -670,13 +672,13 @@ module.exports = {
       }
       conversationsManagementFunctions.addMessageToConversation(activeConversationID, messageInformation);
       var httpOptionsToSendWhatsappTextMessage = {'method': 'POST', 'hostname': 'graph.facebook.com', 'path': '/' + constants.credentials.apiVersion + '/' + constants.credentials.phoneNumberID + '/messages', 'headers': {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + constants.credentials.apiKey}};
-      var httpDataToSendWhatsappTextMessage = JSON.stringify({'messaging_product': 'whatsapp', 'to': recipientPhoneNumber, 'text': {'body': messageContent}});
+      var httpDataToSendWhatsappTextMessage = JSON.stringify({'messaging_product': 'whatsapp', 'to': numero, 'text': {'body': messageContent}});
       var httpRequestToSendWhatsappTextMessage = https.request(httpOptionsToSendWhatsappTextMessage, function (httpResponseToSendWhatsappTextMessage) {
         var httpResponsePartsToSendWhatsappTextMessage = [];
         httpResponseToSendWhatsappTextMessage.on('data', function (httpResponsePartToSendWhatsappTextMessage) {httpResponsePartsToSendWhatsappTextMessage.push(httpResponsePartToSendWhatsappTextMessage);});
         httpResponseToSendWhatsappTextMessage.on('end', function (httpResponsePartToSendWhatsappTextMessage) {
           httpResponsePartsToSendWhatsappTextMessage.push(httpResponsePartToSendWhatsappTextMessage);
-          var activeConversationID = conversationsManagementFunctions.getActiveConversationID(recipientPhoneNumber);
+          var activeConversationID = conversationsManagementFunctions.getActiveConversationID(numero);
           const messageInformation = 
           {
             messageID: '',
@@ -693,11 +695,11 @@ module.exports = {
             dateObject: new Date().toString()
           }
           conversationsManagementFunctions.addMessageToConversation(activeConversationID, messageInformation);
-          conversationsManagementFunctions.deleteStoreConversation(recipientPhoneNumber);
+          conversationsManagementFunctions.deleteStoreConversation(numero);
           agentsManagementFunctions.grabStoreConversation(activeConversationID, agentID, websocketConnection);
 
           var httpOptionsToSendWhatsappTextMessage = {'method': 'POST', 'hostname': 'graph.facebook.com', 'path': '/' + constants.credentials.apiVersion + '/' + constants.credentials.phoneNumberID + '/messages', 'headers': {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + constants.credentials.apiKey}};
-          var httpDataToSendWhatsappTextMessage = JSON.stringify({'messaging_product': 'whatsapp', 'to': recipientPhoneNumber, 'text': {'body': 'LISTO'}, 'context': {'message_id':messageID}});
+          var httpDataToSendWhatsappTextMessage = JSON.stringify({'messaging_product': 'whatsapp', 'to': numero, 'text': {'body': 'LISTO'}, 'context': {'message_id':messageID}});
           var httpRequestToSendWhatsappTextMessage = https.request(httpOptionsToSendWhatsappTextMessage, function (httpResponseToSendWhatsappTextMessage) {
             var httpResponsePartsToSendWhatsappTextMessage = [];
             httpResponseToSendWhatsappTextMessage.on('data', function (httpResponsePartToSendWhatsappTextMessage) {httpResponsePartsToSendWhatsappTextMessage.push(httpResponsePartToSendWhatsappTextMessage);});
