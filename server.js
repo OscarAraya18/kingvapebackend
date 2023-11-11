@@ -30,7 +30,11 @@ backendHttpRequestServer.post('/agentLogin', (request, response) => {
     if (applicationDatabase['applicationStatus'] == 'on'){
       response.end(JSON.stringify({'success': true, 'agentID': agentInformation.agentID, 'agentName': agentInformation.agentName, 'agentUsername': agentInformation.agentUsername, 'agentPassword': agentInformation.agentPassword, 'agentType': agentInformation.agentType, 'agentProfilePicture': agentInformation.agentProfilePicture, 'agentWelcomeMessage': agentInformation.agentWelcomeMessage, 'agentWelcomeImage': agentInformation.agentWelcomeImage, 'agentEndMessage': agentInformation.agentEndMessage, 'agentFavoriteMessages': agentInformation.agentFavoriteMessages, 'agentFavoriteImages': agentInformation.agentFavoriteImages}));
     } else {
-      response.end(JSON.stringify({'success': false, 'applicationStatus': applicationDatabase['applicationStatus']}));
+      if (agentInformation.agentType != 'admin'){
+        response.end(JSON.stringify({'success': false, 'applicationStatus': applicationDatabase['applicationStatus']}));
+      } else {
+        response.end(JSON.stringify({'success': true, 'agentID': agentInformation.agentID, 'agentName': agentInformation.agentName, 'agentUsername': agentInformation.agentUsername, 'agentPassword': agentInformation.agentPassword, 'agentType': agentInformation.agentType, 'agentProfilePicture': agentInformation.agentProfilePicture, 'agentWelcomeMessage': agentInformation.agentWelcomeMessage, 'agentWelcomeImage': agentInformation.agentWelcomeImage, 'agentEndMessage': agentInformation.agentEndMessage, 'agentFavoriteMessages': agentInformation.agentFavoriteMessages, 'agentFavoriteImages': agentInformation.agentFavoriteImages}));
+      }
     }
   } else {
     response.end(JSON.stringify({'success': false, 'applicationStatus': applicationDatabase['applicationStatus']}));
