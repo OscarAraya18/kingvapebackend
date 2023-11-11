@@ -635,9 +635,9 @@ module.exports = {
     sendWhatsappStoreConversationMessage: async function(storeName, recipientPhoneNumber, agentID, messageID, mediaContent, messageContent, websocketConnection){
       var numero = recipientPhoneNumber.replace(/\D/g, '');
 
+      /*
       const uploadWhatsappImageFileResult = await this.uploadWhatsappImageFile(mediaContent.split(',')[1]);
       const whatsappImageMessageFileID = uploadWhatsappImageFileResult.result.whatsappImageMessageFileID;
-      console.log(whatsappImageMessageFileID);
       var sendWhatsappMessageData = 
       {
         'messaging_product': 'whatsapp',
@@ -647,7 +647,7 @@ module.exports = {
       };
       sendWhatsappMessageData = JSON.stringify(sendWhatsappMessageData);
       const sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
-
+      */
 
       var activeConversationID = conversationsManagementFunctions.getActiveConversationID(numero);
       if (activeConversationID == null){
