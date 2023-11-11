@@ -595,7 +595,7 @@ module.exports = {
     },
 
     sendAutomaticWhatsappMediaMessage: async function(recipientPhoneNumber, mediaContent, messageContent, assignedAgentID, websocketConnection){
-      const uploadWhatsappImageFileResult = await this.uploadWhatsappImageFile(mediaContent);
+      const uploadWhatsappImageFileResult = await this.uploadWhatsappImageFile(mediaContent.split(',')[1]);
       const whatsappImageMessageFileID = uploadWhatsappImageFileResult.result.whatsappImageMessageFileID;
       var sendWhatsappMessageData = 
       {
