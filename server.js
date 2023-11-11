@@ -261,7 +261,7 @@ backendHttpRequestServer.post('/rankingLogin', (request, response) => {
 
 
 
-backendHttpRequestServer.post('/getAppStatus', (request, response) => {
+backendHttpRequestServer.post('/getApplicationStatus', (request, response) => {
   const applicationDatabase = databaseManagementFunctions.readDatabase(constants.routes.applicationDatabase);
   response.end(JSON.stringify({'applicationStatus': applicationDatabase['applicationStatus']}));
 });
