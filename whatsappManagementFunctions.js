@@ -23,6 +23,32 @@ ffmpeg.setFfmpegPath(ffmpegPath);
 */
 
 module.exports = {
+  uploadWhatsappImageFile: async function(whatsappImageMessageFile){
+    return new Promise(async (uploadWhatsappImageFilePromiseResolve) => {
+      const uploadWhatsappImageMessageURL = `https://graph.facebook.com/${constants.credentials.apiVersion}/${constants.credentials.phoneNumberID}/media`;
+      const temporaryImageName = `${uuidv4.v4()}-${Date.now()}.png`;
+      const temporaryImageBuffer = Buffer.from(whatsappImageMessageFile, 'base64');
+      sharp(temporaryImageBuffer).toFormat('png').toBuffer().then((convertedImageBuffer) => {
+        fs.writeFileSync(temporaryImageName, convertedImageBuffer);
+        const temporaryImageStream = fs.createReadStream(temporaryImageName);
+        const whatsappImageMessageFile = convertedImageBuffer.toString('base64');
+        const uploadWhatsappImageMessageParameters = new FormData();
+        uploadWhatsappImageMessageParameters.append('messaging_product', 'whatsapp');
+        uploadWhatsappImageMessageParameters.append('type', 'image/png');
+        uploadWhatsappImageMessageParameters.append('file', temporaryImageStream);
+        const uploadWhatsappImageMessageHeaders = uploadWhatsappImageMessageParameters.getHeaders();
+        uploadWhatsappImageMessageHeaders['Authorization'] = `Bearer ${constants.credentials.apiKey}`;
+        axios.post(uploadWhatsappImageMessageURL, uploadWhatsappImageMessageParameters, {headers: uploadWhatsappImageMessageHeaders}).then(async (httpResponse) => {
+          fs.unlink(temporaryImageName, async (errorWhenDeletingTemporaryImage) => {
+            if (!errorWhenDeletingTemporaryImage) {
+              const whatsappImageMessageFileID = httpResponse.data.id;
+              uploadWhatsappImageFilePromiseResolve({success: true, result: {whatsappImageMessageFileID: whatsappImageMessageFileID, whatsappImageMessageFile: whatsappImageMessageFile}});
+            }
+          });
+        });
+      });
+    });
+  },
 
   uploadWhatsappAudioFile: async function(whatsappAudioMessageFile){
     return new Promise(async (uploadWhatsappAudioFilePromiseResolve) => {
@@ -581,7 +607,34 @@ module.exports = {
         }
     },
 
-    sendAutomaticWhatsappMediaMessage: function(recipientPhoneNumber, mediaContent, messageContent, assignedAgentID, websocketConnection){
+    sendWhatsappMessage: async function(sendWhatsappMessageData){
+      return new Promise((sendWhatsappMessagePromiseResolve) => {
+        const sendWhatsappMessageURL = `https://graph.facebook.com/${constants.credentials.apiVersion}/${constants.credentials.phoneNumberID}/messages`;
+        const sendWhatsappMessageHeaders = {'Content-Type': 'application/json', 'Authorization': `Bearer ${constants.credentials.apiKey}`};
+        axios.post(sendWhatsappMessageURL, sendWhatsappMessageData, {headers: sendWhatsappMessageHeaders}).then((response) => {
+          const whatsappMessageID = response.data.messages[0].id;
+          sendWhatsappMessagePromiseResolve({success: true, result: whatsappMessageID});
+        })
+        .catch(() => {
+          sendWhatsappMessagePromiseResolve({success: false, result: 'An unexpected error ocurred when trying to send the Whatsapp message.'});
+        });
+      });
+    },
+
+    sendAutomaticWhatsappMediaMessage: async function(recipientPhoneNumber, mediaContent, messageContent, assignedAgentID, websocketConnection){
+      const uploadWhatsappImageFileResult = await this.uploadWhatsappImageFile(whatsappImageMessageFile);
+      const whatsappImageMessageFileID = uploadWhatsappImageFileResult.result.whatsappImageMessageFileID;
+      var sendWhatsappMessageData = 
+      {
+        'messaging_product': 'whatsapp',
+        'to': whatsappConversationRecipientPhoneNumber, 
+        'type': 'image', 
+        'image': {'id': whatsappImageMessageFileID}
+      };
+      sendWhatsappMessageData = JSON.stringify(sendWhatsappMessageData);
+      const sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
+      
+      
       var activeConversationID = conversationsManagementFunctions.getActiveConversationID(recipientPhoneNumber);
       if (activeConversationID == null){
           conversationsManagementFunctions.createConversation(recipientPhoneNumber, '');
