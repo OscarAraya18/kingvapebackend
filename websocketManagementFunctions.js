@@ -1,6 +1,18 @@
 const WebSocket = require('ws');
 
 module.exports = {
+  turnOffApplication: function(websocketConnection){
+    websocketConnection.clients.forEach(function each(client) {
+      if (client.readyState === WebSocket.OPEN) {
+        const messageToSendByWebsocket = 
+        {
+          websocketMessageID: 'turnOffApplication'
+        }
+        client.send(JSON.stringify(messageToSendByWebsocket));
+      }
+    });
+  },
+  
   updateAgentStatus: function(websocketConnection, agentID, agentStatus){
     websocketConnection.clients.forEach(function each(client) {
       if (client.readyState === WebSocket.OPEN) {

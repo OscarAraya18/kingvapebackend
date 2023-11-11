@@ -265,3 +265,13 @@ backendHttpRequestServer.post('/getApplicationStatus', (request, response) => {
   const applicationDatabase = databaseManagementFunctions.readDatabase(constants.routes.applicationDatabase);
   response.end(JSON.stringify({'applicationStatus': applicationDatabase['applicationStatus']}));
 });
+
+backendHttpRequestServer.post('/updateApplicationStatus', (request, response) => {
+  const applicationDatabase = databaseManagementFunctions.readDatabase(constants.routes.applicationDatabase);
+  applicationDatabase['applicationStatus'] = request.body.applicationStatus;
+  databaseManagementFunctions.saveDatabase(constants.routes.applicationDatabase, applicationDatabase);
+  if (request.body.applicationStatus == 'off'){
+    websocketManagementFunctions.turnOffApplication(backendWebsocketServerConnection);
+  }
+  response.end('');
+});
