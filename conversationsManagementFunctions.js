@@ -181,6 +181,7 @@ module.exports = {
         return totalProfit;
     },
 
+    
     getFilteredConversations: function (startDate, endDate, agent, status){
       var conversationsDatabase = databaseManagementFunctions.readDatabase(constants.routes.conversationsDatabase);
       var agentsDatabase = databaseManagementFunctions.readDatabase(constants.routes.agentsDatabase);

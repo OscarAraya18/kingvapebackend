@@ -173,13 +173,12 @@ module.exports = {
   },
 
 
-    addMessageToRanking: function(websocketConnection, agentID){
+    addMessageCount: function(websocketConnection, agentID){
       websocketConnection.clients.forEach(function each(client) {
           if (client.readyState === WebSocket.OPEN) {
               const messageToSendByWebsocket = 
               {
-                  ranking: true,
-                  type: 'message',
+                  websocketMessageID: 'addMessageCount',
                   agentID: agentID,
               }
               client.send(JSON.stringify(messageToSendByWebsocket));
@@ -187,7 +186,7 @@ module.exports = {
       });
     },
 
-    addConversationToRanking: function(websocketConnection, agentID){
+    addConversationCount: function(websocketConnection, agentID){
       websocketConnection.clients.forEach(function each(client) {
           if (client.readyState === WebSocket.OPEN) {
               const messageToSendByWebsocket = 

@@ -145,7 +145,6 @@ backendHttpRequestServer.post('/getContacts', (request, response) => {
 
 backendHttpRequestServer.get('/getTodaysDashboardInformation', (request, response) => {
   const allClosedConversationsAmount = Object.keys(conversationsManagementFunctions.getConversations()).length;
-
   const allConversationsAmount = allClosedConversationsAmount + allActiveConversationsAmount;
   response.end(JSON.stringify({'amount': Object.keys(allClosedConversations).length + Object.keys(allActiveConversations).length}));
 });
@@ -163,6 +162,7 @@ backendHttpRequestServer.get('/sendWhatsappMessage', (request, response) => {
   } else {
     whatsappManagementFunctions.sendWhatsappMediaMessage(requestQuery, backendWebsocketServerConnection);
   }
+  agentsManagementFunctions.addMessageCount(requestQuery['agentID'], backendWebsocketServerConnection);
   response.end('');
 });
 
@@ -181,6 +181,7 @@ backendHttpRequestServer.get('/webhook', (request, response) => {
 
 backendHttpRequestServer.post('/sendWhatsappLocation', (request, response) => {
     whatsappManagementFunctions.sendWhatsappLocationMessage(request.body, response, backendWebsocketServerConnection);
+    agentsManagementFunctions.addMessageCount(request.body['agentID'], backendWebsocketServerConnection);
 });
 
 backendHttpRequestServer.post('/sendWhatsappMassMessage', (request, response) => {
@@ -194,9 +195,13 @@ backendHttpRequestServer.post('/getAgentStatus', (request, response) => {
 
 backendHttpRequestServer.post('/sendWhatsappMedia', (request, response) => {
     whatsappManagementFunctions.sendWhatsappMediaMessage(request.body, response, backendWebsocketServerConnection);
+    agentsManagementFunctions.addMessageCount(request.body['agentID'], backendWebsocketServerConnection);
+
 });
 backendHttpRequestServer.post('/sendWhatsappMediaURL', (request, response) => {
     whatsappManagementFunctions.sendWhatsappMediaMessageURL(request.body, response, backendWebsocketServerConnection);
+    agentsManagementFunctions.addMessageCount(request.body['agentID'], backendWebsocketServerConnection);
+
 });
 backendHttpRequestServer.get('/getAgentActiveConversations', (request, response) => {
     const requestQuery = url.parse(request.url,true).query;

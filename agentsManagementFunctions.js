@@ -113,7 +113,7 @@ module.exports = {
       const agentsDatabase = databaseManagementFunctions.readDatabase(constants.routes.agentsDatabase);
       agentsDatabase[agentID]['agentSendedMessages'] = agentsDatabase[agentID]['agentSendedMessages'] + 1;
       databaseManagementFunctions.saveDatabase(constants.routes.agentsDatabase, agentsDatabase);
-      websocketManagementFunctions.addMessageToRanking(websocketConnection, agentID);
+      websocketManagementFunctions.addMessageCount(websocketConnection, agentID);
     },
 
     deleteAgent: function(agentID){
