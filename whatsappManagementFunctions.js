@@ -361,7 +361,7 @@ module.exports = {
     },
 
     receiveWhatsappMessage: async function(requestToReceiveWhatsappMesage, frontendResponse, websocketConnection){
-      const numeroEscazu = 50686828012;
+      const numeroEscazu = 50670782096;
       const numeroZapote = 50672527633;
       const numeroCartago = 50670130555;
 
@@ -692,7 +692,7 @@ module.exports = {
       
       var tienda = '';
       if (storeName == 'Escazu'){
-        tienda = '50686828012';
+        tienda = '50670782096';
       } else if (storeName == 'Zapote'){
         tienda = '50672527633';
       } else if (storeName == 'Cartago'){
