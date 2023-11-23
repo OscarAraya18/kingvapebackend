@@ -451,6 +451,7 @@ module.exports = {
                 axios(httpRequestOptionsToDownloadMedia).then((httpResponseToDownloadMedia) => {
                     const buffer = Buffer.from(new Uint8Array(httpResponseToDownloadMedia.data).reduce((data, byte) => data + String.fromCharCode(byte), ''));
                     const base64 = buffer.toString('base64');
+                    console.log(base64);
                     messageInformationToSaveOnDatabase['messageContent'] = 
                     {
                         mediaID: messageContentFromWhatsappAPI[messageInformationToSaveOnDatabase.messageType]['id'],
