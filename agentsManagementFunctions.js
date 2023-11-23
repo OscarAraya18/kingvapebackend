@@ -240,7 +240,7 @@ module.exports = {
       conversationsDatabase[activeConversationID].assignedAgentID = agentID;
       databaseManagementFunctions.saveDatabase(constants.routes.agentsDatabase, agentsDatabase);
       databaseManagementFunctions.saveDatabase(constants.routes.conversationsDatabase, conversationsDatabase);
-      databaseManagementFunctions.saveDatabase(constants.routes.sucursalesDatabase, storesDatabase);   
+      databaseManagementFunctions.saveDatabase(constants.routes.sucursalesDatabase, storesDatabase);    
       websocketManagementFunctions.grabStoreConversation(websocketConnection, conversationsDatabase[activeConversationID], activeConversationID, agentID, agentsDatabase[agentID].agentName);
   }
 }
