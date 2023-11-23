@@ -171,7 +171,7 @@ module.exports = {
         databaseManagementFunctions.saveDatabase(constants.routes.conversationsDatabase, conversationsDatabase);
         databaseManagementFunctions.saveDatabase(constants.routes.agentsDatabase, agentsDatabase);
     },
-
+ 
     getTotalProfit: function (){
         var totalProfit = 0;
         var conversationsDatabase = databaseManagementFunctions.readDatabase(constants.routes.conversationsDatabase);
