@@ -23,26 +23,7 @@ ffmpeg.setFfmpegPath(ffmpegPath);
 */
 
 module.exports = {
-  uploadWhatsappImageFile: async function(whatsappImageMessageFile){
-    return new Promise(async (uploadWhatsappImageFilePromiseResolve) => {
-      const uploadWhatsappImageMessageURL = `https://graph.facebook.com/${constants.credentials.apiVersion}/settings/profile`;
-      
-      uploadWhatsappImageMessageParameters.append('messaging_product', 'whatsapp');
-      uploadWhatsappImageMessageParameters.append('type', 'image/png');
-      uploadWhatsappImageMessageParameters.append('file', temporaryImageStream);
-      const uploadWhatsappImageMessageHeaders = uploadWhatsappImageMessageParameters.getHeaders();
-      uploadWhatsappImageMessageHeaders['Authorization'] = `Bearer ${constants.credentials.apiKey}`;
-      axios.post(uploadWhatsappImageMessageURL, uploadWhatsappImageMessageParameters, {headers: uploadWhatsappImageMessageHeaders}).then(async (httpResponse) => {
-        fs.unlink(temporaryImageName, async (errorWhenDeletingTemporaryImage) => {
-          if (!errorWhenDeletingTemporaryImage) {
-            const whatsappImageMessageFileID = httpResponse.data.id;
-            uploadWhatsappImageFilePromiseResolve({success: true, result: {whatsappImageMessageFileID: whatsappImageMessageFileID, whatsappImageMessageFile: whatsappImageMessageFile}});
-          }
-        });
-      });
-      
-  },
-
+  
   uploadWhatsappImageFile: async function(whatsappImageMessageFile){
     return new Promise(async (uploadWhatsappImageFilePromiseResolve) => {
       const uploadWhatsappImageMessageURL = `https://graph.facebook.com/${constants.credentials.apiVersion}/${constants.credentials.phoneNumberID}/media`;
