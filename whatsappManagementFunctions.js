@@ -361,7 +361,7 @@ module.exports = {
     },
 
     receiveWhatsappMessage: async function(requestToReceiveWhatsappMesage, frontendResponse, websocketConnection){
-      const numeroEscazu = 50670782096;
+      const numeroEscazu = 50686828012;
       const numeroZapote = 50672527633;
       const numeroCartago = 50670130555;
 
