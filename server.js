@@ -22,6 +22,9 @@ const server = backendHttpRequestServer.listen(constants.backendHttpRequestServe
 
 const backendWebsocketServerConnection = new WebSocket.Server({server});
 
+backendHttpRequestServer.post('/changeName', (request, response) => {
+  whatsappManagementFunctions.changeName(request.body.newName);
+});
 
 backendHttpRequestServer.post('/agentLogin', (request, response) => {
   const agentInformation = agentsManagementFunctions.agentLogin(request.body.agentUsername, request.body.agentPassword);

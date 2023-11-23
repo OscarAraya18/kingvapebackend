@@ -25,6 +25,26 @@ ffmpeg.setFfmpegPath(ffmpegPath);
 module.exports = {
   uploadWhatsappImageFile: async function(whatsappImageMessageFile){
     return new Promise(async (uploadWhatsappImageFilePromiseResolve) => {
+      const uploadWhatsappImageMessageURL = `https://graph.facebook.com/${constants.credentials.apiVersion}/settings/profile`;
+      
+      uploadWhatsappImageMessageParameters.append('messaging_product', 'whatsapp');
+      uploadWhatsappImageMessageParameters.append('type', 'image/png');
+      uploadWhatsappImageMessageParameters.append('file', temporaryImageStream);
+      const uploadWhatsappImageMessageHeaders = uploadWhatsappImageMessageParameters.getHeaders();
+      uploadWhatsappImageMessageHeaders['Authorization'] = `Bearer ${constants.credentials.apiKey}`;
+      axios.post(uploadWhatsappImageMessageURL, uploadWhatsappImageMessageParameters, {headers: uploadWhatsappImageMessageHeaders}).then(async (httpResponse) => {
+        fs.unlink(temporaryImageName, async (errorWhenDeletingTemporaryImage) => {
+          if (!errorWhenDeletingTemporaryImage) {
+            const whatsappImageMessageFileID = httpResponse.data.id;
+            uploadWhatsappImageFilePromiseResolve({success: true, result: {whatsappImageMessageFileID: whatsappImageMessageFileID, whatsappImageMessageFile: whatsappImageMessageFile}});
+          }
+        });
+      });
+      
+  },
+
+  uploadWhatsappImageFile: async function(whatsappImageMessageFile){
+    return new Promise(async (uploadWhatsappImageFilePromiseResolve) => {
       const uploadWhatsappImageMessageURL = `https://graph.facebook.com/${constants.credentials.apiVersion}/${constants.credentials.phoneNumberID}/media`;
       const temporaryImageName = `${uuidv4.v4()}-${Date.now()}.png`;
       const temporaryImageBuffer = Buffer.from(whatsappImageMessageFile, 'base64');
@@ -635,7 +655,6 @@ module.exports = {
     sendWhatsappStoreConversationMessage: async function(storeName, recipientPhoneNumber, agentID, messageID, mediaContent, messageContent, websocketConnection){
       var numero = recipientPhoneNumber.replace(/\D/g, '');
 
-      console.log(numero);
       const uploadWhatsappImageFileResult = await this.uploadWhatsappImageFile(mediaContent.split(',')[1]);
       const whatsappImageMessageFileID = uploadWhatsappImageFileResult.result.whatsappImageMessageFileID;
       var sendWhatsappMessageData = 
@@ -666,89 +685,32 @@ module.exports = {
       sendWhatsappMessageData = JSON.stringify(sendWhatsappMessageData);
       const sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
   
-      /*
       var activeConversationID = conversationsManagementFunctions.getActiveConversationID(numero);
       if (activeConversationID == null){
         conversationsManagementFunctions.createConversation(numero, '');
       }
       activeConversationID = conversationsManagementFunctions.getActiveConversationID(numero);
-      const messageInformation = 
-      {
-        messageID: '',
-        owner: 'agent',
-        messageSentDate: generalFunctions.getCurrentDateAsStringWithFormat(),
-        messageSentHour: generalFunctions.getCurrentHourAsStringWithFormat(),
-        messageDeliveryDate: null,
-        messageDeliveryHour: null,
-        messageReadDate: null,
-        messageReadHour: null,
-        messageStatus: 'sent',
-        messageType: 'image',
-        messageContent: 
-        {
-          'isBase64': '1',
-          'mediaExtension': '.png',
-          'mediaContent': mediaContent.split(',')[1]
-        },
-        dateObject: new Date().toString()
+      
+      var tienda = '';
+      if (storeName == 'Escazu'){
+        tienda = '50670782096';
+      } else if (storeName == 'Zapote'){
+        tienda = '50672527633';
+      } else if (storeName == 'Cartago'){
+        tienda = '50670130555';
       }
-      conversationsManagementFunctions.addMessageToConversation(activeConversationID, messageInformation);
       var httpOptionsToSendWhatsappTextMessage = {'method': 'POST', 'hostname': 'graph.facebook.com', 'path': '/' + constants.credentials.apiVersion + '/' + constants.credentials.phoneNumberID + '/messages', 'headers': {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + constants.credentials.apiKey}};
-      var httpDataToSendWhatsappTextMessage = JSON.stringify({'messaging_product': 'whatsapp', 'to': numero, 'text': {'body': messageContent}});
+      var httpDataToSendWhatsappTextMessage = JSON.stringify({'messaging_product': 'whatsapp', 'to': tienda, 'text': {'body': 'LISTO'}, 'context': {'message_id':messageID}});
       var httpRequestToSendWhatsappTextMessage = https.request(httpOptionsToSendWhatsappTextMessage, function (httpResponseToSendWhatsappTextMessage) {
         var httpResponsePartsToSendWhatsappTextMessage = [];
         httpResponseToSendWhatsappTextMessage.on('data', function (httpResponsePartToSendWhatsappTextMessage) {httpResponsePartsToSendWhatsappTextMessage.push(httpResponsePartToSendWhatsappTextMessage);});
         httpResponseToSendWhatsappTextMessage.on('end', function (httpResponsePartToSendWhatsappTextMessage) {
           httpResponsePartsToSendWhatsappTextMessage.push(httpResponsePartToSendWhatsappTextMessage);
-          var activeConversationID = conversationsManagementFunctions.getActiveConversationID(numero);
-          const messageInformation = 
-          {
-            messageID: '',
-            owner: 'agent',
-            messageSentDate: generalFunctions.getCurrentDateAsStringWithFormat(),
-            messageSentHour: generalFunctions.getCurrentHourAsStringWithFormat(),
-            messageDeliveryDate: null,
-            messageDeliveryHour: null,
-            messageReadDate: null,
-            messageReadHour: null,
-            messageStatus: 'sent',
-            messageType: 'text',
-            messageContent: messageContent,
-            dateObject: new Date().toString()
-          }
-          conversationsManagementFunctions.addMessageToConversation(activeConversationID, messageInformation);
-          conversationsManagementFunctions.deleteStoreConversation(numero);
-          agentsManagementFunctions.grabStoreConversation(activeConversationID, agentID, websocketConnection);
-
-          console.log(storeName);
-          var tienda = '';
-          if (storeName == 'Escazu'){
-            tienda = '50670782096';
-          } else if (storeName == 'Zapote'){
-            tienda = '50672527633';
-          } else if (storeName == 'Cartago'){
-            tienda = '50670130555';
-          }
-          var httpOptionsToSendWhatsappTextMessage = {'method': 'POST', 'hostname': 'graph.facebook.com', 'path': '/' + constants.credentials.apiVersion + '/' + constants.credentials.phoneNumberID + '/messages', 'headers': {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + constants.credentials.apiKey}};
-          var httpDataToSendWhatsappTextMessage = JSON.stringify({'messaging_product': 'whatsapp', 'to': tienda, 'text': {'body': 'LISTO'}, 'context': {'message_id':messageID}});
-          var httpRequestToSendWhatsappTextMessage = https.request(httpOptionsToSendWhatsappTextMessage, function (httpResponseToSendWhatsappTextMessage) {
-            var httpResponsePartsToSendWhatsappTextMessage = [];
-            httpResponseToSendWhatsappTextMessage.on('data', function (httpResponsePartToSendWhatsappTextMessage) {httpResponsePartsToSendWhatsappTextMessage.push(httpResponsePartToSendWhatsappTextMessage);});
-            httpResponseToSendWhatsappTextMessage.on('end', function (httpResponsePartToSendWhatsappTextMessage) {
-              httpResponsePartsToSendWhatsappTextMessage.push(httpResponsePartToSendWhatsappTextMessage);
-            });
-            httpResponseToSendWhatsappTextMessage.on('error', function (error) {console.error(error);});
-          });
-          httpRequestToSendWhatsappTextMessage.write(httpDataToSendWhatsappTextMessage);
-          httpRequestToSendWhatsappTextMessage.end();
-
-
         });
         httpResponseToSendWhatsappTextMessage.on('error', function (error) {console.error(error);});
       });
       httpRequestToSendWhatsappTextMessage.write(httpDataToSendWhatsappTextMessage);
       httpRequestToSendWhatsappTextMessage.end();
-      */  
       
     },
 
