@@ -633,7 +633,7 @@ module.exports = {
         httpRequestToSendWhatsappTextMessage.end();
     },
 
-    sendWhatsappStoreConversationMessage: async function(storeName, recipientPhoneNumber, agentID, messageID, mediaContent, messageContent, websocketConnection){
+    sendWhatsappStoreConversationMessage: async function(storeName, recipientPhoneNumber, agentID, messageID, mediaContent, messageContent, websocketConnection){      
       var numero = recipientPhoneNumber.replace(/\D/g, '');
 
       const uploadWhatsappImageFileResult = await this.uploadWhatsappImageFile(mediaContent.split(',')[1]);
@@ -671,6 +671,24 @@ module.exports = {
         conversationsManagementFunctions.createConversation(numero, '');
       }
       activeConversationID = conversationsManagementFunctions.getActiveConversationID(numero);
+
+      const messageInformation = 
+      {
+          messageID: '',
+          owner: 'agent',
+          messageSentDate: generalFunctions.getCurrentDateAsStringWithFormat(),
+          messageSentHour: generalFunctions.getCurrentHourAsStringWithFormat(),
+          messageDeliveryDate: null,
+          messageDeliveryHour: null,
+          messageReadDate: null,
+          messageReadHour: null,
+          messageStatus: 'sent',
+          messageType: 'text',
+          messageContent: 'Mensaje de bienvenida enviado al cliente. Esperando respuesta...',
+          dateObject: new Date().toString()
+      }
+      conversationsManagementFunctions.addMessageToConversation(activeConversationID, messageInformation);
+      agentsManagementFunctions.grabStoreConversation(activeConversationID, agentID, websocketConnection);
       
       var tienda = '';
       if (storeName == 'Escazu'){
