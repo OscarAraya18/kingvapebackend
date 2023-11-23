@@ -231,13 +231,16 @@ module.exports = {
         websocketManagementFunctions.grabPendingConversation(websocketConnection, conversationsDatabase[requestQuery.conversationID], requestQuery.conversationID, requestQuery.agentID, agentsDatabase[requestQuery.agentID].agentName);
     },
 
-    grabStoreConversation: function (activeConversationID, agentID, websocketConnection){
+    grabStoreConversation: function (recipientPhoneNumber, activeConversationID, agentID, websocketConnection){
       var agentsDatabase = databaseManagementFunctions.readDatabase(constants.routes.agentsDatabase);
       var conversationsDatabase = databaseManagementFunctions.readDatabase(constants.routes.conversationsDatabase);
+      var storesDatabase = databaseManagementFunctions.readDatabase(constants.routes.sucursalesDatabase);
+      delete storesDatabase[recipientPhoneNumber];
       agentsDatabase[agentID].agentActiveConversations.push(activeConversationID);
       conversationsDatabase[activeConversationID].assignedAgentID = agentID;
       databaseManagementFunctions.saveDatabase(constants.routes.agentsDatabase, agentsDatabase);
       databaseManagementFunctions.saveDatabase(constants.routes.conversationsDatabase, conversationsDatabase);
+      databaseManagementFunctions.saveDatabase(constants.routes.sucursalesDatabase, storesDatabase);
       websocketManagementFunctions.grabStoreConversation(websocketConnection, conversationsDatabase[activeConversationID], activeConversationID, agentID, agentsDatabase[agentID].agentName);
   }
 }

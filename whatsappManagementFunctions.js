@@ -688,7 +688,7 @@ module.exports = {
           dateObject: new Date().toString()
       }
       conversationsManagementFunctions.addMessageToConversation(activeConversationID, messageInformation);
-      agentsManagementFunctions.grabStoreConversation(activeConversationID, agentID, websocketConnection);
+      agentsManagementFunctions.grabStoreConversation(recipientPhoneNumber, activeConversationID, agentID, websocketConnection);
       
       var tienda = '';
       if (storeName == 'Escazu'){
