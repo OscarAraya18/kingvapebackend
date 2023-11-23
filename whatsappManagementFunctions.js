@@ -674,7 +674,7 @@ module.exports = {
       
       var tienda = '';
       if (storeName == 'Escazu'){
-        tienda = '50670782096';
+        tienda = '50686828012';
       } else if (storeName == 'Zapote'){
         tienda = '50672527633';
       } else if (storeName == 'Cartago'){
