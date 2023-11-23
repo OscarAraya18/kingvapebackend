@@ -248,7 +248,7 @@ backendHttpRequestServer.get('/closeConversation', (request, response) => {
     const agentsDatabase = databaseManagementFunctions.readDatabase(constants.routes.agentsDatabase);
     const requestQuery = url.parse(request.url,true).query;
     conversationsManagementFunctions.closeConversation(requestQuery['conversationID'], requestQuery['conversationStatus'], requestQuery['amount']);
-    whatsappManagementFunctions.sendAutomaticWhatsappTextMessage(conversationsDatabase[requestQuery['conversationID']].recipientPhoneNumber, agentsDatabase[conversationsDatabase[requestQuery['conversationID']].assignedAgentID].endMessage, backendWebsocketServerConnection);
+    whatsappManagementFunctions.sendAutomaticWhatsappTextMessage(conversationsDatabase[requestQuery['conversationID']].recipientPhoneNumber, agentsDatabase[conversationsDatabase[requestQuery['conversationID']].assignedAgentID].agentEndMessage, backendWebsocketServerConnection);
     whatsappManagementFunctions.sendAutomaticWhatsappTextMessage(conversationsDatabase[requestQuery['conversationID']].recipientPhoneNumber, 'Lo más importante para nosotros es la atención del cliente. Puede calificarnos accediendo al siguiente enlace: https://kingvapecr.com/pages/feedback', backendWebsocketServerConnection);
     response.end('');
 });
