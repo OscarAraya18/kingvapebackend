@@ -510,6 +510,46 @@ module.exports = {
         }
     },
 
+    sendWhatsappContactMessage: async function(requestQuery, websocketConnection){
+      var sendWhatsappMessageData = 
+      {
+        'messaging_product': 'whatsapp',
+        'to': requestQuery['recipientPhoneNumber'], 
+        "type": "template",
+        "template": {
+          "name": "bienvenida",
+          "language": {
+            "code": "es"
+          },
+          "components":
+          [
+            {
+              "type": "body",
+              "parameters":
+              [
+                {
+                  "type": "text",
+                  "text": requestQuery['messageContent']
+                }
+              ]
+            }
+          ]     
+        }
+      };
+      sendWhatsappMessageData = JSON.stringify(sendWhatsappMessageData);
+      const sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
+      
+      var activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
+      if (activeConversationID == null){
+          conversationsManagementFunctions.createConversation(requestQuery['recipientPhoneNumber'], '');
+      }
+      activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
+      
+      websocketManagementFunctions.startNewConversation(websocketConnection, databaseManagementFunctions.readDatabase(constants.routes.conversationsDatabase)[activeConversationID], activeConversationID, assignedAgentID);
+      websocketManagementFunctions.sendWhatsappMessage(websocketConnection, activeConversationID, messageInformation);
+      conversationsManagementFunctions.addMessageToConversation(activeConversationID, messageInformation);
+    },
+
     sendWhatsappMessage: async function(sendWhatsappMessageData){
       return new Promise((sendWhatsappMessagePromiseResolve) => {
         const sendWhatsappMessageURL = `https://graph.facebook.com/${constants.credentials.apiVersion}/${constants.credentials.phoneNumberID}/messages`;
@@ -522,7 +562,7 @@ module.exports = {
         .catch((error) => {
           console.log(error);
           console.log('Hay error');
-        });
+        }); 
       });
     },
 

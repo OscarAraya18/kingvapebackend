@@ -169,6 +169,11 @@ backendHttpRequestServer.get('/sendWhatsappMessage', (request, response) => {
   response.end('');
 });
 
+backendHttpRequestServer.get('/sendWhatsappContactMessage', (request, response) => {
+  const requestQuery = url.parse(request.url,true).query;
+  whatsappManagementFunctions.sendWhatsappContactMessage(requestQuery, backendWebsocketServerConnection);
+  response.end('');
+});
 
 backendHttpRequestServer.post('/webhook', (request, response) => {
   if (request.body['entry'][0]['changes'][0]['value']['messages']){
