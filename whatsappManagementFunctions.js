@@ -465,7 +465,7 @@ module.exports = {
                     if (activeConversationID == null){
                         const newConversationID = conversationsManagementFunctions.createConversation(recipientPhoneNumber, recipientProfileName);
                         agentsManagementFunctions.assignNewConversationToAgentWithLessActiveConversations(newConversationID, null);
-                    }
+                    } 
                     activeConversationID = conversationsManagementFunctions.getActiveConversationID(recipientPhoneNumber);
                     const assignedAgentID = agentsManagementFunctions.getAssignedAgentToConversationID(activeConversationID);
                     conversationsManagementFunctions.updateConversationRecipientProfileName(activeConversationID, recipientProfileName);
