@@ -41,7 +41,7 @@ module.exports = {
           client.send(JSON.stringify(messageToSendByWebsocket));
         }
     });
-  },
+  }, 
 
   receivePendingConversation: function (websocketConnection, pendingConversationID, recipientPhoneNumber, startDate, startHour){
     websocketConnection.clients.forEach(function each(client) {
