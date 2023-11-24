@@ -841,7 +841,7 @@ module.exports = {
       activeConversationID = conversationsManagementFunctions.getActiveConversationID(recipientPhoneNumber);
       const messageInformation = 
       {
-          messageID: '',
+          messageID: '', 
           owner: 'agent',
           messageSentDate: generalFunctions.getCurrentDateAsStringWithFormat(),
           messageSentHour: generalFunctions.getCurrentHourAsStringWithFormat(),
