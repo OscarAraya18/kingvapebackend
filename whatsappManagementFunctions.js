@@ -115,7 +115,7 @@ module.exports = {
         httpResponseToSendWhatsappTextMessage.on('end', function (httpResponsePartToSendWhatsappTextMessage) {
             httpResponsePartsToSendWhatsappTextMessage.push(httpResponsePartToSendWhatsappTextMessage);
 
-            const messageID = JSON.parse(httpResponsePartsToSendWhatsappTextMessage.toString())['messages'][0]['id'];
+            const messageID = httpResponsePartsToSendWhatsappTextMessage.toString()['messages'][0]['id'];
             var activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
             if (activeConversationID == null){
                 const newConversationID = conversationsManagementFunctions.createConversation(requestQuery['recipientPhoneNumber'], '', null);
@@ -873,7 +873,7 @@ module.exports = {
             httpResponseToSendWhatsappTextMessage.on('end', function (httpResponsePartToSendWhatsappTextMessage) {
                 httpResponsePartsToSendWhatsappTextMessage.push(httpResponsePartToSendWhatsappTextMessage);
 
-                const messageID = JSON.parse(httpResponsePartsToSendWhatsappTextMessage.toString())['messages'][0]['id'];
+                const messageID = httpResponsePartsToSendWhatsappTextMessage.toString()['messages'][0]['id'];
 
                 var activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
                 if (activeConversationID == null){
