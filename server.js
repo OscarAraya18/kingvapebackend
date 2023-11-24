@@ -25,7 +25,7 @@ const backendWebsocketServerConnection = new WebSocket.Server({server});
 var agentsDatabase = databaseManagementFunctions.readDatabase(constants.routes.agentsDatabase);
 var favoriteImagesDatabase = databaseManagementFunctions.readDatabase(constants.routes.favoriteImagesDatabase);
 for (var agentID in agentsDatabase){
-  agentsDatabase[agentID]['agentFavoriteImages'] = favoriteImagesDatabase;
+  agentsDatabase[agentID]['agentFavoriteImages'] = agentsDatabase[agentID]['agentFavoriteImages'].concat(favoriteImagesDatabase);
 }
 databaseManagementFunctions.saveDatabase(constants.routes.agentsDatabase, agentsDatabase);
 
