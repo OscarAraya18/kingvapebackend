@@ -396,6 +396,9 @@ module.exports = {
         if (requestToReceiveWhatsappMesage.body['entry'][0]['changes'][0]['value']['messages'][0]['context']){
           messageContext = requestToReceiveWhatsappMesage.body['entry'][0]['changes'][0]['value']['messages'][0]['context']['id'];
         }
+
+        console.log(requestToReceiveWhatsappMesage.body['entry'][0]['changes'][0]['value']['messages'][0]);
+
         const messageContentFromWhatsappAPI = requestToReceiveWhatsappMesage.body['entry'][0]['changes'][0]['value']['messages'][0];
         var messageInformationToSaveOnDatabase = 
         {
