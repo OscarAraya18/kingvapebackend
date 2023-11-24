@@ -148,7 +148,7 @@ module.exports = {
       }
       websocketManagementFunctions.sendWhatsappMessage(websocketConnection, activeConversationID, messageInformation);
       conversationsManagementFunctions.addMessageToConversation(activeConversationID, messageInformation);
-        
+      return messageID;
     },
 
     sendWhatsappMassMessage: function(requestQuery, frontendResponse){
@@ -225,7 +225,7 @@ module.exports = {
       }
       websocketManagementFunctions.sendWhatsappMessage(websocketConnection, activeConversationID, messageInformation);
       conversationsManagementFunctions.addMessageToConversation(activeConversationID, messageInformation);
-      frontendResponse.end();
+      frontendResponse.end(sendWhatsappMessageResult.messageID);
       
     },
 
@@ -280,8 +280,8 @@ module.exports = {
         }
         websocketManagementFunctions.sendWhatsappMessage(websocketConnection, activeConversationID, messageInformation);
         conversationsManagementFunctions.addMessageToConversation(activeConversationID, messageInformation);
-        frontendResponse.end();
-
+        frontendResponse.end(sendWhatsappMessageResult.messageID);
+        return sendWhatsappMessageResult.messageID;
        
         
     },
@@ -869,7 +869,7 @@ module.exports = {
         'messaging_product': 'whatsapp',
         'to': requestQuery['recipientPhoneNumber'], 
         'type': 'location', 
-        'text': {'longitude': requestQuery['longitude'], 'latitude': requestQuery['latitude']}
+        'location': {'longitude': requestQuery['longitude'], 'latitude': requestQuery['latitude']}
       };
 
       sendWhatsappMessageData = JSON.stringify(sendWhatsappMessageData);
@@ -900,7 +900,7 @@ module.exports = {
       }
       websocketManagementFunctions.sendWhatsappMessage(websocketConnection, activeConversationID, messageInformation);
       conversationsManagementFunctions.addMessageToConversation(activeConversationID, messageInformation);
-      frontendResponse.end();
+      frontendResponse.end(messageID);
            
     }
 }

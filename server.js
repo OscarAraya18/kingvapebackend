@@ -161,12 +161,12 @@ backendHttpRequestServer.post('/sendWhatsappAudio', (request, response) => {
 backendHttpRequestServer.get('/sendWhatsappMessage', (request, response) => {
   const requestQuery = url.parse(request.url,true).query;
   if (requestQuery['type'] == 'text'){
-    whatsappManagementFunctions.sendWhatsappTextMessage(requestQuery, backendWebsocketServerConnection);
+    var messageID = whatsappManagementFunctions.sendWhatsappTextMessage(requestQuery, backendWebsocketServerConnection);
   } else {
-    whatsappManagementFunctions.sendWhatsappMediaMessage(requestQuery, backendWebsocketServerConnection);
+    var messageID = whatsappManagementFunctions.sendWhatsappMediaMessage(requestQuery, backendWebsocketServerConnection);
   }
   agentsManagementFunctions.addMessageCount(requestQuery['agentID'], backendWebsocketServerConnection);
-  response.end('');
+  response.end(messageID);
 });
 
 backendHttpRequestServer.get('/sendWhatsappContactMessage', (request, response) => {
