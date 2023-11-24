@@ -17,6 +17,24 @@
     "agentEndMessage": "Mensaje de despedida",
     "agentFavoriteImages": []
   },
+  "305020966": {
+    "agentName": "Stef",
+    "agentUsername": "sponce",
+    "agentPassword": "LN11",
+    "agentProfilePicture": "",
+    "agentActiveConversations": [],
+    "agentFinishedConversations": [],
+    "agentReceivedMessages": 0,
+    "agentReadedMessages": 0,
+    "agentSendedMessages": 0,
+    "agentStatus": "offline",
+    "agentType": "agent",
+    "agentFavoriteMessages": [],
+    "agentWelcomeImage": "",
+    "agentWelcomeMessage": "Mensaje de bienvenida",
+    "agentEndMessage": "Mensaje de despedida",
+    "agentFavoriteImages": []
+  },
   "117180470": {
     "agentName": "Sharon",   
     "agentUsername": "sespinoza",
