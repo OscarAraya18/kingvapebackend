@@ -863,45 +863,44 @@ module.exports = {
       agentsManagementFunctions.grabPendingConversation(requestQuery, websocketConnection);
     },
 
-    sendWhatsappLocationMessage: function(requestQuery, frontendResponse, websocketConnection){
-        var httpOptionsToSendWhatsappTextMessage = {'method': 'POST', 'hostname': 'graph.facebook.com', 'path': '/' + constants.credentials.apiVersion + '/' + constants.credentials.phoneNumberID + '/messages', 'headers': {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + constants.credentials.apiKey}};
-        var httpDataToSendWhatsappTextMessage = JSON.stringify({'messaging_product': 'whatsapp', 'to': requestQuery['recipientPhoneNumber'], 'type':'location', 'location': {'longitude': requestQuery['longitude'], 'latitude': requestQuery['latitude']}});
-        var httpRequestToSendWhatsappTextMessage = https.request(httpOptionsToSendWhatsappTextMessage, function (httpResponseToSendWhatsappTextMessage) {
-            var httpResponsePartsToSendWhatsappTextMessage = [];
-            httpResponseToSendWhatsappTextMessage.on('data', function (httpResponsePartToSendWhatsappTextMessage) {httpResponsePartsToSendWhatsappTextMessage.push(httpResponsePartToSendWhatsappTextMessage);});
-            httpResponseToSendWhatsappTextMessage.on('end', function (httpResponsePartToSendWhatsappTextMessage) {
-                httpResponsePartsToSendWhatsappTextMessage.push(httpResponsePartToSendWhatsappTextMessage);
+    sendWhatsappLocationMessage: async function(requestQuery, frontendResponse, websocketConnection){
+      var sendWhatsappMessageData = 
+      {
+        'messaging_product': 'whatsapp',
+        'to': requestQuery['recipientPhoneNumber'], 
+        'type': 'location', 
+        'text': {'longitude': requestQuery['longitude'], 'latitude': requestQuery['latitude']}
+      };
 
-                const messageID = httpResponsePartsToSendWhatsappTextMessage.toString()['messages'][0]['id'];
+      sendWhatsappMessageData = JSON.stringify(sendWhatsappMessageData);
+      const sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
 
-                var activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
-                if (activeConversationID == null){
-                    const newConversationID = conversationsManagementFunctions.createConversation(requestQuery['recipientPhoneNumber'], '', null);
-                    agentsManagementFunctions.assignNewConversationToAgentWithLessActiveConversations(newConversationID, requestQuery['agentID']);
-                }
-                activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
-                const messageInformation = 
-                {
-                    messageID: messageID,
-                    owner: 'agent',
-                    messageSentDate: generalFunctions.getCurrentDateAsStringWithFormat(),
-                    messageSentHour: generalFunctions.getCurrentHourAsStringWithFormat(),
-                    messageDeliveryDate: null,
-                    messageDeliveryHour: null,
-                    messageReadDate: null,
-                    messageReadHour: null,
-                    messageStatus: 'sent',
-                    messageType: 'location',
-                    messageContent: {locationLatitude: requestQuery['latitude'], locationLongitude: requestQuery['longitude']},
-                    dateObject: new Date().toString()
-                }
-                websocketManagementFunctions.sendWhatsappMessage(websocketConnection, activeConversationID, messageInformation);
-                conversationsManagementFunctions.addMessageToConversation(activeConversationID, messageInformation);
-                frontendResponse.end();
-            });
-            httpResponseToSendWhatsappTextMessage.on('error', function (error) {console.error(error);});
-        });
-        httpRequestToSendWhatsappTextMessage.write(httpDataToSendWhatsappTextMessage);
-        httpRequestToSendWhatsappTextMessage.end();
+      const messageID = sendWhatsappMessageResult.result;
+
+      var activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
+      if (activeConversationID == null){
+          const newConversationID = conversationsManagementFunctions.createConversation(requestQuery['recipientPhoneNumber'], '', null);
+          agentsManagementFunctions.assignNewConversationToAgentWithLessActiveConversations(newConversationID, requestQuery['agentID']);
+      }
+      activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
+      const messageInformation = 
+      {
+          messageID: messageID,
+          owner: 'agent',
+          messageSentDate: generalFunctions.getCurrentDateAsStringWithFormat(),
+          messageSentHour: generalFunctions.getCurrentHourAsStringWithFormat(),
+          messageDeliveryDate: null,
+          messageDeliveryHour: null,
+          messageReadDate: null,
+          messageReadHour: null,
+          messageStatus: 'sent',
+          messageType: 'location',
+          messageContent: {locationLatitude: requestQuery['latitude'], locationLongitude: requestQuery['longitude']},
+          dateObject: new Date().toString()
+      }
+      websocketManagementFunctions.sendWhatsappMessage(websocketConnection, activeConversationID, messageInformation);
+      conversationsManagementFunctions.addMessageToConversation(activeConversationID, messageInformation);
+      frontendResponse.end();
+           
     }
 }
