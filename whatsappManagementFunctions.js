@@ -537,6 +537,22 @@ module.exports = {
           ]     
         }
       };
+      const messageInformation = 
+      {
+          messageID: '',
+          owner: 'agent',
+          messageSentDate: generalFunctions.getCurrentDateAsStringWithFormat(),
+          messageSentHour: generalFunctions.getCurrentHourAsStringWithFormat(),
+          messageDeliveryDate: null,
+          messageDeliveryHour: null,
+          messageReadDate: null,
+          messageReadHour: null,
+          messageStatus: 'sent',
+          messageType: 'text',
+          messageContent: 'Se ha contactado al cliente. Esperando respuesta...',
+          dateObject: new Date().toString()
+      }
+
       sendWhatsappMessageData = JSON.stringify(sendWhatsappMessageData);
       const sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
       
