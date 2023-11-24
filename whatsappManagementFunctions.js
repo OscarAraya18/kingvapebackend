@@ -204,7 +204,7 @@ module.exports = {
       activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
       const messageInformation = 
       {
-          messageID: sendWhatsappMessageResult.messageID,
+          messageID: sendWhatsappMessageResult.result,
           owner: 'agent',
           messageSentDate: generalFunctions.getCurrentDateAsStringWithFormat(),
           messageSentHour: generalFunctions.getCurrentHourAsStringWithFormat(),
@@ -225,7 +225,7 @@ module.exports = {
       }
       websocketManagementFunctions.sendWhatsappMessage(websocketConnection, activeConversationID, messageInformation);
       conversationsManagementFunctions.addMessageToConversation(activeConversationID, messageInformation);
-      frontendResponse.end(sendWhatsappMessageResult.messageID);
+      frontendResponse.end(sendWhatsappMessageResult.result);
       
     },
 
@@ -253,7 +253,6 @@ module.exports = {
         };
         sendWhatsappMessageData = JSON.stringify(sendWhatsappMessageData);
         const sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
-        console.log(sendWhatsappMessageResult);
         var activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
         if (activeConversationID == null){
             conversationsManagementFunctions.createConversation(requestQuery['recipientPhoneNumber'], '', null);
@@ -261,7 +260,7 @@ module.exports = {
         activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
         const messageInformation = 
         {
-            messageID: sendWhatsappMessageResult.messageID,
+            messageID: sendWhatsappMessageResult.result,
             owner: 'agent',
             messageSentDate: generalFunctions.getCurrentDateAsStringWithFormat(),
             messageSentHour: generalFunctions.getCurrentHourAsStringWithFormat(),
@@ -281,7 +280,7 @@ module.exports = {
         }
         websocketManagementFunctions.sendWhatsappMessage(websocketConnection, activeConversationID, messageInformation);
         conversationsManagementFunctions.addMessageToConversation(activeConversationID, messageInformation);
-        frontendResponse.end(sendWhatsappMessageResult.messageID);
+        frontendResponse.end(sendWhatsappMessageResult.result);
                
     },
 
@@ -769,7 +768,7 @@ module.exports = {
 
       const messageInformation = 
       {
-          messageID: sendWhatsappMessageResult.messageID,
+          messageID: sendWhatsappMessageResult.result,
           owner: 'agent',
           messageSentDate: generalFunctions.getCurrentDateAsStringWithFormat(),
           messageSentHour: generalFunctions.getCurrentHourAsStringWithFormat(),
@@ -845,7 +844,7 @@ module.exports = {
       activeConversationID = conversationsManagementFunctions.getActiveConversationID(recipientPhoneNumber);
       const messageInformation = 
       {
-          messageID: sendWhatsappMessageResult.messageID, 
+          messageID: sendWhatsappMessageResult.result, 
           owner: 'agent',
           messageSentDate: generalFunctions.getCurrentDateAsStringWithFormat(),
           messageSentHour: generalFunctions.getCurrentHourAsStringWithFormat(),
