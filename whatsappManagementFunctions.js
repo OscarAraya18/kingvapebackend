@@ -542,11 +542,11 @@ module.exports = {
       
       var activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
       if (activeConversationID == null){
-          conversationsManagementFunctions.createConversation(requestQuery['recipientPhoneNumber'], '', null);
+          conversationsManagementFunctions.createConversation(requestQuery['recipientPhoneNumber'], '', requestQuery['agentID']);
       }
       activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
       
-      websocketManagementFunctions.startNewConversation(websocketConnection, databaseManagementFunctions.readDatabase(constants.routes.conversationsDatabase)[activeConversationID], activeConversationID, assignedAgentID);
+      websocketManagementFunctions.startNewConversation(websocketConnection, databaseManagementFunctions.readDatabase(constants.routes.conversationsDatabase)[activeConversationID], activeConversationID, requestQuery['agentID']);
       websocketManagementFunctions.sendWhatsappMessage(websocketConnection, activeConversationID, messageInformation);
       conversationsManagementFunctions.addMessageToConversation(activeConversationID, messageInformation);
     },
