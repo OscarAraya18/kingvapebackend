@@ -158,12 +158,12 @@ backendHttpRequestServer.post('/sendWhatsappAudio', (request, response) => {
   response.end('');
 });
 
-backendHttpRequestServer.get('/sendWhatsappMessage', (request, response) => {
+backendHttpRequestServer.get('/sendWhatsappMessage', async (request, response) => {
   const requestQuery = url.parse(request.url,true).query;
   if (requestQuery['type'] == 'text'){
-    var messageID = whatsappManagementFunctions.sendWhatsappTextMessage(requestQuery, backendWebsocketServerConnection);
+    var messageID = await whatsappManagementFunctions.sendWhatsappTextMessage(requestQuery, backendWebsocketServerConnection);
   } else {
-    var messageID = whatsappManagementFunctions.sendWhatsappMediaMessage(requestQuery, backendWebsocketServerConnection);
+    var messageID = await whatsappManagementFunctions.sendWhatsappMediaMessage(requestQuery, backendWebsocketServerConnection);
   }
   agentsManagementFunctions.addMessageCount(requestQuery['agentID'], backendWebsocketServerConnection);
   response.end(messageID);
