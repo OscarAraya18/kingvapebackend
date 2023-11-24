@@ -106,50 +106,49 @@ module.exports = {
     }
   },
 
-    sendWhatsappTextMessage: function(requestQuery, websocketConnection){
-      var httpOptionsToSendWhatsappTextMessage = {'method': 'POST', 'hostname': 'graph.facebook.com', 'path': '/' + constants.credentials.apiVersion + '/' + constants.credentials.phoneNumberID + '/messages', 'headers': {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + constants.credentials.apiKey}};
-      var httpDataToSendWhatsappTextMessage = JSON.stringify({'messaging_product': 'whatsapp', 'to': requestQuery['recipientPhoneNumber'], 'text': {'body': requestQuery['messageContent']}});
-      var httpRequestToSendWhatsappTextMessage = https.request(httpOptionsToSendWhatsappTextMessage, function (httpResponseToSendWhatsappTextMessage) {
-        var httpResponsePartsToSendWhatsappTextMessage = [];
-        httpResponseToSendWhatsappTextMessage.on('data', function (httpResponsePartToSendWhatsappTextMessage) {httpResponsePartsToSendWhatsappTextMessage.push(httpResponsePartToSendWhatsappTextMessage);});
-        httpResponseToSendWhatsappTextMessage.on('end', function (httpResponsePartToSendWhatsappTextMessage) {
-            httpResponsePartsToSendWhatsappTextMessage.push(httpResponsePartToSendWhatsappTextMessage);
+    sendWhatsappTextMessage: async function(requestQuery, websocketConnection){
+      var sendWhatsappMessageData = 
+      {
+        'messaging_product': 'whatsapp',
+        'to': requestQuery['recipientPhoneNumber'], 
+        'type': 'text', 
+        'text': {'body': requestQuery['messageContent']}
+      };
 
-            const messageID = httpResponsePartsToSendWhatsappTextMessage.toString()['messages'][0]['id'];
-            var activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
-            if (activeConversationID == null){
-                const newConversationID = conversationsManagementFunctions.createConversation(requestQuery['recipientPhoneNumber'], '', null);
-                agentsManagementFunctions.assignNewConversationToAgentWithLessActiveConversations(newConversationID, requestQuery['agentID']);
-            }
-            activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
-            var textMessage = '';
-            if (requestQuery['sendedProduct'] == '1'){
-                textMessage = requestQuery['messageContent'].split('*').join('');
-            } else {
-                textMessage = requestQuery['messageContent']
-            }
-            const messageInformation = 
-            {
-                messageID: messageID,
-                owner: 'agent',
-                messageSentDate: generalFunctions.getCurrentDateAsStringWithFormat(),
-                messageSentHour: generalFunctions.getCurrentHourAsStringWithFormat(),
-                messageDeliveryDate: null,
-                messageDeliveryHour: null,
-                messageReadDate: null,
-                messageReadHour: null,
-                messageStatus: 'sent',
-                messageType: 'text',
-                messageContent: textMessage,
-                dateObject: new Date().toString()
-            }
-            websocketManagementFunctions.sendWhatsappMessage(websocketConnection, activeConversationID, messageInformation);
-            conversationsManagementFunctions.addMessageToConversation(activeConversationID, messageInformation);
-        });
-        httpResponseToSendWhatsappTextMessage.on('error', function (error) {console.error(error);});
-      });
-      httpRequestToSendWhatsappTextMessage.write(httpDataToSendWhatsappTextMessage);
-      httpRequestToSendWhatsappTextMessage.end();
+      sendWhatsappMessageData = JSON.stringify(sendWhatsappMessageData);
+      const sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
+
+      const messageID = sendWhatsappMessageResult.result;
+      var activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
+      if (activeConversationID == null){
+          const newConversationID = conversationsManagementFunctions.createConversation(requestQuery['recipientPhoneNumber'], '', null);
+          agentsManagementFunctions.assignNewConversationToAgentWithLessActiveConversations(newConversationID, requestQuery['agentID']);
+      }
+      activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
+      var textMessage = '';
+      if (requestQuery['sendedProduct'] == '1'){
+          textMessage = requestQuery['messageContent'].split('*').join('');
+      } else {
+          textMessage = requestQuery['messageContent']
+      }
+      const messageInformation = 
+      {
+          messageID: messageID,
+          owner: 'agent',
+          messageSentDate: generalFunctions.getCurrentDateAsStringWithFormat(),
+          messageSentHour: generalFunctions.getCurrentHourAsStringWithFormat(),
+          messageDeliveryDate: null,
+          messageDeliveryHour: null,
+          messageReadDate: null,
+          messageReadHour: null,
+          messageStatus: 'sent',
+          messageType: 'text',
+          messageContent: textMessage,
+          dateObject: new Date().toString()
+      }
+      websocketManagementFunctions.sendWhatsappMessage(websocketConnection, activeConversationID, messageInformation);
+      conversationsManagementFunctions.addMessageToConversation(activeConversationID, messageInformation);
+        
     },
 
     sendWhatsappMassMessage: function(requestQuery, frontendResponse){
