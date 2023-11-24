@@ -392,6 +392,7 @@ module.exports = {
         const recipientProfileName = requestToReceiveWhatsappMesage.body['entry'][0]['changes'][0]['value']['contacts'][0]['profile']['name'];
         var messageID = requestToReceiveWhatsappMesage.body['entry'][0]['changes'][0]['value']['messages'][0]['id'];
         const messageType = requestToReceiveWhatsappMesage.body['entry'][0]['changes'][0]['value']['messages'][0]['type'];
+        console.log(requestToReceiveWhatsappMesage.body['entry'][0]['changes'][0]['value']['messages'][0]);
         const messageContentFromWhatsappAPI = requestToReceiveWhatsappMesage.body['entry'][0]['changes'][0]['value']['messages'][0];
         var messageInformationToSaveOnDatabase = 
         {
@@ -400,7 +401,8 @@ module.exports = {
             messageReceivedDate: generalFunctions.getCurrentDateAsStringWithFormat(),
             messageReceivedHour: generalFunctions.getCurrentHourAsStringWithFormat(),
             messageStatus: 'received',
-            messageType: messageType
+            messageType: messageType,
+            messageContext: 'hola'
         };
         if (messageType == 'text'){
             this.addWhatsappTextMessageInformation(messageContentFromWhatsappAPI, messageInformationToSaveOnDatabase, recipientPhoneNumber, recipientProfileName, frontendResponse, websocketConnection);
