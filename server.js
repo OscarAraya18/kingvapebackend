@@ -261,7 +261,7 @@ backendHttpRequestServer.get('/closeConversation', (request, response) => {
     conversationsManagementFunctions.closeConversation(requestQuery['conversationID'], requestQuery['conversationStatus'], requestQuery['amount']);
     whatsappManagementFunctions.sendAutomaticWhatsappTextMessage(conversationsDatabase[requestQuery['conversationID']].recipientPhoneNumber, agentsDatabase[conversationsDatabase[requestQuery['conversationID']].assignedAgentID].agentEndMessage, backendWebsocketServerConnection);
     response.end('');
-});  zz
+});
 
 
 backendHttpRequestServer.get('/getTotalProfit', (request, response) => {
