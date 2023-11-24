@@ -697,7 +697,7 @@ module.exports = {
                   "text": messageContent
                 }
               ]
-            }
+            } 
           ]     
         }
       };
@@ -808,7 +808,7 @@ module.exports = {
       var sendWhatsappMessageData = 
       {
         'messaging_product': 'whatsapp',
-        'to': numero, 
+        'to': recipientPhoneNumber, 
         "type": "template",
         "template": {
           "name": "bienvenida",
