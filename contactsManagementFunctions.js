@@ -37,7 +37,7 @@ module.exports = {
       delete contactsDatabase[contactID];
       databaseManagementFunctions.saveDatabase(constants.routes.contactsDatabase, contactsDatabase);
     },
-
+ 
     createContactFromContactsPage: function(request){
       var contactsDatabase = databaseManagementFunctions.readDatabase(constants.routes.contactsDatabase);
       contactsDatabase[request.contactID] = 
