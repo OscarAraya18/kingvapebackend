@@ -487,7 +487,6 @@ module.exports = {
       var activeConversationID = conversationsManagementFunctions.getActiveConversationID(recipientPhoneNumber);
         var newConversation = false;
         if (activeConversationID == null){
-            console.log('paso por aqui')
             const newConversationID = conversationsManagementFunctions.createConversation(recipientPhoneNumber, recipientProfileName, null);
             agentsManagementFunctions.assignNewConversationToAgentWithLessActiveConversations(newConversationID, null);
             newConversation = true;
@@ -503,7 +502,7 @@ module.exports = {
             if (assignedAgentID){
                 this.sendAutomaticWhatsappMediaMessage(recipientPhoneNumber, databaseManagementFunctions.readDatabase(constants.routes.agentsDatabase)[assignedAgentID].agentWelcomeImage, databaseManagementFunctions.readDatabase(constants.routes.agentsDatabase)[assignedAgentID].agentWelcomeMessage, assignedAgentID,  websocketConnection)
             } else {
-                this.sendAutomaticWhatsappTextMessage(recipientPhoneNumber, 'Gracias por escribir a KingVape. De momento, todos nuestros agentes se encuentran fuera de servicio. Estimado cliente, lo atenderemos lo más pronto posible, muchas gracias por la espera!', websocketConnection);
+                this.sendAutomaticHoldMessage(recipientPhoneNumber, websocketConnection);
                 websocketManagementFunctions.receivePendingConversation(websocketConnection, activeConversationID, recipientPhoneNumber, generalFunctions.getCurrentDateAsStringWithFormat(), generalFunctions.getCurrentHourAsStringWithFormat());
             }
         } else {
@@ -611,6 +610,22 @@ module.exports = {
       };
       sendWhatsappMessageData = JSON.stringify(sendWhatsappMessageData);
       const sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
+
+      const messageInformation = 
+      {
+          messageID: '',
+          owner: 'agent',
+          messageSentDate: generalFunctions.getCurrentDateAsStringWithFormat(),
+          messageSentHour: generalFunctions.getCurrentHourAsStringWithFormat(),
+          messageDeliveryDate: null,
+          messageDeliveryHour: null,
+          messageReadDate: null,
+          messageReadHour: null,
+          messageStatus: 'sent',
+          messageType: 'text',
+          messageContent: 'Mensaje de bienvenida enviado al cliente. Esperando respuesta...',
+          dateObject: new Date().toString()
+      }
       
       var activeConversationID = conversationsManagementFunctions.getActiveConversationID(recipientPhoneNumber);
       if (activeConversationID == null){
@@ -621,6 +636,43 @@ module.exports = {
       websocketManagementFunctions.startNewConversation(websocketConnection, databaseManagementFunctions.readDatabase(constants.routes.conversationsDatabase)[activeConversationID], activeConversationID, assignedAgentID);
       websocketManagementFunctions.sendWhatsappMessage(websocketConnection, activeConversationID, messageInformation);
       conversationsManagementFunctions.addMessageToConversation(activeConversationID, messageInformation);
+    },
+
+    sendAutomaticHoldMessage: async function(recipientPhoneNumber, websocketConnection){
+      var sendWhatsappMessageData = 
+      {
+        'messaging_product': 'whatsapp',
+        'to': recipientPhoneNumber, 
+        "type": "template",
+        "template": {
+          "name": "espera",
+          "language": {
+            "code": "es"
+          }  
+        }
+      };
+      sendWhatsappMessageData = JSON.stringify(sendWhatsappMessageData);
+      const sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
+
+      const messageInformation = 
+      {
+          messageID: '',
+          owner: 'agent',
+          messageSentDate: generalFunctions.getCurrentDateAsStringWithFormat(),
+          messageSentHour: generalFunctions.getCurrentHourAsStringWithFormat(),
+          messageDeliveryDate: null,
+          messageDeliveryHour: null,
+          messageReadDate: null,
+          messageReadHour: null,
+          messageStatus: 'sent',
+          messageType: 'text',
+          messageContent: 'Mensaje de espera enviado al cliente. Esperando respuesta...',
+          dateObject: new Date().toString()
+      }
+  
+      websocketManagementFunctions.sendWhatsappMessage(websocketConnection, activeConversationID, messageInformation);
+      conversationsManagementFunctions.addMessageToConversation(activeConversationID, messageInformation);
+
     },
 
     sendAutomaticWhatsappTextMessage: async function(recipientPhoneNumber, messageContent, websocketConnection){
@@ -651,11 +703,25 @@ module.exports = {
       };
       sendWhatsappMessageData = JSON.stringify(sendWhatsappMessageData);
       const sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
+
+      const messageInformation = 
+      {
+          messageID: '',
+          owner: 'agent',
+          messageSentDate: generalFunctions.getCurrentDateAsStringWithFormat(),
+          messageSentHour: generalFunctions.getCurrentHourAsStringWithFormat(),
+          messageDeliveryDate: null,
+          messageDeliveryHour: null,
+          messageReadDate: null,
+          messageReadHour: null,
+          messageStatus: 'sent',
+          messageType: 'text',
+          messageContent: 'Mensaje de bienvenida enviado al cliente. Esperando respuesta...',
+          dateObject: new Date().toString()
+      }
   
       websocketManagementFunctions.sendWhatsappMessage(websocketConnection, activeConversationID, messageInformation);
       conversationsManagementFunctions.addMessageToConversation(activeConversationID, messageInformation);
-            
-        
 
     },
 
