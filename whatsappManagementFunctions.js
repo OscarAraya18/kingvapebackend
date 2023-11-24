@@ -454,8 +454,8 @@ module.exports = {
                 var mediaURL = JSON.parse(Buffer.concat(responseParts).toString())['url'];
                 var httpRequestOptionsToDownloadMedia = {'method': 'get', 'url': mediaURL, 'headers': {'Authorization': 'Bearer ' + constants.credentials.apiKey}, 'responseType': 'arraybuffer'};
                 axios(httpRequestOptionsToDownloadMedia).then((httpResponseToDownloadMedia) => {
-                    const buffer = Buffer.from(new Uint8Array(httpResponseToDownloadMedia.data).reduce((data, byte) => data + String.fromCharCode(byte), ''));
-                    const base64 = buffer.toString('base64');
+                    const arrayBuffer = new Uint8Array(httpResponseToDownloadMedia.data).buffer;  // Convert to ArrayBuffer
+                    const base64 = Buffer.from(arrayBuffer).toString('base64');
                     console.log(base64);
                     messageInformationToSaveOnDatabase['messageContent'] = 
                     {
