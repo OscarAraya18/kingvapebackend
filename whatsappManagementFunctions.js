@@ -116,7 +116,7 @@ module.exports = {
             httpResponsePartsToSendWhatsappTextMessage.push(httpResponsePartToSendWhatsappTextMessage);
             var activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
             if (activeConversationID == null){
-                const newConversationID = conversationsManagementFunctions.createConversation(requestQuery['recipientPhoneNumber'], '');
+                const newConversationID = conversationsManagementFunctions.createConversation(requestQuery['recipientPhoneNumber'], '', null);
                 agentsManagementFunctions.assignNewConversationToAgentWithLessActiveConversations(newConversationID, requestQuery['agentID']);
             }
             activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
@@ -197,7 +197,7 @@ module.exports = {
 
       var activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
       if (activeConversationID == null){
-          conversationsManagementFunctions.createConversation(requestQuery['recipientPhoneNumber'], '');
+          conversationsManagementFunctions.createConversation(requestQuery['recipientPhoneNumber'], '', null);
       }
       activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
       const messageInformation = 
@@ -254,7 +254,7 @@ module.exports = {
 
         var activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
         if (activeConversationID == null){
-            conversationsManagementFunctions.createConversation(requestQuery['recipientPhoneNumber'], '');
+            conversationsManagementFunctions.createConversation(requestQuery['recipientPhoneNumber'], '', null);
         }
         activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
         const messageInformation = 
@@ -463,7 +463,7 @@ module.exports = {
                     messageInformationToSaveOnDatabase['dateObject'] = new Date().toString();
                     var activeConversationID = conversationsManagementFunctions.getActiveConversationID(recipientPhoneNumber);
                     if (activeConversationID == null){
-                        const newConversationID = conversationsManagementFunctions.createConversation(recipientPhoneNumber, recipientProfileName);
+                        const newConversationID = conversationsManagementFunctions.createConversation(recipientPhoneNumber, recipientProfileName, null);
                         agentsManagementFunctions.assignNewConversationToAgentWithLessActiveConversations(newConversationID, null);
                     } 
                     activeConversationID = conversationsManagementFunctions.getActiveConversationID(recipientPhoneNumber);
@@ -487,7 +487,7 @@ module.exports = {
       var activeConversationID = conversationsManagementFunctions.getActiveConversationID(recipientPhoneNumber);
         var newConversation = false;
         if (activeConversationID == null){
-            const newConversationID = conversationsManagementFunctions.createConversation(recipientPhoneNumber, recipientProfileName);
+            const newConversationID = conversationsManagementFunctions.createConversation(recipientPhoneNumber, recipientProfileName, null);
             agentsManagementFunctions.assignNewConversationToAgentWithLessActiveConversations(newConversationID, null);
             newConversation = true;
         }
@@ -541,7 +541,7 @@ module.exports = {
       
       var activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
       if (activeConversationID == null){
-          conversationsManagementFunctions.createConversation(requestQuery['recipientPhoneNumber'], '');
+          conversationsManagementFunctions.createConversation(requestQuery['recipientPhoneNumber'], '', null);
       }
       activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
       
@@ -597,7 +597,7 @@ module.exports = {
       
       var activeConversationID = conversationsManagementFunctions.getActiveConversationID(recipientPhoneNumber);
       if (activeConversationID == null){
-          conversationsManagementFunctions.createConversation(recipientPhoneNumber, '');
+          conversationsManagementFunctions.createConversation(recipientPhoneNumber, '', null);
       }
       activeConversationID = conversationsManagementFunctions.getActiveConversationID(recipientPhoneNumber);
       
@@ -675,7 +675,7 @@ module.exports = {
   
       var activeConversationID = conversationsManagementFunctions.getActiveConversationID(numero);
       if (activeConversationID == null){
-        conversationsManagementFunctions.createConversation(numero, '');
+        conversationsManagementFunctions.createConversation(numero, '', agentID, null);
       }
       activeConversationID = conversationsManagementFunctions.getActiveConversationID(numero);
 
@@ -753,7 +753,7 @@ module.exports = {
 
       var activeConversationID = conversationsManagementFunctions.getActiveConversationID(recipientPhoneNumber);
       if (activeConversationID == null){
-          conversationsManagementFunctions.createConversation(recipientPhoneNumber, '');
+          conversationsManagementFunctions.createConversation(recipientPhoneNumber, '', agentID, null);
       }
       activeConversationID = conversationsManagementFunctions.getActiveConversationID(recipientPhoneNumber);
       const messageInformation = 
@@ -785,7 +785,7 @@ module.exports = {
                 httpResponsePartsToSendWhatsappTextMessage.push(httpResponsePartToSendWhatsappTextMessage);
                 var activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
                 if (activeConversationID == null){
-                    const newConversationID = conversationsManagementFunctions.createConversation(requestQuery['recipientPhoneNumber'], '');
+                    const newConversationID = conversationsManagementFunctions.createConversation(requestQuery['recipientPhoneNumber'], '', null);
                     agentsManagementFunctions.assignNewConversationToAgentWithLessActiveConversations(newConversationID, requestQuery['agentID']);
                 }
                 activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);

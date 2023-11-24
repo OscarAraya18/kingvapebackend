@@ -10,7 +10,7 @@ module.exports = {
     databaseManagementFunctions.saveDatabase(constants.routes.sucursalesDatabase, storesDatabase);
   },
 
-    createConversation: function (recipientPhoneNumber, recipientProfileName){
+    createConversation: function (recipientPhoneNumber, recipientProfileName, agentID){
         var conversationsDatabase = databaseManagementFunctions.readDatabase(constants.routes.conversationsDatabase);
         const currentDateAsString = generalFunctions.getCurrentDateAsString();
         var newConversationID = currentDateAsString;
@@ -29,7 +29,7 @@ module.exports = {
         {
             recipientPhoneNumber: recipientPhoneNumber,
             recipientProfileName: recipientProfileName,
-            assignedAgentID: null,
+            assignedAgentID: agentID,
             startDateObject: generalFunctions.getCurrentDateObject(),
             startDate: generalFunctions.getCurrentDateAsStringWithFormat(), 
             endDate: null, 
