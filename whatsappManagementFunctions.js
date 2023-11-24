@@ -682,7 +682,7 @@ module.exports = {
         'to': recipientPhoneNumber, 
         "type": "template",
         "template": {
-          "name": "bienvenida",
+          "name": "despedida",
           "language": {
             "code": "es"
           },
@@ -716,7 +716,7 @@ module.exports = {
           messageReadHour: null,
           messageStatus: 'sent',
           messageType: 'text',
-          messageContent: 'Mensaje de bienvenida enviado al cliente. Esperando respuesta...',
+          messageContent: 'Mensaje de despedida enviado al cliente.',
           dateObject: new Date().toString()
       }
   
