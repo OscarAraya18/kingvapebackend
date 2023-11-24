@@ -27,7 +27,7 @@ var favoriteImagesDatabase = databaseManagementFunctions.readDatabase(constants.
 for (var agentID in agentsDatabase){
   agentsDatabase[agentID]['agentFavoriteImages'] = favoriteImagesDatabase;
 }
-databaseManagementFunctions.saveDatabase(agentsDatabase, favoriteImagesDatabase);
+databaseManagementFunctions.saveDatabase(constants.routes.agentsDatabase, agentsDatabase);
 
 
 backendHttpRequestServer.post('/changeName', (request, response) => {
