@@ -43,11 +43,22 @@ module.exports = {
       contactsDatabase[request.contactID] = 
       {
         'contactName': request.contactName,
+        'contactID': '',
         'contactPhoneNumber': request.contactID,
         'contactEmail': request.contactEmail,
         'contactLocation': {
-          'latitude': '0',
-          'longitude': '0'
+          'CASA': {
+            'latitude': 0,
+            'longitude': 0
+          },
+          'TRABAJO': {
+            'latitude': 0,
+            'longitude': 0
+          },
+          'OTRO': {
+            'latitude': 0,
+            'longitude': 0
+          }
         },
         'contactLocationDetails': request.contactLocationDetails,
         'contactNote': request.contactNote
