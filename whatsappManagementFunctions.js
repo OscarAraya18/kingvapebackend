@@ -195,8 +195,7 @@ module.exports = {
       };
 
       sendWhatsappMessageData = JSON.stringify(sendWhatsappMessageData);
-      const messageSendResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
-      const messageID = messageSendResult.result;
+      const sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
 
 
       var activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
@@ -206,7 +205,7 @@ module.exports = {
       activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
       const messageInformation = 
       {
-          messageID: messageID,
+          messageID: sendWhatsappMessageResult.messageID,
           owner: 'agent',
           messageSentDate: generalFunctions.getCurrentDateAsStringWithFormat(),
           messageSentHour: generalFunctions.getCurrentHourAsStringWithFormat(),
@@ -255,7 +254,6 @@ module.exports = {
         };
         sendWhatsappMessageData = JSON.stringify(sendWhatsappMessageData);
         const sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
-        const messageID = sendWhatsappMessageResult.result;
         var activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
         if (activeConversationID == null){
             conversationsManagementFunctions.createConversation(requestQuery['recipientPhoneNumber'], '', null);
@@ -263,7 +261,7 @@ module.exports = {
         activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
         const messageInformation = 
         {
-            messageID: messageID,
+            messageID: sendWhatsappMessageResult.messageID,
             owner: 'agent',
             messageSentDate: generalFunctions.getCurrentDateAsStringWithFormat(),
             messageSentHour: generalFunctions.getCurrentHourAsStringWithFormat(),
@@ -550,11 +548,10 @@ module.exports = {
 
       sendWhatsappMessageData = JSON.stringify(sendWhatsappMessageData);
       const sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
-      const messageID = sendWhatsappMessageResult.result;
 
       const messageInformation = 
       {
-          messageID: messageID,
+          messageID: sendWhatsappMessageResult.result,
           owner: 'agent',
           messageSentDate: generalFunctions.getCurrentDateAsStringWithFormat(),
           messageSentHour: generalFunctions.getCurrentHourAsStringWithFormat(),
@@ -623,11 +620,10 @@ module.exports = {
       };
       sendWhatsappMessageData = JSON.stringify(sendWhatsappMessageData);
       const sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
-      const messageID = sendWhatsappMessageResult.result;
 
       const messageInformation = 
       {
-          messageID: messageID,
+          messageID: sendWhatsappMessageResult.result,
           owner: 'agent',
           messageSentDate: generalFunctions.getCurrentDateAsStringWithFormat(),
           messageSentHour: generalFunctions.getCurrentHourAsStringWithFormat(),
@@ -667,10 +663,9 @@ module.exports = {
       };
       sendWhatsappMessageData = JSON.stringify(sendWhatsappMessageData);
       const sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
-      const messageID = sendWhatsappMessageResult.result;
       const messageInformation = 
       {
-          messageID: messageID,
+          messageID: sendWhatsappMessageResult.result,
           owner: 'agent',
           messageSentDate: generalFunctions.getCurrentDateAsStringWithFormat(),
           messageSentHour: generalFunctions.getCurrentHourAsStringWithFormat(),
@@ -717,10 +712,9 @@ module.exports = {
       };
       sendWhatsappMessageData = JSON.stringify(sendWhatsappMessageData);
       const sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
-      const messageID = sendWhatsappMessageResult.messageID;
       const messageInformation = 
       {
-          messageID: messageID,
+          messageID: sendWhatsappMessageResult.result,
           owner: 'agent',
           messageSentDate: generalFunctions.getCurrentDateAsStringWithFormat(),
           messageSentHour: generalFunctions.getCurrentHourAsStringWithFormat(),
@@ -769,7 +763,6 @@ module.exports = {
       };
       sendWhatsappMessageData = JSON.stringify(sendWhatsappMessageData);
       const sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
-      const messageID = sendWhatsappMessageResult.messageID;
       var activeConversationID = conversationsManagementFunctions.getActiveConversationID(numero);
       if (activeConversationID == null){
         conversationsManagementFunctions.createConversation(numero, '', agentID, null);
@@ -778,7 +771,7 @@ module.exports = {
 
       const messageInformation = 
       {
-          messageID: messageID,
+          messageID: sendWhatsappMessageResult.messageID,
           owner: 'agent',
           messageSentDate: generalFunctions.getCurrentDateAsStringWithFormat(),
           messageSentHour: generalFunctions.getCurrentHourAsStringWithFormat(),
@@ -846,7 +839,6 @@ module.exports = {
       };
       sendWhatsappMessageData = JSON.stringify(sendWhatsappMessageData);
       const sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
-      const messageID = sendWhatsappMessageResult.messageID;
 
       var activeConversationID = conversationsManagementFunctions.getActiveConversationID(recipientPhoneNumber);
       if (activeConversationID == null){
@@ -855,7 +847,7 @@ module.exports = {
       activeConversationID = conversationsManagementFunctions.getActiveConversationID(recipientPhoneNumber);
       const messageInformation = 
       {
-          messageID: messageID, 
+          messageID: sendWhatsappMessageResult.messageID, 
           owner: 'agent',
           messageSentDate: generalFunctions.getCurrentDateAsStringWithFormat(),
           messageSentHour: generalFunctions.getCurrentHourAsStringWithFormat(),
