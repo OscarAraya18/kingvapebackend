@@ -487,6 +487,7 @@ module.exports = {
       var activeConversationID = conversationsManagementFunctions.getActiveConversationID(recipientPhoneNumber);
         var newConversation = false;
         if (activeConversationID == null){
+            console.log('paso por aqui')
             const newConversationID = conversationsManagementFunctions.createConversation(recipientPhoneNumber, recipientProfileName, null);
             agentsManagementFunctions.assignNewConversationToAgentWithLessActiveConversations(newConversationID, null);
             newConversation = true;
