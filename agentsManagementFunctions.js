@@ -235,7 +235,7 @@ module.exports = {
       var agentsDatabase = databaseManagementFunctions.readDatabase(constants.routes.agentsDatabase);
       var conversationsDatabase = databaseManagementFunctions.readDatabase(constants.routes.conversationsDatabase);
       var storesDatabase = databaseManagementFunctions.readDatabase(constants.routes.sucursalesDatabase);
-      delete storesDatabase[recipientPhoneNumber];
+      delete storesDatabase[recipientPhoneNumber]; 
       agentsDatabase[agentID].agentActiveConversations.push(activeConversationID);
       conversationsDatabase[activeConversationID].assignedAgentID = agentID;
       databaseManagementFunctions.saveDatabase(constants.routes.agentsDatabase, agentsDatabase);
