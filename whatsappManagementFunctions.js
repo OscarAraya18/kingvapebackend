@@ -115,7 +115,7 @@ module.exports = {
         httpResponseToSendWhatsappTextMessage.on('end', function (httpResponsePartToSendWhatsappTextMessage) {
             httpResponsePartsToSendWhatsappTextMessage.push(httpResponsePartToSendWhatsappTextMessage);
 
-            console.log(httpResponsePartsToSendWhatsappTextMessage);
+            console.log(httpResponsePartsToSendWhatsappTextMessage.toString());
             var activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
             if (activeConversationID == null){
                 const newConversationID = conversationsManagementFunctions.createConversation(requestQuery['recipientPhoneNumber'], '', null);
