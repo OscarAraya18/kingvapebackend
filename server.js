@@ -22,6 +22,14 @@ const server = backendHttpRequestServer.listen(constants.backendHttpRequestServe
 
 const backendWebsocketServerConnection = new WebSocket.Server({server});
 
+var agentsDatabase = databaseManagementFunctions.readDatabase(constants.routes.agentsDatabase);
+var favoriteImagesDatabase = databaseManagementFunctions.readDatabase(constants.routes.favoriteImagesDatabase);
+for (var agentID in agentsDatabase){
+  agentsDatabase[agentID]['agentFavoriteImages'] = favoriteImagesDatabase;
+}
+databaseManagementFunctions.saveDatabase(agentsDatabase, favoriteImagesDatabase);
+
+
 backendHttpRequestServer.post('/changeName', (request, response) => {
   whatsappManagementFunctions.changeName(request.body.newName);
 });
