@@ -253,6 +253,7 @@ module.exports = {
         };
         sendWhatsappMessageData = JSON.stringify(sendWhatsappMessageData);
         const sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
+        console.log(sendWhatsappMessageResult);
         var activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
         if (activeConversationID == null){
             conversationsManagementFunctions.createConversation(requestQuery['recipientPhoneNumber'], '', null);
@@ -281,9 +282,7 @@ module.exports = {
         websocketManagementFunctions.sendWhatsappMessage(websocketConnection, activeConversationID, messageInformation);
         conversationsManagementFunctions.addMessageToConversation(activeConversationID, messageInformation);
         frontendResponse.end(sendWhatsappMessageResult.messageID);
-        return sendWhatsappMessageResult.messageID;
-       
-        
+               
     },
 
     updateWhatsappMessageStatus: function(requestToUpdateWhatsappMessageStatus, frontendResponse){
