@@ -24,9 +24,8 @@ module.exports = {
     agentsDatabase[agentID]['agentProfilePicture'] = agentProfilePicture;
     databaseManagementFunctions.saveDatabase(constants.routes.agentsDatabase, agentsDatabase);
   },
-  updateAgentAutomaticMessages: function(agentID, agentWelcomeImage, agentWelcomeMessage, agentEndMessage){
+  updateAgentAutomaticMessages: function(agentID, agentWelcomeMessage, agentEndMessage){
     const agentsDatabase = databaseManagementFunctions.readDatabase(constants.routes.agentsDatabase);
-    agentsDatabase[agentID]['agentWelcomeImage'] = agentWelcomeImage;
     agentsDatabase[agentID]['agentWelcomeMessage'] = agentWelcomeMessage;
     agentsDatabase[agentID]['agentEndMessage'] = agentEndMessage;
     databaseManagementFunctions.saveDatabase(constants.routes.agentsDatabase, agentsDatabase);

@@ -37,12 +37,12 @@ backendHttpRequestServer.post('/agentLogin', (request, response) => {
   const applicationDatabase = databaseManagementFunctions.readDatabase(constants.routes.applicationDatabase);
   if (agentInformation.agentID != null){
     if (applicationDatabase['applicationStatus'] == 'on'){
-      response.end(JSON.stringify({'success': true, 'agentID': agentInformation.agentID, 'agentName': agentInformation.agentName, 'agentUsername': agentInformation.agentUsername, 'agentPassword': agentInformation.agentPassword, 'agentType': agentInformation.agentType, 'agentProfilePicture': agentInformation.agentProfilePicture, 'agentWelcomeMessage': agentInformation.agentWelcomeMessage, 'agentWelcomeImage': agentInformation.agentWelcomeImage, 'agentEndMessage': agentInformation.agentEndMessage, 'agentFavoriteMessages': agentInformation.agentFavoriteMessages, 'agentFavoriteImages': agentInformation.agentFavoriteImages}));
+      response.end(JSON.stringify({'success': true, 'agentID': agentInformation.agentID, 'agentName': agentInformation.agentName, 'agentUsername': agentInformation.agentUsername, 'agentPassword': agentInformation.agentPassword, 'agentType': agentInformation.agentType, 'agentProfilePicture': agentInformation.agentProfilePicture, 'agentWelcomeMessage': agentInformation.agentWelcomeMessage, 'agentEndMessage': agentInformation.agentEndMessage, 'agentFavoriteMessages': agentInformation.agentFavoriteMessages}));
     } else {
       if (agentInformation.agentType != 'admin'){
         response.end(JSON.stringify({'success': false, 'applicationStatus': applicationDatabase['applicationStatus']}));
       } else {
-        response.end(JSON.stringify({'success': true, 'agentID': agentInformation.agentID, 'agentName': agentInformation.agentName, 'agentUsername': agentInformation.agentUsername, 'agentPassword': agentInformation.agentPassword, 'agentType': agentInformation.agentType, 'agentProfilePicture': agentInformation.agentProfilePicture, 'agentWelcomeMessage': agentInformation.agentWelcomeMessage, 'agentWelcomeImage': agentInformation.agentWelcomeImage, 'agentEndMessage': agentInformation.agentEndMessage, 'agentFavoriteMessages': agentInformation.agentFavoriteMessages, 'agentFavoriteImages': agentInformation.agentFavoriteImages}));
+        response.end(JSON.stringify({'success': true, 'agentID': agentInformation.agentID, 'agentName': agentInformation.agentName, 'agentUsername': agentInformation.agentUsername, 'agentPassword': agentInformation.agentPassword, 'agentType': agentInformation.agentType, 'agentProfilePicture': agentInformation.agentProfilePicture, 'agentWelcomeMessage': agentInformation.agentWelcomeMessage, 'agentEndMessage': agentInformation.agentEndMessage, 'agentFavoriteMessages': agentInformation.agentFavoriteMessages}));
       }
     }
   } else {
@@ -56,7 +56,7 @@ backendHttpRequestServer.post('/updateAgentLoginCredentials', (request, response
 });
 backendHttpRequestServer.post('/updateAgentAutomaticMessages', (request, response) => {
   const requestQuery = request.body;
-  agentsManagementFunctions.updateAgentAutomaticMessages(requestQuery.agentID, requestQuery.agentWelcomeImage, requestQuery.agentWelcomeMessage, requestQuery.agentEndMessage);
+  agentsManagementFunctions.updateAgentAutomaticMessages(requestQuery.agentID, requestQuery.agentWelcomeMessage, requestQuery.agentEndMessage);
   response.end('');
 });
 backendHttpRequestServer.post('/updateAgentFavoriteMessage', (request, response) => {
@@ -159,9 +159,9 @@ backendHttpRequestServer.get('/getTodaysDashboardInformation', (request, respons
 });
 
 
-backendHttpRequestServer.post('/sendWhatsappAudio', (request, response) => {
-  whatsappManagementFunctions.sendWhatsappAudioMessage(request.body, backendWebsocketServerConnection);
-  response.end('');
+backendHttpRequestServer.post('/sendWhatsappAudio', async (request, response) => {
+  const sendWhatsappAudioMessageResult = await whatsappManagementFunctions.sendWhatsappAudioMessage(request.body, backendWebsocketServerConnection);
+  response.end(JSON.stringify(sendWhatsappAudioMessageResult));
 });
 
 backendHttpRequestServer.get('/sendWhatsappMessage', async (request, response) => {

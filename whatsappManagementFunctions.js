@@ -16,11 +16,11 @@ const uuidv4 = require('uuid');
 const sharp = require('sharp');
 sharp.cache({files : 0});
 
-/*
+
 const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 const ffmpeg = require('fluent-ffmpeg');
 ffmpeg.setFfmpegPath(ffmpegPath);
-*/
+
 
 module.exports = {
   
@@ -54,11 +54,12 @@ module.exports = {
   uploadWhatsappAudioFile: async function(whatsappAudioMessageFile){
     return new Promise(async (uploadWhatsappAudioFilePromiseResolve) => {
       const uploadWhatsappAudioMessageURL = `https://graph.facebook.com/${constants.credentials.apiVersion}/${constants.credentials.phoneNumberID}/media`;
-      const originalAudioName = `${uuidv4.v4()}-${Date.now()}.mp3`;
-      const convertedAudioName = `${uuidv4.v4()}-${Date.now()}.mp3`;
+      const originalAudioName = `${uuidv4.v4()}-${Date.now()}.ogg`;
+      const convertedAudioName = `${uuidv4.v4()}-${Date.now()}.ogg`;
+      whatsappAudioMessageFile = whatsappAudioMessageFile.split(',')[1];
       var whatsappAudioMessageFileBuffer = Buffer.from(whatsappAudioMessageFile, 'base64');
       fs.writeFileSync(originalAudioName, whatsappAudioMessageFileBuffer);
-      ffmpeg().input(originalAudioName).toFormat('mp3').on('end', () => {
+      ffmpeg().input(originalAudioName).audioCodec('libopus').format('ogg').on('end', () => {
         fs.unlink(originalAudioName, async (errorWhenDeletingOriginalAudioFile) => {
           if (!errorWhenDeletingOriginalAudioFile) {
             var whatsappAudioMessageFile = fs.readFileSync(convertedAudioName);
@@ -66,7 +67,7 @@ module.exports = {
             const temporaryAudioStream = fs.createReadStream(convertedAudioName);
             const uploadWhatsappAudioMessageParameters = new FormData();
             uploadWhatsappAudioMessageParameters.append('messaging_product', 'whatsapp');
-            uploadWhatsappAudioMessageParameters.append('type', 'audio/mp3');
+            uploadWhatsappAudioMessageParameters.append('type', 'audio/ogg; codecs=opus');
             uploadWhatsappAudioMessageParameters.append('file', temporaryAudioStream);
             const uploadWhatsappAudioMessageHeaders = uploadWhatsappAudioMessageParameters.getHeaders();
             uploadWhatsappAudioMessageHeaders['Authorization'] = `Bearer ${constants.credentials.apiKey}`;
@@ -75,19 +76,28 @@ module.exports = {
                 if (!errorWhenDeletingConvertedAudio) {
                   const whatsappAudioMessageFileID = httpResponse.data.id;
                   uploadWhatsappAudioFilePromiseResolve({success: true, result: {whatsappAudioMessageFileID: whatsappAudioMessageFileID, whatsappAudioMessageFile: whatsappAudioMessageFile}});
+                } else {
+                  console.log('3')
                 }
               });
             })
             .catch(() => {
+              console.log('2')
             });
+          } else {
+            console.log('1')
           }
         });
       })
-      .on('error', () => {
+      .on('error', (error, stdout, stderr) => {
+        console.log('FFmpeg error:', error);
+        console.log('FFmpeg stdout:', stdout);
+        console.log('FFmpeg stderr:', stderr);
       })
       .save(convertedAudioName);
     });
   },
+  
   sendWhatsappAudioMessage: async function(requestQuery, websocketConnection){
     const whatsappAudioMessageFile = requestQuery.audioFile;
     const whatsappConversationRecipientPhoneNumber = requestQuery.recipientPhoneNumber;
@@ -102,7 +112,36 @@ module.exports = {
         'type': 'audio',
         'audio': {'id': whatsappAudioMessageFileID}
       };
-      console.log(JSON.stringify(sendWhatsappMessageData));
+      const sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
+
+      const messageID = sendWhatsappMessageResult.result;
+      var activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
+      if (activeConversationID == null){
+          const newConversationID = conversationsManagementFunctions.createConversation(requestQuery['recipientPhoneNumber'], '', null);
+          agentsManagementFunctions.assignNewConversationToAgentWithLessActiveConversations(newConversationID, requestQuery['agentID']);
+      }
+      activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
+      
+      const messageInformation = 
+      {
+          messageID: messageID,
+          owner: 'agent',
+          messageSentDate: generalFunctions.getCurrentDateAsStringWithFormat(),
+          messageSentHour: generalFunctions.getCurrentHourAsStringWithFormat(),
+          messageDeliveryDate: null,
+          messageDeliveryHour: null,
+          messageReadDate: null,
+          messageReadHour: null,
+          messageStatus: 'sent',
+          messageType: 'audio',
+          messageContent: {mediaContent: whatsappAudioMessageFile},
+          dateObject: new Date().toString()
+      }
+      websocketManagementFunctions.sendWhatsappMessage(websocketConnection, activeConversationID, messageInformation);
+      conversationsManagementFunctions.addMessageToConversation(activeConversationID, messageInformation);
+      return {whatsappMessageID: messageID, whatsappAudioMessageFile: whatsappAudioMessageFile};
+    } else {
+      console.log('error');
     }
   },
 
