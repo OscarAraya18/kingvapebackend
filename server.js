@@ -34,6 +34,11 @@ backendHttpRequestServer.post('/getHistoryConversations', async (request, respon
   response.end(JSON.stringify(historyConversations));
 });
 
+backendHttpRequestServer.post('/openHistoryConversation', async (request, response) => {
+  const historyConversation = databaseManagementFunctions.readDatabase(constants.routes.conversationsDatabase)[request.body.conversationID];
+  response.end(JSON.stringify(historyConversation));
+});
+
 
 
 backendHttpRequestServer.post('/changeName', (request, response) => {

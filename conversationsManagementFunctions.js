@@ -10,10 +10,12 @@ module.exports = {
     const agentsDatabase = databaseManagementFunctions.readDatabase(constants.routes.agentsDatabase);
     for (var conversationID in conversationsDatabase){
       if (conversationsDatabase[conversationID].recipientPhoneNumber == recipientPhoneNumber){
-        var conversationWithoutMessages = conversationsDatabase[conversationID];
-        conversationWithoutMessages['assignedAgentName'] = agentsDatabase[conversationWithoutMessages['assignedAgentID']].agentName;
-        delete conversationWithoutMessages['messages']
-        historyConversations[conversationID] = conversationWithoutMessages;
+        if (conversationsDatabase[conversationID].recipientPhoneNumber.active == true) {
+          var conversationWithoutMessages = conversationsDatabase[conversationID];
+          conversationWithoutMessages['assignedAgentName'] = agentsDatabase[conversationWithoutMessages['assignedAgentID']].agentName;
+          delete conversationWithoutMessages['messages']
+          historyConversations[conversationID] = conversationWithoutMessages;
+        }
       }
     }
     return historyConversations;
