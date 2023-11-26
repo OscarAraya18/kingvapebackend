@@ -4,6 +4,21 @@ const databaseManagementFunctions = require('./databaseManagementFunctions.js');
 const agentsManagementFunctions = require('./agentsManagementFunctions.js');
 
 module.exports = {
+  getHistoryConversations: function (recipientPhoneNumber){
+    var historyConversations = {};
+    const conversationsDatabase = databaseManagementFunctions.readDatabase(constants.routes.conversationsDatabase);
+    const agentsDatabase = databaseManagementFunctions.readDatabase(constants.routes.agentsDatabase);
+    for (var conversationID in conversationsDatabase){
+      if (conversationsDatabase[conversationID].recipientPhoneNumber == recipientPhoneNumber){
+        var conversationWithoutMessages = conversationsDatabase[conversationID];
+        conversationWithoutMessages['assignedAgentName'] = agentsDatabase[conversationWithoutMessages['assignedAgentID']].agentName;
+        delete conversationWithoutMessages['messages']
+        historyConversations[conversationID] = conversationWithoutMessages;
+      }
+    }
+    return historyConversations;
+  },
+
   deleteStoreConversation: function (recipientPhoneNumber){
     var storesDatabase = databaseManagementFunctions.readDatabase(constants.routes.sucursalesDatabase);
     delete storesDatabase[recipientPhoneNumber];

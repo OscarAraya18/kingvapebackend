@@ -28,6 +28,14 @@ backendHttpRequestServer.post('/getFavoriteImages', (request, response) => {
   response.end(JSON.stringify(favoriteImagesDatabase))
 });
 
+
+backendHttpRequestServer.post('/getHistoryConversations', async (request, response) => {
+  const historyConversations = conversationsManagementFunctions.getHistoryConversations(request.body.recipientPhoneNumber);
+  response.end(JSON.stringify(historyConversations));
+});
+
+
+
 backendHttpRequestServer.post('/changeName', (request, response) => {
   whatsappManagementFunctions.changeName(request.body.newName);
 });
