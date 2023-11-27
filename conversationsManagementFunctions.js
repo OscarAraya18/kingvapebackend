@@ -9,8 +9,9 @@ module.exports = {
     const conversationsDatabase = databaseManagementFunctions.readDatabase(constants.routes.conversationsDatabase);
     const agentsDatabase = databaseManagementFunctions.readDatabase(constants.routes.agentsDatabase);
     for (var conversationID in conversationsDatabase){
+      //console.log(conversationsDatabase[conversationID])
       if (conversationsDatabase[conversationID].recipientPhoneNumber == recipientPhoneNumber){
-        if (conversationsDatabase[conversationID].active == true) {
+        if (conversationsDatabase[conversationID].active == false) {
           var conversationWithoutMessages = conversationsDatabase[conversationID];
           conversationWithoutMessages['assignedAgentName'] = agentsDatabase[conversationWithoutMessages['assignedAgentID']].agentName;
           delete conversationWithoutMessages['messages']

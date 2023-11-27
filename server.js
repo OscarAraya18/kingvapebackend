@@ -36,6 +36,7 @@ backendHttpRequestServer.post('/getHistoryConversations', async (request, respon
 
 backendHttpRequestServer.post('/openHistoryConversation', async (request, response) => {
   const historyConversation = databaseManagementFunctions.readDatabase(constants.routes.conversationsDatabase)[request.body.conversationID];
+  console.log(historyConversation);
   response.end(JSON.stringify(historyConversation));
 });
 
