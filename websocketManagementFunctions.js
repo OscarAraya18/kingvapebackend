@@ -186,6 +186,32 @@ module.exports = {
       });
     },
 
+    addClosedCount: function(websocketConnection, agentID){
+      websocketConnection.clients.forEach(function each(client) {
+          if (client.readyState === WebSocket.OPEN) {
+              const messageToSendByWebsocket = 
+              {
+                  websocketMessageID: 'addClosedCount',
+                  agentID: agentID,
+              }
+              client.send(JSON.stringify(messageToSendByWebsocket));
+          }
+      });
+    },
+
+    addActiveCount: function(websocketConnection, agentID){
+      websocketConnection.clients.forEach(function each(client) {
+          if (client.readyState === WebSocket.OPEN) {
+            const messageToSendByWebsocket = 
+            {
+                websocketMessageID: 'addActiveCount',
+                agentID: agentID,
+            }
+            client.send(JSON.stringify(messageToSendByWebsocket));
+          }
+      });
+    },
+
     addConversationCount: function(websocketConnection, agentID){
       websocketConnection.clients.forEach(function each(client) {
           if (client.readyState === WebSocket.OPEN) {

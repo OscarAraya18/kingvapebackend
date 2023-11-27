@@ -122,6 +122,8 @@ backendHttpRequestServer.post('/grabPendingConversation', (request, response) =>
   const messageContent = agentsDatabase[request.body.agentID].agentWelcomeMessage;
   const mediaContent = agentsDatabase[request.body.agentID].agentWelcomeImage;
   whatsappManagementFunctions.sendWhatsappPendingConversationMessage(recipientPhoneNumber, mediaContent, messageContent, request.body, backendWebsocketServerConnection);
+  websocketManagementFunctions.addActiveCount(backendWebsocketServerConnection, request.body.agentID);
+
   response.end('');
 });
 backendHttpRequestServer.post('/grabStoreConversation', (request, response) => {
@@ -133,6 +135,8 @@ backendHttpRequestServer.post('/grabStoreConversation', (request, response) => {
   const mediaContent = agentsDatabase[request.body.agentID].agentWelcomeImage;
   const storeName = request.body.storeName;
   whatsappManagementFunctions.sendWhatsappStoreConversationMessage(storeName, recipientPhoneNumber, agentID, messageID, mediaContent, messageContent, backendWebsocketServerConnection);
+  websocketManagementFunctions.addActiveCount(backendWebsocketServerConnection, request.body.agentID);
+
   response.end('');
 });
 backendHttpRequestServer.post('/requestTransfer', (request, response) => {
@@ -175,6 +179,7 @@ backendHttpRequestServer.get('/getTodaysDashboardInformation', (request, respons
 
 backendHttpRequestServer.post('/sendWhatsappAudio', async (request, response) => {
   const sendWhatsappAudioMessageResult = await whatsappManagementFunctions.sendWhatsappAudioMessage(request.body, backendWebsocketServerConnection);
+  agentsManagementFunctions.addMessageCount(requestQuery['agentID'], backendWebsocketServerConnection);
   response.end(JSON.stringify(sendWhatsappAudioMessageResult));
 });
 
@@ -274,6 +279,8 @@ backendHttpRequestServer.get('/closeConversation', (request, response) => {
     const requestQuery = url.parse(request.url,true).query;
     conversationsManagementFunctions.closeConversation(requestQuery['conversationID'], requestQuery['conversationStatus'], requestQuery['amount']);
     whatsappManagementFunctions.sendAutomaticWhatsappTextMessage(conversationsDatabase[requestQuery['conversationID']].recipientPhoneNumber, agentsDatabase[conversationsDatabase[requestQuery['conversationID']].assignedAgentID].agentEndMessage, backendWebsocketServerConnection);
+    websocketManagementFunctions.addClosedCount(backendWebsocketServerConnection, requestQuery['agentID']);
+
     response.end('');
 });
 

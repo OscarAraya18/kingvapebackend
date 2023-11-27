@@ -176,7 +176,7 @@ module.exports = {
         websocketManagementFunctions.transferConversation(websocketConnection, conversationsDatabase[activeConversationID], activeConversationID, newAgentID, agentsDatabase[newAgentID].agentName, false);
     },
 
-    assignNewConversationToAgentWithLessActiveConversations: function (newConversationID, agentID){
+    assignNewConversationToAgentWithLessActiveConversations: function (newConversationID, agentID, websocketConnection){
         var conversationsDatabase = databaseManagementFunctions.readDatabase(constants.routes.conversationsDatabase);
         var agentsDatabase = databaseManagementFunctions.readDatabase(constants.routes.agentsDatabase);
         var agentsWithLessActiveConversations = [];
@@ -207,6 +207,8 @@ module.exports = {
             databaseManagementFunctions.saveDatabase(constants.routes.conversationsDatabase, conversationsDatabase);
             databaseManagementFunctions.saveDatabase(constants.routes.agentsDatabase, agentsDatabase);
         }
+        websocketManagementFunctions.addActiveCount(websocketConnection, agentID);
+
     },
 
     assignConversationToAgent: function (conversationID, agentID){
