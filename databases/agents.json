@@ -131,5 +131,21 @@
     "agentSendedMessages": 0,
     "agentStatus": "offline",
     "agentType": "admin"
+  },
+  "5566778899": {
+    "agentName": "Arafat",
+    "agentUsername": "arafat",
+    "agentPassword": "kvadmin",
+    "agentProfilePicture": "",
+    "agentWelcomeMessage": "Mensaje de bienvenida",
+    "agentEndMessage": "Mensaje de despedida",
+    "agentFavoriteMessages": [],
+    "agentActiveConversations": [],
+    "agentFinishedConversations": [],
+    "agentReceivedMessages": 0,
+    "agentReadedMessages": 0,
+    "agentSendedMessages": 0,
+    "agentStatus": "offline",
+    "agentType": "admin"
   }
 }
