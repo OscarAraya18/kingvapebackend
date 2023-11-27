@@ -260,6 +260,7 @@ module.exports = {
           messageReadHour: null,
           messageStatus: 'sent',
           messageType: 'image',
+          messageContext: '',
           messageContent: 
           {
               'isBase64': '0',
@@ -688,7 +689,8 @@ module.exports = {
           messageStatus: 'sent',
           messageType: 'text',
           messageContent: 'Mensaje de bienvenida enviado al cliente. Esperando respuesta...',
-          dateObject: new Date().toString()
+          dateObject: new Date().toString(),
+          messageContext: ''
       }
       
       var activeConversationID = conversationsManagementFunctions.getActiveConversationID(recipientPhoneNumber);
@@ -730,7 +732,8 @@ module.exports = {
           messageStatus: 'sent',
           messageType: 'text',
           messageContent: 'Mensaje de espera enviado al cliente. Esperando respuesta...',
-          dateObject: new Date().toString()
+          dateObject: new Date().toString(),
+          messageContext: ''
       }
   
       websocketManagementFunctions.sendWhatsappMessage(websocketConnection, activeConversationID, messageInformation);
@@ -781,6 +784,7 @@ module.exports = {
           messageStatus: 'sent',
           messageType: 'text',
           messageContent: 'Mensaje de despedida enviado al cliente.',
+          messageContext: '',
           dateObject: new Date().toString()
       }
   

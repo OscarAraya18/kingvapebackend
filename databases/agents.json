@@ -49,7 +49,7 @@
     "agentReceivedMessages": 0,
     "agentReadedMessages": 0,
     "agentSendedMessages": 0,
-    "agentStatus": "online",
+    "agentStatus": "offline",
     "agentType": "agent"
   },
   "118900985": {
@@ -112,7 +112,7 @@
     "agentFinishedConversations": [],
     "agentReceivedMessages": 0,
     "agentReadedMessages": 0,
-    "agentSendedMessages": 15,
+    "agentSendedMessages": 0,
     "agentStatus": "offline",
     "agentType": "agent"
   },
