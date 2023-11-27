@@ -634,12 +634,10 @@ module.exports = {
         const sendWhatsappMessageHeaders = {'Content-Type': 'application/json', 'Authorization': `Bearer ${constants.credentials.apiKey}`};
         axios.post(sendWhatsappMessageURL, sendWhatsappMessageData, {headers: sendWhatsappMessageHeaders}).then((response) => {
           const whatsappMessageID = response.data.messages[0].id;
-          console.log(whatsappMessageID);
           sendWhatsappMessagePromiseResolve({success: true, result: whatsappMessageID});
         })
         .catch((error) => {
           console.log(error);
-          console.log('Hay error');
         });  
       });
     },
@@ -929,6 +927,7 @@ module.exports = {
       if (requestQuery.messageContext != ''){
         sendWhatsappMessageData['context'] = {'message_id': requestQuery.messageContext};
       }
+      console.log(sendWhatsappMessageData);
 
       sendWhatsappMessageData = JSON.stringify(sendWhatsappMessageData);
       const sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
