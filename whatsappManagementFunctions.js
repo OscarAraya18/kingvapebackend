@@ -153,7 +153,9 @@ module.exports = {
         'type': 'text', 
         'text': {'body': requestQuery['messageContent']}
       };
-
+      if (requestQuery.messageContext != ''){
+        sendWhatsappMessageData['context'] = {'message_id': requestQuery.messageContext};
+      }
       sendWhatsappMessageData = JSON.stringify(sendWhatsappMessageData);
       const sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
 
@@ -173,6 +175,7 @@ module.exports = {
       const messageInformation = 
       {
           messageID: messageID,
+          messageContext: requestQuery.messageContext,
           owner: 'agent',
           messageSentDate: generalFunctions.getCurrentDateAsStringWithFormat(),
           messageSentHour: generalFunctions.getCurrentHourAsStringWithFormat(),
