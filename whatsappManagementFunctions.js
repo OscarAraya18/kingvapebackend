@@ -112,6 +112,9 @@ module.exports = {
         'type': 'audio',
         'audio': {'id': whatsappAudioMessageFileID}
       };
+      if (requestQuery.messageContext != ''){
+        sendWhatsappMessageData['context'] = {'message_id': requestQuery.messageContext};
+      }
       const sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
 
       const messageID = sendWhatsappMessageResult.result;
@@ -134,6 +137,7 @@ module.exports = {
           messageReadHour: null,
           messageStatus: 'sent',
           messageType: 'audio',
+          messageContext: requestQuery.messageContext,
           messageContent: {mediaContent: whatsappAudioMessageFile},
           dateObject: new Date().toString()
       }
