@@ -48,7 +48,7 @@
     "agentFinishedConversations": [],
     "agentReceivedMessages": 0,
     "agentReadedMessages": 0,
-    "agentSendedMessages": 21,
+    "agentSendedMessages": 0,
     "agentStatus": "online",
     "agentType": "agent"
   },
@@ -96,7 +96,7 @@
     "agentFinishedConversations": [],
     "agentReceivedMessages": 0,
     "agentReadedMessages": 0,
-    "agentSendedMessages": 10,
+    "agentSendedMessages": 0,
     "agentStatus": "offline",
     "agentType": "agent"
   },
