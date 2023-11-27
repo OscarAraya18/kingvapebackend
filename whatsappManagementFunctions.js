@@ -297,6 +297,9 @@ module.exports = {
           'type': 'image', 
           'image': {'id': whatsappImageMessageFileID}
         };
+        if (requestQuery.messageContext != ''){
+          sendWhatsappMessageData['context'] = {'message_id': requestQuery.messageContext};
+        }
         sendWhatsappMessageData = JSON.stringify(sendWhatsappMessageData);
         const sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
         var activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
@@ -307,6 +310,7 @@ module.exports = {
         const messageInformation = 
         {
             messageID: sendWhatsappMessageResult.result,
+            messageContext: requestQuery.messageContext,
             owner: 'agent',
             messageSentDate: generalFunctions.getCurrentDateAsStringWithFormat(),
             messageSentHour: generalFunctions.getCurrentHourAsStringWithFormat(),
