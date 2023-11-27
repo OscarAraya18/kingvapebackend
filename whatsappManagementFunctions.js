@@ -926,6 +926,9 @@ module.exports = {
         'type': 'location', 
         'location': {'longitude': requestQuery['longitude'], 'latitude': requestQuery['latitude']}
       };
+      if (requestQuery.messageContext != ''){
+        sendWhatsappMessageData['context'] = {'message_id': requestQuery.messageContext};
+      }
 
       sendWhatsappMessageData = JSON.stringify(sendWhatsappMessageData);
       const sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
@@ -951,6 +954,7 @@ module.exports = {
           messageStatus: 'sent',
           messageType: 'location',
           messageContent: {locationLatitude: requestQuery['latitude'], locationLongitude: requestQuery['longitude']},
+          messageContext: requestQuery.messageContext,
           dateObject: new Date().toString()
       }
       websocketManagementFunctions.sendWhatsappMessage(websocketConnection, activeConversationID, messageInformation);
