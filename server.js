@@ -5,6 +5,7 @@ const conversationsManagementFunctions = require('./conversationsManagementFunct
 const contactsManagementFunctions = require('./contactsManagementFunctions.js');
 const databaseManagementFunctions = require('./databaseManagementFunctions.js');
 const websocketManagementFunctions = require('./websocketManagementFunctions.js');
+const generalFunctions = require('./generalFunctions.js');
 
 const url = require('url');
 const bodyParser = require('body-parser');
@@ -171,9 +172,129 @@ backendHttpRequestServer.post('/getContacts', (request, response) => {
 
 
 backendHttpRequestServer.get('/getTodaysDashboardInformation', (request, response) => {
-  const allClosedConversationsAmount = Object.keys(conversationsManagementFunctions.getConversations()).length;
-  const allConversationsAmount = allClosedConversationsAmount + allActiveConversationsAmount;
-  response.end(JSON.stringify({'amount': Object.keys(allClosedConversations).length + Object.keys(allActiveConversations).length}));
+  const conversationsDatabase = databaseManagementFunctions.readDatabase(constants.routes.conversationsDatabase);
+  const currentDateAsString = generalFunctions.getCurrentDateAsStringWithFormat();
+  
+  var currentTodayConversation = 0;
+  var currentTodayConverted = 0;
+  var currentTodayNotConverted = 0;
+  var currentTodayAmount = 0;
+
+  var currentTodaySent = 0;
+  var currentTodayReceived = 0;
+
+  for (var conversationID in conversationsDatabase){
+    if (conversationsDatabase[conversationID].startDate == currentDateAsString){
+      
+      currentTodayConversation = currentTodayConversation + 1;
+      if (conversationsDatabase[conversationID].active == false){
+        if (conversationsDatabase[conversationID].status == 'converted'){
+          currentTodayConverted = currentTodayConverted + 1;
+          currentTodayAmount = currentTodayAmount + parseInt(conversationsDatabase[conversationID].amount);
+        } else {
+          currentTodayNotConverted = currentTodayNotConverted + 1;
+        }
+      }
+
+      for (var messageID in conversationsDatabase[conversationID].messages){
+        if (conversationsDatabase[conversationID].messages[messageID].owner == 'agent'){
+          currentTodaySent = currentTodaySent + 1;
+        } else {
+          currentTodayReceived = currentTodayReceived + 1;
+        }
+      }
+    }
+  }
+
+  const result = 
+  {
+    currentTodayConversation: currentTodayConversation,
+    currentTodayConverted: currentTodayConverted,
+    currentTodayNotConverted: currentTodayNotConverted,
+    currentTodayAmount: currentTodayAmount,
+    currentTodaySent: currentTodaySent,
+    currentTodayReceived: currentTodayReceived
+  }
+  response.end(JSON.stringify(result));
+
+});
+
+
+backendHttpRequestServer.get('/getTodayReport', (request, response) => {
+  const conversationsDatabase = databaseManagementFunctions.readDatabase(constants.routes.conversationsDatabase);
+  const agentsDatabase = databaseManagementFunctions.readDatabase(constants.routes.agentsDatabase);
+  const currentDateAsString = generalFunctions.getCurrentDateAsStringWithFormat();
+  
+  var result = {};
+
+  for (var conversationID in conversationsDatabase){
+    if (conversationsDatabase[conversationID].startDate == currentDateAsString){
+      var agentName = agentsDatabase[conversationsDatabase[conversationID].assignedAgentID].agentName;
+      if (!(agentName in result)){
+        result[agentName] = 
+        {
+          agentName: agentName,
+          todayConversations: 0,
+          todayConvertedConversations: 0,
+          todayNotConvertedConversations: 0,
+          todayAmount: 0,
+          todaySent: 0,
+          todayReceived: 0
+        };
+      }
+      result[agentName]['todayConversations'] = result[agentName]['todayConversations'] + 1;
+      if (conversationsDatabase[conversationID].active == false){
+        if (conversationsDatabase[conversationID].status == 'converted'){
+          result[agentName]['todayConvertedConversations'] = result[agentName]['todayConvertedConversations'] + 1;
+          result[agentName]['todayAmount'] = result[agentName]['todayAmount'] + parseInt(conversationsDatabase[conversationID].amount);;
+        } else {
+          result[agentName]['todayNotConvertedConversations'] = result[agentName]['todayNotConvertedConversations'] + 1;
+        }
+      }
+
+      for (var messageID in conversationsDatabase[conversationID].messages){
+        if (conversationsDatabase[conversationID].messages[messageID].owner == 'agent'){
+          result[agentName]['todaySent'] = result[agentName]['todaySent'] + 1;
+        } else {
+          result[agentName]['todayReceived'] = result[agentName]['todayReceived'] + 1;
+        }
+      }
+    }
+
+  }
+
+  for (var agentID in agentsDatabase){
+    var agentName = agentsDatabase[agentID].agentName;
+    if (!(agentName in result)){
+      if (agentsDatabase[agentID].agentType == 'agent'){
+        result[agentName] = 
+        {
+          agentName: agentName,
+          todayConversations: 0,
+          todayConvertedConversations: 0,
+          todayNotConvertedConversations: 0,
+          todayAmount: 0,
+          todaySent: 0,
+          todayReceived: 0
+        };
+      }
+      
+    }
+  }
+
+  response.end(JSON.stringify(result));
+
+});
+
+
+backendHttpRequestServer.get('/getAgentOptions', async (request, response) => {
+  const agentsDatabase = databaseManagementFunctions.readDatabase(constants.routes.agentsDatabase);
+  var result = {};
+  for (var agentID in agentsDatabase){
+    var agentName = agentsDatabase[agentID].agentName;
+    result[agentName] = {value: agentID, text: agentName};
+  }
+  response.end(JSON.stringify(result));
 });
 
 
