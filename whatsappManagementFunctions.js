@@ -719,6 +719,8 @@ module.exports = {
       };
       sendWhatsappMessageData = JSON.stringify(sendWhatsappMessageData);
       const sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
+      var activeConversationID = conversationsManagementFunctions.getActiveConversationID(recipientPhoneNumber);
+
       const messageInformation = 
       {
           messageID: sendWhatsappMessageResult.result,
