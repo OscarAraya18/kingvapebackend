@@ -293,7 +293,7 @@ backendHttpRequestServer.get('/getAgentOptions', async (request, response) => {
   for (var agentID in agentsDatabase){
     var agentName = agentsDatabase[agentID].agentName;
     result[agentName] = {value: agentID, text: agentName};
-  }
+  } 
   response.end(JSON.stringify(result));
 });
 
