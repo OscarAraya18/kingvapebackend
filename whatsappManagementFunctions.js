@@ -628,6 +628,7 @@ module.exports = {
           conversationsManagementFunctions.createConversation(requestQuery['recipientPhoneNumber'], '', requestQuery['agentID']);
       }
       activeConversationID = conversationsManagementFunctions.getActiveConversationID(requestQuery['recipientPhoneNumber']);
+      agentsManagementFunctions.assignConversationToAgent(activeConversationID, requestQuery['agentID']);
       
       websocketManagementFunctions.startNewConversation(websocketConnection, databaseManagementFunctions.readDatabase(constants.routes.conversationsDatabase)[activeConversationID], activeConversationID, requestQuery['agentID']);
       websocketManagementFunctions.sendWhatsappMessage(websocketConnection, activeConversationID, messageInformation);
