@@ -164,8 +164,8 @@ module.exports = {
         var agentsDatabase = databaseManagementFunctions.readDatabase(constants.routes.agentsDatabase);
         var conversationsDatabase = databaseManagementFunctions.readDatabase(constants.routes.conversationsDatabase);
         const activeConversationIndex = agentsDatabase[previousAgentID].agentActiveConversations.indexOf(activeConversationID);
-        if (activeConversationIndex !== -1) {
-            agentsDatabase[previousAgentID].agentActiveConversations.splice(activeConversationIndex, 1);
+        if (activeConversationIndex != -1) {
+          agentsDatabase[previousAgentID].agentActiveConversations.splice(activeConversationIndex, 1);
         }
         agentsDatabase[newAgentID].agentActiveConversations.push(activeConversationID);
         conversationsDatabase[activeConversationID].assignedAgentID = newAgentID;
