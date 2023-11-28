@@ -619,6 +619,7 @@ module.exports = {
           messageStatus: 'sent',
           messageType: 'text',
           messageContent: 'Se ha contactado al cliente. Esperando respuesta...',
+          messageContext: '',
           dateObject: new Date().toString()
       }
       
