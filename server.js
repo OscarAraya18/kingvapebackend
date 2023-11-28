@@ -179,7 +179,7 @@ backendHttpRequestServer.get('/getTodaysDashboardInformation', (request, respons
 
 backendHttpRequestServer.post('/sendWhatsappAudio', async (request, response) => {
   const sendWhatsappAudioMessageResult = await whatsappManagementFunctions.sendWhatsappAudioMessage(request.body, backendWebsocketServerConnection);
-  agentsManagementFunctions.addMessageCount(requestQuery['agentID'], backendWebsocketServerConnection);
+  agentsManagementFunctions.addMessageCount(request.body['agentID'], backendWebsocketServerConnection);
   response.end(JSON.stringify(sendWhatsappAudioMessageResult));
 });
 
