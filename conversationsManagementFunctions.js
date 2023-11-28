@@ -180,11 +180,9 @@ module.exports = {
         conversationsDatabase[conversationID]['status'] = conversationStatus;
         conversationsDatabase[conversationID]['amount'] = amount;
         conversationsDatabase[conversationID]['endDateObject'] = generalFunctions.getCurrentDateObject();
-
         const index = agentsDatabase[conversationsDatabase[conversationID].assignedAgentID].agentActiveConversations.indexOf(conversationID);
         if (index > -1) {
-          console.log('eliminadooooo') 
-            agentsDatabase[conversationsDatabase[conversationID].assignedAgentID].agentActiveConversations.splice(index, 1);
+          agentsDatabase[conversationsDatabase[conversationID].assignedAgentID].agentActiveConversations.splice(index, 1);
         }
         agentsDatabase[conversationsDatabase[conversationID].assignedAgentID].agentFinishedConversations.push(conversationID);
         databaseManagementFunctions.saveDatabase(constants.routes.conversationsDatabase, conversationsDatabase);
