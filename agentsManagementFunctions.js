@@ -142,9 +142,14 @@ module.exports = {
     },
 
     getAssignedAgentToConversationID: function (searchedConversationID){
+      console.log('CONVERSACION CREADA:' + searchedConversationID);
         const agentsDatabase = databaseManagementFunctions.readDatabase(constants.routes.agentsDatabase);
         for (var agentID in agentsDatabase){
+          console.log('ID AGENTE:' + agentID);
+
             for (var conversationID in agentsDatabase[agentID].agentActiveConversations){
+              console.log('CONVERSACION COMPARADA:' + conversationID);
+
                 if (searchedConversationID == conversationID){
                     return agentID;
                 }
