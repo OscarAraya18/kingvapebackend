@@ -853,7 +853,8 @@ module.exports = {
           messageStatus: 'sent',
           messageType: 'text',
           messageContent: 'Mensaje de bienvenida enviado al cliente. Esperando respuesta...',
-          dateObject: new Date().toString()
+          dateObject: new Date().toString(),
+          messageContext: ''
       }
       conversationsManagementFunctions.addMessageToConversation(activeConversationID, messageInformation);
       agentsManagementFunctions.grabStoreConversation(recipientPhoneNumber, activeConversationID, agentID, websocketConnection);
