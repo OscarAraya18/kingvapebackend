@@ -29,7 +29,6 @@ module.exports = {
   },
 
     createConversation: function (recipientPhoneNumber, recipientProfileName, agentID){
-      console.log('AGENT ID :' + agentID)
         var conversationsDatabase = databaseManagementFunctions.readDatabase(constants.routes.conversationsDatabase);
         const currentDateAsString = generalFunctions.getCurrentDateAsString();
         var newConversationID = currentDateAsString;
@@ -44,6 +43,8 @@ module.exports = {
         } else {
             newConversationID = currentDateAsString + (currentDayConversationsAmount + 1).toString();
         }
+        console.log('AGENT ID :' + agentID)
+
         conversationsDatabase[newConversationID] = 
         {
             recipientPhoneNumber: recipientPhoneNumber,
