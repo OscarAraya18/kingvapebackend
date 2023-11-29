@@ -506,7 +506,7 @@ module.exports = {
         };
         this.sendReceivedWhatsappMessageToAgents(messageInformationToSaveOnDatabase, recipientPhoneNumber, recipientProfileName, frontendResponse, websocketConnection);
     },
-
+ 
     addWhatsappLocationMessageInformation: function(messageContentFromWhatsappAPI, messageInformationToSaveOnDatabase, recipientPhoneNumber, recipientProfileName, frontendResponse, websocketConnection){
         messageInformationToSaveOnDatabase['messageContent'] = 
         {
