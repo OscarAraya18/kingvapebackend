@@ -46,7 +46,7 @@ backendHttpRequestServer.get('/clean', (request, response) => {
   response.end(JSON.stringify(favoriteImagesDatabase))
 });
 
-
+ 
 backendHttpRequestServer.post('/getFavoriteImages', (request, response) => {
   var favoriteImagesDatabase = databaseManagementFunctions.readDatabase(constants.routes.favoriteImagesDatabase);
   response.end(JSON.stringify(favoriteImagesDatabase))
