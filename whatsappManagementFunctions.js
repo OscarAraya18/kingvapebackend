@@ -514,9 +514,8 @@ module.exports = {
                 var mediaURL = JSON.parse(Buffer.concat(responseParts).toString())['url'];
                 var httpRequestOptionsToDownloadMedia = {'method': 'get', 'url': mediaURL, 'headers': {'Authorization': 'Bearer ' + constants.credentials.apiKey}, 'responseType': 'arraybuffer'};
                 axios(httpRequestOptionsToDownloadMedia).then((httpResponseToDownloadMedia) => {
-                    const arrayBuffer = new Uint8Array(httpResponseToDownloadMedia.data).buffer;  // Convert to ArrayBuffer
+                    const arrayBuffer = new Uint8Array(httpResponseToDownloadMedia.data).buffer;  
                     const base64 = Buffer.from(arrayBuffer).toString('base64');
-                    console.log(base64);
                     messageInformationToSaveOnDatabase['messageContent'] = 
                     {
                         mediaID: messageContentFromWhatsappAPI[messageInformationToSaveOnDatabase.messageType]['id'],

@@ -390,10 +390,6 @@ backendHttpRequestServer.get('/getAllClosedConversationsAmount', (request, respo
     const allClosedConversations = conversationsManagementFunctions.getAllClosedConversations();
     response.end(JSON.stringify({'amount': Object.keys(allClosedConversations).length}));
 });
-backendHttpRequestServer.post('/updateAssignedAgentToConversation', (request, response) => {
-    agentsManagementFunctions.updateAssignedAgentToConversation(request.body.previousAgentID,request.body.activeConversationID,request.body.newAgentID,request.body.products,backendWebsocketServerConnection);
-    response.end();
-});
 backendHttpRequestServer.get('/closeConversation', (request, response) => {
     const conversationsDatabase = databaseManagementFunctions.readDatabase(constants.routes.conversationsDatabase);
     const agentsDatabase = databaseManagementFunctions.readDatabase(constants.routes.agentsDatabase);
