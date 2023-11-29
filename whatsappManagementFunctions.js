@@ -455,6 +455,12 @@ module.exports = {
           }
         }
 
+        else if (requestToReceiveWhatsappMesage.body['entry'][0]['changes'][0]['value']['messages'][0]['video']){
+          if (requestToReceiveWhatsappMesage.body['entry'][0]['changes'][0]['value']['messages'][0]['video']['caption']){
+            messageCaption = requestToReceiveWhatsappMesage.body['entry'][0]['changes'][0]['value']['messages'][0]['video']['caption'];
+          }
+        }
+        
         const messageContentFromWhatsappAPI = requestToReceiveWhatsappMesage.body['entry'][0]['changes'][0]['value']['messages'][0];
         var messageInformationToSaveOnDatabase = 
         {
