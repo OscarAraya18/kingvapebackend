@@ -194,7 +194,6 @@ module.exports = {
                     }
                 }
             }
-            websocketManagementFunctions.addClosedCount(websocketConnection, agentsWithLessActiveConversations);
             if (agentsWithLessActiveConversations.length != 0){
                 const agentWithLessActiveConversations = agentsWithLessActiveConversations[Math.floor(Math.random()*agentsWithLessActiveConversations.length)]; 
                 conversationsDatabase[newConversationID].assignedAgentID = agentWithLessActiveConversations;

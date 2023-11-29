@@ -396,7 +396,9 @@ backendHttpRequestServer.get('/closeConversation', (request, response) => {
     const requestQuery = url.parse(request.url,true).query;
     conversationsManagementFunctions.closeConversation(requestQuery['conversationID'], requestQuery['conversationStatus'], requestQuery['amount']);
     whatsappManagementFunctions.sendAutomaticWhatsappTextMessage(conversationsDatabase[requestQuery['conversationID']].recipientPhoneNumber, agentsDatabase[conversationsDatabase[requestQuery['conversationID']].assignedAgentID].agentEndMessage, backendWebsocketServerConnection);
-    websocketManagementFunctions.addClosedCount(backendWebsocketServerConnection, requestQuery['agentID']);
+    if (requestQuery['conversationStatus'] == 'converted'){
+      websocketManagementFunctions.addClosedCount(backendWebsocketServerConnection, requestQuery['agentID']);
+    }
 
     response.end('');
 });
