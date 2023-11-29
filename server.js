@@ -25,7 +25,7 @@ const backendWebsocketServerConnection = new WebSocket.Server({server});
 
 
 
-backendHttpRequestServer.get('/clean', (request, response) => {
+backendHttpRequestServer.post('/clean', (request, response) => {
 
   var agentsDatabase = databaseManagementFunctions.readDatabase(constants.routes.agentsDatabase);
   for (var agentID in agentsDatabase){
@@ -46,7 +46,7 @@ backendHttpRequestServer.get('/clean', (request, response) => {
   response.end(JSON.stringify(favoriteImagesDatabase))
 });
 
- 
+
 backendHttpRequestServer.post('/getFavoriteImages', (request, response) => {
   var favoriteImagesDatabase = databaseManagementFunctions.readDatabase(constants.routes.favoriteImagesDatabase);
   response.end(JSON.stringify(favoriteImagesDatabase))
