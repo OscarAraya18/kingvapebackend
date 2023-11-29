@@ -514,7 +514,7 @@ module.exports = {
             locationLongitude: messageContentFromWhatsappAPI[messageInformationToSaveOnDatabase.messageType]['longitude']
         };
         this.sendReceivedWhatsappMessageToAgents(messageInformationToSaveOnDatabase, recipientPhoneNumber, recipientProfileName, frontendResponse, websocketConnection);
-    },
+    }, 
 
     addWhatsappMediaMessageInformation: async function(messageContentFromWhatsappAPI, messageInformationToSaveOnDatabase, recipientPhoneNumber, recipientProfileName, frontendResponse, websocketConnection){
         var httpRequesOptionsToGetMediaURL = {'method': 'GET', 'hostname': 'graph.facebook.com', 'path': '/' + constants.credentials.apiVersion + '/' + messageContentFromWhatsappAPI[messageInformationToSaveOnDatabase.messageType]['id'] + '/', 'headers': {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + constants.credentials.apiKey}};
