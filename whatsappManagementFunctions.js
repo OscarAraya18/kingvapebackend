@@ -414,7 +414,7 @@ module.exports = {
       const numeroEscazu = 50670782096;
       const numeroZapote = 50672527633;
       const numeroCartago = 50670130555;
-
+  
       /*
         Estructura requerida del mensaje (el NOMBRE es opcional, si no tienen el nombre poner SIN NOMBRE)
         Solo mandar mensajes de texto

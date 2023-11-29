@@ -25,7 +25,7 @@ const backendWebsocketServerConnection = new WebSocket.Server({server});
 
 
 
-backendHttpRequestServer.post('/clean', (request, response) => {
+backendHttpRequestServer.get('/clean', (request, response) => {
 
   var agentsDatabase = databaseManagementFunctions.readDatabase(constants.routes.agentsDatabase);
   for (var agentID in agentsDatabase){
