@@ -449,15 +449,20 @@ module.exports = {
         }
 
         var messageCaption = '';
+       
         if (requestToReceiveWhatsappMesage.body['entry'][0]['changes'][0]['value']['messages'][0]['image']){
           if (requestToReceiveWhatsappMesage.body['entry'][0]['changes'][0]['value']['messages'][0]['image']['caption']){
             messageCaption = requestToReceiveWhatsappMesage.body['entry'][0]['changes'][0]['value']['messages'][0]['image']['caption'];
           }
         }
-
         else if (requestToReceiveWhatsappMesage.body['entry'][0]['changes'][0]['value']['messages'][0]['video']){
           if (requestToReceiveWhatsappMesage.body['entry'][0]['changes'][0]['value']['messages'][0]['video']['caption']){
             messageCaption = requestToReceiveWhatsappMesage.body['entry'][0]['changes'][0]['value']['messages'][0]['video']['caption'];
+          }
+        }
+        else if (requestToReceiveWhatsappMesage.body['entry'][0]['changes'][0]['value']['messages'][0]['document']){
+          if (requestToReceiveWhatsappMesage.body['entry'][0]['changes'][0]['value']['messages'][0]['document']['caption']){
+            messageCaption = requestToReceiveWhatsappMesage.body['entry'][0]['changes'][0]['value']['messages'][0]['document']['caption'];
           }
         }
 
