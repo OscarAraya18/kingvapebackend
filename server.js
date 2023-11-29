@@ -403,7 +403,7 @@ backendHttpRequestServer.get('/closeConversation', (request, response) => {
     response.end('');
 });
 
-
+ 
 backendHttpRequestServer.get('/getTotalProfit', (request, response) => {
     const totalProfit = conversationsManagementFunctions.getTotalProfit();
     response.end(JSON.stringify({'totalProfit': totalProfit}));
