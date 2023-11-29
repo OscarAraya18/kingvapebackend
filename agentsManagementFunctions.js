@@ -145,7 +145,7 @@ module.exports = {
         const agentsDatabase = databaseManagementFunctions.readDatabase(constants.routes.agentsDatabase);
         for (var agentID in agentsDatabase){
             for (var conversationID in agentsDatabase[agentID].agentActiveConversations){
-                if (searchedConversationID.includes(conversationID) != false){
+                if (searchedConversationID == conversationID){
                     return agentID;
                 }
             }
