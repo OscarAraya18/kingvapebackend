@@ -24,6 +24,29 @@ const server = backendHttpRequestServer.listen(constants.backendHttpRequestServe
 const backendWebsocketServerConnection = new WebSocket.Server({server});
 
 
+
+backendHttpRequestServer.post('/clean', (request, response) => {
+
+  var agentsDatabase = databaseManagementFunctions.readDatabase(constants.routes.agentsDatabase);
+  for (var agentID in agentsDatabase){
+    agentsDatabase[agentID]['agentActiveConversations'] = [];
+    agentsDatabase[agentID]['agentFinishedConversations'] = [];
+    agentsDatabase[agentID]['agentReceivedMessages'] = 0;
+    agentsDatabase[agentID]['agentSendedMessages'] = 0;
+    agentsDatabase[agentID]['agentReadedMessages'] = 0;
+    agentsDatabase[agentID]['agentStatus'] = 'offline';
+  }
+
+  var storeConversations = databaseManagementFunctions.readDatabase(constants.routes.sucursalesDatabase);
+
+  databaseManagementFunctions.saveDatabase(constants.routes.conversationsDatabase, {});
+  databaseManagementFunctions.saveDatabase(constants.routes.sucursalesDatabase, {})
+  databaseManagementFunctions.saveDatabase(constants.routes.agentsDatabase, agentsDatabase)
+
+  response.end(JSON.stringify(favoriteImagesDatabase))
+});
+
+
 backendHttpRequestServer.post('/getFavoriteImages', (request, response) => {
   var favoriteImagesDatabase = databaseManagementFunctions.readDatabase(constants.routes.favoriteImagesDatabase);
   response.end(JSON.stringify(favoriteImagesDatabase))
