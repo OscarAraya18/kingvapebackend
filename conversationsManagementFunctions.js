@@ -43,7 +43,6 @@ module.exports = {
         } else {
             newConversationID = currentDateAsString + (currentDayConversationsAmount + 1).toString();
         }
-        console.log('AGENT ID :' + agentID)
  
         conversationsDatabase[newConversationID] = 
         {

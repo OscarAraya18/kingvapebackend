@@ -460,7 +460,7 @@ module.exports = {
             messageCaption = requestToReceiveWhatsappMesage.body['entry'][0]['changes'][0]['value']['messages'][0]['video']['caption'];
           }
         }
-        
+
         const messageContentFromWhatsappAPI = requestToReceiveWhatsappMesage.body['entry'][0]['changes'][0]['value']['messages'][0];
         var messageInformationToSaveOnDatabase = 
         {
@@ -528,7 +528,8 @@ module.exports = {
                         mediaName: messageContentFromWhatsappAPI[messageInformationToSaveOnDatabase.messageType]['filename'],
                         mediaExtension: messageContentFromWhatsappAPI[messageInformationToSaveOnDatabase.messageType]['mime_type'],
                         mediaURL: mediaURL,
-                        mediaContent: base64
+                        mediaContent: base64,
+                        mediaContext: ''
                     };
                     messageInformationToSaveOnDatabase['dateObject'] = new Date().toString();
                     var activeConversationID = conversationsManagementFunctions.getActiveConversationID(recipientPhoneNumber);
