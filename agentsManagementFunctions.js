@@ -153,7 +153,7 @@ module.exports = {
         return null;
     }, 
 
-    
+     
 
     getAllFavoriteImages: function (){
       const favoriteImagesDatabase = databaseManagementFunctions.readDatabase(constants.routes.favoriteImagesDatabase);
