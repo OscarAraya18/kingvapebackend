@@ -565,6 +565,7 @@ module.exports = {
         messageInformationToSaveOnDatabase['dateObject'] = new Date().toString();
         activeConversationID = conversationsManagementFunctions.getActiveConversationID(recipientPhoneNumber);
         const assignedAgentID = agentsManagementFunctions.getAssignedAgentToConversationID(activeConversationID);
+        console.log('AGENTE ASIGNADO: ' + assignedAgentID);
         conversationsManagementFunctions.updateConversationRecipientProfileName(activeConversationID, recipientProfileName);
         messageID = conversationsManagementFunctions.addMessageToConversation(activeConversationID, messageInformationToSaveOnDatabase);
         console.log('Message "' + messageID + '" received to the conversation "' + activeConversationID + '"');
