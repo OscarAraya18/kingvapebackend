@@ -60,14 +60,7 @@ backendHttpRequestServer.post('/getHistoryConversations', async (request, respon
 
 backendHttpRequestServer.post('/openHistoryConversation', async (request, response) => {
   const historyConversation = databaseManagementFunctions.readDatabase(constants.routes.conversationsDatabase)[request.body.conversationID];
-  console.log(historyConversation);
   response.end(JSON.stringify(historyConversation));
-});
-
-
-
-backendHttpRequestServer.post('/changeName', (request, response) => {
-  whatsappManagementFunctions.changeName(request.body.newName);
 });
 
 backendHttpRequestServer.post('/agentLogin', (request, response) => {
@@ -87,16 +80,20 @@ backendHttpRequestServer.post('/agentLogin', (request, response) => {
     response.end(JSON.stringify({'success': false, 'applicationStatus': applicationDatabase['applicationStatus']}));
   }
 });
+
 backendHttpRequestServer.post('/updateAgentLoginCredentials', (request, response) => {
   const requestQuery = request.body;
   agentsManagementFunctions.updateAgentLoginCredentials(requestQuery.agentID, requestQuery.agentProfilePicture, requestQuery.agentUsername, requestQuery.agentPassword);
   response.end('');
 });
+
 backendHttpRequestServer.post('/updateAgentAutomaticMessages', (request, response) => {
   const requestQuery = request.body;
   agentsManagementFunctions.updateAgentAutomaticMessages(requestQuery.agentID, requestQuery.agentWelcomeMessage, requestQuery.agentEndMessage);
   response.end('');
 });
+
+
 backendHttpRequestServer.post('/updateAgentFavoriteMessage', (request, response) => {
   const requestQuery = request.body;
   agentsManagementFunctions.updateAgentFavoriteMessage(requestQuery.agentID, requestQuery.agentFavoriteMessageTitle, requestQuery.agentFavoriteMessageContent);
@@ -112,16 +109,8 @@ backendHttpRequestServer.post('/createAgentFavoriteMessage', (request, response)
   agentsManagementFunctions.createAgentFavoriteMessage(requestQuery.agentID, requestQuery.agentFavoriteMessageTitle, requestQuery.agentFavoriteMessageContent);
   response.end('');
 });
-backendHttpRequestServer.post('/deleteAgentFavoriteImage', (request, response) => {
-  const requestQuery = request.body;
-  agentsManagementFunctions.deleteAgentFavoriteImage(requestQuery.agentID, requestQuery.agentFavoriteImageTitle);
-  response.end('');
-});
-backendHttpRequestServer.post('/createAgentFavoriteImage', (request, response) => {
-  const requestQuery = request.body;
-  agentsManagementFunctions.createAgentFavoriteImage(requestQuery.agentID, requestQuery.agentFavoriteImageTitle, requestQuery.agentFavoriteImageContent);
-  response.end('');
-});
+
+
 backendHttpRequestServer.post('/createAgent', (request, response) => {
   agentsManagementFunctions.createAgent(request.body);
   response.end('')
@@ -130,6 +119,8 @@ backendHttpRequestServer.get('/getAllAgents', (request, response) => {
   const allAgentsInformation = agentsManagementFunctions.getAllAgents();
   response.end(JSON.stringify(allAgentsInformation));
 });
+
+
 backendHttpRequestServer.post('/updateAgentFromAdminPortal', (request, response) => {
   agentsManagementFunctions.updateAgentFromAdminPortal(request.body);
   response.end()
@@ -139,6 +130,8 @@ backendHttpRequestServer.post('/updateAgentStatus', (request, response) => {
   agentsManagementFunctions.updateAgentStatus(requestQuery.agentID, requestQuery.agentStatus, backendWebsocketServerConnection);
   response.end('');
 });
+
+
 backendHttpRequestServer.post('/grabPendingConversation', (request, response) => {
   const conversationsDatabase = databaseManagementFunctions.readDatabase(constants.routes.conversationsDatabase);
   const recipientPhoneNumber = conversationsDatabase[request.body.conversationID].recipientPhoneNumber;
@@ -147,7 +140,6 @@ backendHttpRequestServer.post('/grabPendingConversation', (request, response) =>
   const mediaContent = agentsDatabase[request.body.agentID].agentWelcomeImage;
   whatsappManagementFunctions.sendWhatsappPendingConversationMessage(recipientPhoneNumber, mediaContent, messageContent, request.body, backendWebsocketServerConnection);
   websocketManagementFunctions.addActiveCount(backendWebsocketServerConnection, request.body.agentID);
-
   response.end('');
 });
 backendHttpRequestServer.post('/grabStoreConversation', (request, response) => {
@@ -160,7 +152,6 @@ backendHttpRequestServer.post('/grabStoreConversation', (request, response) => {
   const storeName = request.body.storeName;
   whatsappManagementFunctions.sendWhatsappStoreConversationMessage(storeName, recipientPhoneNumber, agentID, messageID, mediaContent, messageContent, backendWebsocketServerConnection);
   websocketManagementFunctions.addActiveCount(backendWebsocketServerConnection, request.body.agentID);
-
   response.end('');
 });
 backendHttpRequestServer.post('/requestTransfer', (request, response) => {
@@ -241,8 +232,6 @@ backendHttpRequestServer.get('/getTodaysDashboardInformation', (request, respons
   response.end(JSON.stringify(result));
 
 });
-
-
 backendHttpRequestServer.get('/getTodayReport', (request, response) => {
   const conversationsDatabase = databaseManagementFunctions.readDatabase(constants.routes.conversationsDatabase);
   const agentsDatabase = databaseManagementFunctions.readDatabase(constants.routes.agentsDatabase);
@@ -338,11 +327,6 @@ backendHttpRequestServer.get('/sendWhatsappMessage', async (request, response) =
   response.end(messageID);
 });
 
-backendHttpRequestServer.get('/sendWhatsappContactMessage', (request, response) => {
-  const requestQuery = url.parse(request.url,true).query;
-  whatsappManagementFunctions.sendWhatsappContactMessage(requestQuery, backendWebsocketServerConnection);
-  response.end('');
-}); 
 
 backendHttpRequestServer.post('/webhook', (request, response) => {
   if (request.body['entry'][0]['changes'][0]['value']['messages']){
@@ -361,9 +345,6 @@ backendHttpRequestServer.post('/sendWhatsappLocation', (request, response) => {
     agentsManagementFunctions.addMessageCount(request.body['agentID'], backendWebsocketServerConnection);
 });
 
-backendHttpRequestServer.post('/sendWhatsappMassMessage', (request, response) => {
-    whatsappManagementFunctions.sendWhatsappMassMessage(request.body, response);
-});
 backendHttpRequestServer.post('/getAgentStatus', (request, response) => {
     agentsManagementFunctions.getAgentStatus(request.body, response);
 });
@@ -373,13 +354,12 @@ backendHttpRequestServer.post('/getAgentStatus', (request, response) => {
 backendHttpRequestServer.post('/sendWhatsappMedia', (request, response) => {
     whatsappManagementFunctions.sendWhatsappMediaMessage(request.body, response, backendWebsocketServerConnection);
     agentsManagementFunctions.addMessageCount(request.body['agentID'], backendWebsocketServerConnection);
-
 });
 backendHttpRequestServer.post('/sendWhatsappMediaURL', (request, response) => {
     whatsappManagementFunctions.sendWhatsappMediaMessageURL(request.body, response, backendWebsocketServerConnection);
     agentsManagementFunctions.addMessageCount(request.body['agentID'], backendWebsocketServerConnection);
-
 });
+
 backendHttpRequestServer.get('/getAgentActiveConversations', (request, response) => {
     const requestQuery = url.parse(request.url,true).query;
     const agentActiveConversations = agentsManagementFunctions.getAgentActiveConversations(requestQuery['agentID']);
@@ -394,8 +374,8 @@ agentsManagementFunctions.deleteAgent(request.body.agentID);
 response.end()
 });
 backendHttpRequestServer.get('/getAllActiveConversations', (request, response) => {
-    const allActiveConversations = conversationsManagementFunctions.getAllActiveConversations();
-    response.end(JSON.stringify(allActiveConversations));
+  const allActiveConversations = conversationsManagementFunctions.getAllActiveConversations();
+  response.end(JSON.stringify(allActiveConversations));
 });
 backendHttpRequestServer.get('/getAllClosedConversations', (request, response) => {
     const allClosedConversations = conversationsManagementFunctions.getAllClosedConversations();

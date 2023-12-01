@@ -9,7 +9,6 @@ module.exports = {
     const conversationsDatabase = databaseManagementFunctions.readDatabase(constants.routes.conversationsDatabase);
     const agentsDatabase = databaseManagementFunctions.readDatabase(constants.routes.agentsDatabase);
     for (var conversationID in conversationsDatabase){
-      //console.log(conversationsDatabase[conversationID])
       if (conversationsDatabase[conversationID].recipientPhoneNumber == recipientPhoneNumber){
         if (conversationsDatabase[conversationID].active == false) {
           var conversationWithoutMessages = conversationsDatabase[conversationID];
@@ -87,34 +86,7 @@ module.exports = {
         }        
     },
 
-    updateConversationMessageStatus: function (activeConversationID, messageID, messageStatus){
-        if (messageStatus == 'sent'){
-            var conversationsDatabase = databaseManagementFunctions.readDatabase(constants.routes.conversationsDatabase);
-            const updatedMessageNumber = Object.keys(conversationsDatabase[activeConversationID].messages).length.toString();
-            //conversationsDatabase[activeConversationID].messages[updatedMessageNumber].messageID = messageID;
-            databaseManagementFunctions.saveDatabase(constants.routes.conversationsDatabase, conversationsDatabase);
-        } else {
-            var conversationsDatabase = databaseManagementFunctions.readDatabase(constants.routes.conversationsDatabase);
-            var updatedMessageNumber = '';
-            for (var messageNumber in conversationsDatabase[activeConversationID].messages){
-                if (conversationsDatabase[activeConversationID].messages[messageNumber].messageID == messageID){
-                    updatedMessageNumber = messageNumber;
-                }
-            }
-            if (conversationsDatabase[activeConversationID].messages[updatedMessageNumber]){
-                conversationsDatabase[activeConversationID].messages[updatedMessageNumber].messageStatus = messageStatus;
-                if (messageStatus == 'delivered'){
-                    conversationsDatabase[activeConversationID].messages[updatedMessageNumber].messageDeliveryDate = generalFunctions.getCurrentDateAsStringWithFormat();
-                    conversationsDatabase[activeConversationID].messages[updatedMessageNumber].messageDeliveryHour = generalFunctions.getCurrentHourAsStringWithFormat();
-                } else {
-                    conversationsDatabase[activeConversationID].messages[updatedMessageNumber].messageReadDate = generalFunctions.getCurrentDateAsStringWithFormat();
-                    conversationsDatabase[activeConversationID].messages[updatedMessageNumber].messageReadHour = generalFunctions.getCurrentHourAsStringWithFormat();
-                }
-            }
-            databaseManagementFunctions.saveDatabase(constants.routes.conversationsDatabase, conversationsDatabase);
-        }
-    },
-
+    
     updateConversationRecipientProfileName: function (activeConversationID, recipientProfileName){
         var conversationsDatabase = databaseManagementFunctions.readDatabase(constants.routes.conversationsDatabase);
         conversationsDatabase[activeConversationID].recipientProfileName = recipientProfileName;

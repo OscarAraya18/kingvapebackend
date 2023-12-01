@@ -197,25 +197,6 @@ module.exports = {
       return messageID;
     },
 
-    sendWhatsappMassMessage: function(requestQuery, frontendResponse){
-        for (var recipientPhoneNumberIndex in requestQuery.recipientPhoneNumbers){
-            var httpOptionsToSendWhatsappTextMessage = {'method': 'POST', 'hostname': 'graph.facebook.com', 'path': '/' + constants.credentials.apiVersion + '/' + constants.credentials.phoneNumberID + '/messages', 'headers': {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + constants.credentials.apiKey}};
-            var httpDataToSendWhatsappTextMessage = JSON.stringify({'messaging_product': 'whatsapp', 'to': requestQuery.recipientPhoneNumbers[recipientPhoneNumberIndex], 'text': {'body': requestQuery.messageContent}});
-            var httpRequestToSendWhatsappTextMessage = https.request(httpOptionsToSendWhatsappTextMessage, function (httpResponseToSendWhatsappTextMessage) {
-                var httpResponsePartsToSendWhatsappTextMessage = [];
-                httpResponseToSendWhatsappTextMessage.on('data', function (httpResponsePartToSendWhatsappTextMessage) {httpResponsePartsToSendWhatsappTextMessage.push(httpResponsePartToSendWhatsappTextMessage);});
-                httpResponseToSendWhatsappTextMessage.on('end', function (httpResponsePartToSendWhatsappTextMessage) {
-                    httpResponsePartsToSendWhatsappTextMessage.push(httpResponsePartToSendWhatsappTextMessage);
-                    frontendResponse.end();
-                });
-                httpResponseToSendWhatsappTextMessage.on('error', function (error) {console.error(error);});
-            });
-            httpRequestToSendWhatsappTextMessage.write(httpDataToSendWhatsappTextMessage);
-            httpRequestToSendWhatsappTextMessage.end();
-        }
-        frontendResponse.end();
-    },
-
     downloadWhatsappImageFile: async function(whatsappImageMessageURL){
       return new Promise(async (downloadWhatsappImageFilePromiseResolve) => {
         axios.get(whatsappImageMessageURL, {responseType: 'arraybuffer'}).then(async (response) => {
@@ -333,32 +314,6 @@ module.exports = {
         conversationsManagementFunctions.addMessageToConversation(activeConversationID, messageInformation);
         frontendResponse.end(sendWhatsappMessageResult.result);
                
-    },
-
-    updateWhatsappMessageStatus: function(requestToUpdateWhatsappMessageStatus, frontendResponse){
-        /*
-        const messageID = requestToUpdateWhatsappMessageStatus.body['entry'][0]['changes'][0]['value']['statuses'][0]['id'];
-        const messageStatus = requestToUpdateWhatsappMessageStatus.body['entry'][0]['changes'][0]['value']['statuses'][0]['status'];
-        const recipientPhoneNumber = requestToUpdateWhatsappMessageStatus.body['entry'][0]['changes'][0]['value']['statuses'][0]['recipient_id'];
-        var activeConversationID = conversationsManagementFunctions.getActiveConversationID(recipientPhoneNumber);
-        if (activeConversationID == null){
-            conversationsManagementFunctions.createConversation(recipientPhoneNumber, '');
-        }
-        activeConversationID = conversationsManagementFunctions.getActiveConversationID(recipientPhoneNumber);
-        if (messageStatus == 'sent'){
-            conversationsManagementFunctions.updateConversationMessageStatus(activeConversationID, messageID, messageStatus);
-            console.log('Message "' + messageID + '" sended to the conversation "' + activeConversationID + '"');
-            frontendResponse.end('Message "' + messageID + '" sended to the conversation "' + activeConversationID + '"');
-        } else if (messageStatus == 'delivered'){
-            conversationsManagementFunctions.updateConversationMessageStatus(activeConversationID, messageID, messageStatus);
-            console.log('Message "' + messageID + '" delivered to the conversation "' + activeConversationID + '"');
-            frontendResponse.end('Message "' + messageID + '" delivered to the conversation "' + activeConversationID + '"');
-        } else if (messageStatus == 'read'){
-            conversationsManagementFunctions.updateConversationMessageStatus(activeConversationID, messageID, messageStatus);
-            console.log('Message "' + messageID + '" readed to the conversation "' + activeConversationID + '"');
-            frontendResponse.end('Message "' + messageID + '" readed to the conversation "' + activeConversationID + '"');
-        }
-        */
     },
 
     receiveWhatsappStoreMessage: function(storeName, storeNumber, messageInformation, messageID, frontendResponse, websocketConnection){

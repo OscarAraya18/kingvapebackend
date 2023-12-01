@@ -35,6 +35,7 @@ module.exports = {
     for (var agentFavoriteMessageIndex in agentsDatabase[agentID]['agentFavoriteMessages']){
       if (agentsDatabase[agentID]['agentFavoriteMessages'][agentFavoriteMessageIndex]['title'] == agentFavoriteMessageTitle){
         agentsDatabase[agentID]['agentFavoriteMessages'][agentFavoriteMessageIndex]['content'] = agentFavoriteMessageContent;
+        break;
       }
     }
     databaseManagementFunctions.saveDatabase(constants.routes.agentsDatabase, agentsDatabase);
@@ -47,16 +48,6 @@ module.exports = {
   createAgentFavoriteMessage: function(agentID, agentFavoriteMessageTitle, agentFavoriteMessageContent){
     const agentsDatabase = databaseManagementFunctions.readDatabase(constants.routes.agentsDatabase);
     agentsDatabase[agentID]['agentFavoriteMessages'].push({'title': agentFavoriteMessageTitle, 'content': agentFavoriteMessageContent});
-    databaseManagementFunctions.saveDatabase(constants.routes.agentsDatabase, agentsDatabase);
-  },
-  deleteAgentFavoriteImage: function(agentID, agentFavoriteImageTitle){
-    const agentsDatabase = databaseManagementFunctions.readDatabase(constants.routes.agentsDatabase);
-    agentsDatabase[agentID]['agentFavoriteImages'] = agentsDatabase[agentID]['agentFavoriteImages'].filter(agentFavoriteImage => agentFavoriteImage.title != agentFavoriteImageTitle);
-    databaseManagementFunctions.saveDatabase(constants.routes.agentsDatabase, agentsDatabase);
-  },
-  createAgentFavoriteImage: function(agentID, agentFavoriteImageTitle, agentFavoriteImageContent){
-    const agentsDatabase = databaseManagementFunctions.readDatabase(constants.routes.agentsDatabase);
-    agentsDatabase[agentID]['agentFavoriteImages'].push({'title': agentFavoriteImageTitle, 'content': agentFavoriteImageContent});
     databaseManagementFunctions.saveDatabase(constants.routes.agentsDatabase, agentsDatabase);
   },
   createAgent: function(request){
@@ -135,7 +126,7 @@ module.exports = {
         var agentActiveConversations = {};
         for (var conversationID in conversationsDatabase){
             if (agentActiveConversationsIDS.includes(conversationID)){
-                agentActiveConversations[conversationID] = conversationsDatabase[conversationID];
+              agentActiveConversations[conversationID] = conversationsDatabase[conversationID];
             }
         }
         return agentActiveConversations;
