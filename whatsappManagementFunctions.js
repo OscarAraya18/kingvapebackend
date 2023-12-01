@@ -935,6 +935,7 @@ module.exports = {
           messageStatus: 'sent',
           messageType: 'text',
           messageContent: messageContent,
+          messageContext: '',
           dateObject: new Date().toString()
       }
       conversationsManagementFunctions.addMessageToConversation(activeConversationID, messageInformation);
