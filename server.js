@@ -36,7 +36,7 @@ backendHttpRequestServer.post('/clean', (request, response) => {
     agentsDatabase[agentID]['agentReadedMessages'] = 0;
     agentsDatabase[agentID]['agentStatus'] = 'offline';
   }
-
+ 
   var storeConversations = databaseManagementFunctions.readDatabase(constants.routes.sucursalesDatabase);
 
   databaseManagementFunctions.saveDatabase(constants.routes.conversationsDatabase, {});
