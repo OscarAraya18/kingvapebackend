@@ -40,12 +40,11 @@ module.exports = {
         const uploadWhatsappImageMessageHeaders = uploadWhatsappImageMessageParameters.getHeaders();
         uploadWhatsappImageMessageHeaders['Authorization'] = `Bearer ${constants.credentials.apiKey}`;
         axios.post(uploadWhatsappImageMessageURL, uploadWhatsappImageMessageParameters, {headers: uploadWhatsappImageMessageHeaders}).then(async (httpResponse) => {
-          fs.unlink(temporaryImageName, async (errorWhenDeletingTemporaryImage) => {
-            if (!errorWhenDeletingTemporaryImage) {
-              const whatsappImageMessageFileID = httpResponse.data.id;
-              uploadWhatsappImageFilePromiseResolve({success: true, result: {whatsappImageMessageFileID: whatsappImageMessageFileID, whatsappImageMessageFile: whatsappImageMessageFile}});
-            }
-          });
+          await unlinkAsync(temporaryImageName);
+
+          const whatsappImageMessageFileID = httpResponse.data.id;
+          uploadWhatsappImageFilePromiseResolve({success: true, result: {whatsappImageMessageFileID: whatsappImageMessageFileID, whatsappImageMessageFile: whatsappImageMessageFile}});
+            
         });
       });
     });
