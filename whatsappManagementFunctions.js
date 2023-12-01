@@ -206,7 +206,7 @@ module.exports = {
         .catch((error) => {
         });
       });
-    },
+    }, 
 
     sendWhatsappMediaMessageURL: async function(requestQuery, frontendResponse, websocketConnection){
       const downloadedWhatsappImageFile = await this.downloadWhatsappImageFile(requestQuery.mediaURL);
