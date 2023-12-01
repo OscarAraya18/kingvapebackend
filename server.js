@@ -365,7 +365,7 @@ backendHttpRequestServer.post('/webhook', (request, response) => {
   if (request.body['entry'][0]['changes'][0]['value']['messages']){
       whatsappManagementFunctions.receiveWhatsappMessage(request, response, backendWebsocketServerConnection);
   } else {
-      whatsappManagementFunctions.updateWhatsappMessageStatus(request, response);
+      //whatsappManagementFunctions.updateWhatsappMessageStatus(request, response);
   }
 });
 backendHttpRequestServer.get('/webhook', (request, response) => {
