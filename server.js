@@ -24,6 +24,39 @@ const server = backendHttpRequestServer.listen(constants.backendHttpRequestServe
 const backendWebsocketServerConnection = new WebSocket.Server({server});
 
 
+const activeRequests = {};
+backendHttpRequestServer.use('/getAllActiveConversations', (req, res, next) => {
+  const clientIP = req.ip;
+
+  // Check if there is an active request from the same IP
+  if (activeRequests[clientIP] && activeRequests[clientIP].cancel) {
+    activeRequests[clientIP].cancel(); // Cancel the previous request
+  }
+
+  // Create a cancellation token for the current request
+  const source = axios.CancelToken.source();
+  activeRequests[clientIP] = { cancel: source.cancel };
+
+  // Attach the cancellation token to the request object
+  req.cancelToken = source.token;
+
+  next(); // Continue to the route handler
+});
+backendHttpRequestServer.get('/getAllActiveConversations', (request, response) => {
+  try {
+  const allActiveConversations = conversationsManagementFunctions.getAllActiveConversations();
+  } catch {
+
+  } finally {
+    // Remove the cancellation token once the request is completed or canceled
+    delete activeRequests[req.ip];
+  }
+  response.end(JSON.stringify(allActiveConversations));
+});
+
+
+
+
 
 backendHttpRequestServer.post('/clean', (request, response) => {
 
@@ -372,10 +405,6 @@ backendHttpRequestServer.get('/getAllFavoriteImages', (request, response) => {
 backendHttpRequestServer.post('/deleteAgent', (request, response) => {
 agentsManagementFunctions.deleteAgent(request.body.agentID);
 response.end()
-});
-backendHttpRequestServer.get('/getAllActiveConversations', (request, response) => {
-  const allActiveConversations = conversationsManagementFunctions.getAllActiveConversations();
-  response.end(JSON.stringify(allActiveConversations));
 });
 backendHttpRequestServer.get('/getAllClosedConversations', (request, response) => {
     const allClosedConversations = conversationsManagementFunctions.getAllClosedConversations();
