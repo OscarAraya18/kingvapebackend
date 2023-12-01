@@ -22,6 +22,9 @@ const ffmpeg = require('fluent-ffmpeg');
 ffmpeg.setFfmpegPath(ffmpegPath);
 
 
+const unlinkAsync = util.promisify(fs.unlink);
+
+
 module.exports = {
   
   uploadWhatsappImageFile: async function(whatsappImageMessageFile){
