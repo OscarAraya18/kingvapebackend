@@ -445,8 +445,7 @@ module.exports = {
         } else if (['image','audio','video','document','sticker'].includes(messageType)) {
             this.addWhatsappMediaMessageInformation(messageContentFromWhatsappAPI, messageInformationToSaveOnDatabase, recipientPhoneNumber, recipientProfileName, frontendResponse, websocketConnection);
         } else {
-            messageInformationToSaveOnDatabase['messageContent'] = null;
-            this.sendReceivedWhatsappMessageToAgents(messageInformationToSaveOnDatabase, recipientPhoneNumber, recipientProfileName, frontendResponse, websocketConnection);
+            
         }
       }
     },
