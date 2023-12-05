@@ -196,7 +196,7 @@ module.exports = {
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(closeWhatsappConversationSQL, closeWhatsappConversationValues);
       closeWhatsappConversationPromiseResolve(databaseResult);
     });
-  },
+  }, 
   
   createWhatsappConversation: async function(whatsappConversationRecipientPhoneNumber){
     return new Promise (async (createWhatsappConversationPromiseResolve) => {
