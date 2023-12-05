@@ -489,16 +489,10 @@ module.exports = {
     });
   },
 
-  selectFavoriteImages: async function(whatsappFavoriteImageCatalog){
+  selectFavoriteImages: async function(){
     return new Promise(async (selectFavoriteImagesPromiseResolve) => {
-      const selectFavoriteImagesSQL = 
-      `
-      SELECT * FROM WhatsappFavoriteImages
-      WHERE whatsappFavoriteImageCatalog=(?)
-      ORDER BY whatsappFavoriteImageName;
-      `;
-      const selectFavoriteImagesValues = [whatsappFavoriteImageCatalog];
-      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectFavoriteImagesSQL, selectFavoriteImagesValues);
+      const selectFavoriteImagesSQL = `SELECT * FROM WhatsappFavoriteImages ORDER BY whatsappFavoriteImageName;`;
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectFavoriteImagesSQL);
       selectFavoriteImagesPromiseResolve(JSON.stringify(databaseResult));
     });
   },
