@@ -194,6 +194,7 @@ module.exports = {
       const closeWhatsappConversationSQL = `UPDATE WhatsappConversations SET whatsappConversationEndDateTime=(?), whatsappConversationIsActive=(?), whatsappConversationCloseComment=(?), whatsappConversationAmount=(?), whatsappConversationProducts=(?) WHERE whatsappConversationID=(?);`;
       const closeWhatsappConversationValues = [whatsappConversationEndDateTime, whatsappConversationIsActive, whatsappConversationCloseComment, parseFloat(whatsappConversationAmount), whatsappConversationID, JSON.stringify(whatsappConversationProducts)];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(closeWhatsappConversationSQL, closeWhatsappConversationValues);
+      console.log(databaseResult);
       closeWhatsappConversationPromiseResolve(databaseResult);
     });
   },
