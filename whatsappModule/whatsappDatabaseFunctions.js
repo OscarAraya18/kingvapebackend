@@ -357,10 +357,10 @@ module.exports = {
     });
   },
 
-  createWhatsappFavoriteImageMessage: async function(whatsappFavoriteImageMessageID, whatsappFavoriteImageMessageDriveURL){
+  createWhatsappFavoriteImageMessage: async function(whatsappFavoriteImageMessageID, whatsappFavoriteImageMessageDriveURL, whatsappFavoriteImageMessageCaption){
     return new Promise(async (createWhatsappFavoriteImageMessagePromiseResolve) => {
-      const createWhatsappFavoriteImageMessageSQL = `INSERT INTO WhatsappFavoriteImageMessages (whatsappFavoriteImageMessageID, whatsappFavoriteImageMessageDriveURL) VALUES (?,?);`;
-      const createWhatsappFavoriteImageMessageValues = [whatsappFavoriteImageMessageID, whatsappFavoriteImageMessageDriveURL];
+      const createWhatsappFavoriteImageMessageSQL = `INSERT INTO WhatsappFavoriteImageMessages (whatsappFavoriteImageMessageID, whatsappFavoriteImageMessageDriveURL, whatsappFavoriteImageMessageCaption) VALUES (?,?,?);`;
+      const createWhatsappFavoriteImageMessageValues = [whatsappFavoriteImageMessageID, whatsappFavoriteImageMessageDriveURL, whatsappFavoriteImageMessageCaption];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(createWhatsappFavoriteImageMessageSQL, createWhatsappFavoriteImageMessageValues);
       createWhatsappFavoriteImageMessagePromiseResolve(databaseResult);
     });

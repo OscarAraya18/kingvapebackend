@@ -88,7 +88,8 @@ backendWhatsappHttpRequestServer.post('/sendWhatsappFavoriteImageMessage', async
   const httpRequestQuery = httpRequest.body;
   const whatsappConversationRecipientPhoneNumber = httpRequestQuery.whatsappConversationRecipientPhoneNumber;
   const whatsappFavoriteImageMessageContent = httpRequestQuery.whatsappFavoriteImageMessageContent;
-  const sendWhatsappFavoriteImageMessageResult = await whatsappManagementFunctions.sendWhatsappFavoriteImageMessage(websocketConnection, whatsappConversationRecipientPhoneNumber, whatsappFavoriteImageMessageContent);
+  const whatsappFavoriteImageMessageCaption = httpRequestQuery.whatsappFavoriteImageMessageCaption;
+  const sendWhatsappFavoriteImageMessageResult = await whatsappManagementFunctions.sendWhatsappFavoriteImageMessage(websocketConnection, whatsappConversationRecipientPhoneNumber, whatsappFavoriteImageMessageContent, whatsappFavoriteImageMessageCaption);
   httpResponse.end(sendWhatsappFavoriteImageMessageResult);
 });
 

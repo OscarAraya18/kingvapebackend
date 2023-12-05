@@ -268,7 +268,6 @@ module.exports = {
         const uploadWhatsappImageFileResult = await this.uploadWhatsappImageFile(whatsappImageMessageFile);
         if (uploadWhatsappImageFileResult.success){
           const whatsappImageMessageFileID = uploadWhatsappImageFileResult.result.whatsappImageMessageFileID;
-          console.log('imageID ' + whatsappImageMessageFileID);
           const convertedWhatsappImageMessageFile = uploadWhatsappImageFileResult.result.whatsappImageMessageFile;
           var httpDataToSendWhatsappImageMessage =
           {
@@ -457,7 +456,7 @@ module.exports = {
     
   },
 
-  sendWhatsappFavoriteImageMessage: async function(websocketConnection, whatsappConversationRecipientPhoneNumber, whatsappFavoriteImageMessageContent){
+  sendWhatsappFavoriteImageMessage: async function(websocketConnection, whatsappConversationRecipientPhoneNumber, whatsappFavoriteImageMessageContent, whatsappFavoriteImageMessageCaption){
     return new Promise(async (sendWhatsappFavoriteImageMessagePromiseResolve) => {
       var httpDataToSendWhatsappFavoriteImageMessage =
       {
@@ -466,6 +465,9 @@ module.exports = {
         'type': 'image',
         'image': {'id': whatsappFavoriteImageMessageContent.whatsappFavoriteImageFileID}
       };
+      if (whatsappFavoriteImageMessageCaption != null){
+        httpDataToSendWhatsappFavoriteImageMessage['image']['caption'] = whatsappFavoriteImageMessageCaption;
+      }
       httpDataToSendWhatsappFavoriteImageMessage = JSON.stringify(httpDataToSendWhatsappFavoriteImageMessage);
       const sendWhatsappMessageResult = await this.sendWhatsappMessage(httpDataToSendWhatsappFavoriteImageMessage);
       if (sendWhatsappMessageResult.success){
@@ -480,7 +482,7 @@ module.exports = {
           if (createWhatsappGeneralMessageResult.success){
             const whatsappGeneralMessageIndex = createWhatsappGeneralMessageResult.result.whatsappGeneralMessageIndex;
             const whatsappGeneralMessageCreationDateTime = createWhatsappGeneralMessageResult.result.whatsappGeneralMessageCreationDateTime;
-            const createWhatsappFavoriteImageMessageResult = await whatsappDatabaseFunctions.createWhatsappFavoriteImageMessage(whatsappFavoriteImageMessageID, whatsappFavoriteImageMessageContent.whatsappFavoriteImageDriveURL);
+            const createWhatsappFavoriteImageMessageResult = await whatsappDatabaseFunctions.createWhatsappFavoriteImageMessage(whatsappFavoriteImageMessageID, whatsappFavoriteImageMessageContent.whatsappFavoriteImageDriveURL, whatsappFavoriteImageMessageCaption);
             if (createWhatsappFavoriteImageMessageResult.success){
               const websocketMessageContent = 
               {
@@ -495,7 +497,8 @@ module.exports = {
                   whatsappGeneralMessageCreationDateTime: whatsappGeneralMessageCreationDateTime,
                   whatsappGeneralMessageOwnerPhoneNumber: whatsappGeneralMessageOwnerPhoneNumber,
                   whatsappFavoriteImageMessageID: whatsappFavoriteImageMessageID,
-                  whatsappFavoriteImageMessageDriveURL: whatsappFavoriteImageMessageContent.whatsappFavoriteImageDriveURL
+                  whatsappFavoriteImageMessageDriveURL: whatsappFavoriteImageMessageContent.whatsappFavoriteImageDriveURL,
+                  whatsappFavoriteImageMessageCaption: whatsappFavoriteImageMessageCaption
                 }
               };
               sendWhatsappFavoriteImageMessagePromiseResolve(JSON.stringify(websocketMessageContent));
