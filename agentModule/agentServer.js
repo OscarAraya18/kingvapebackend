@@ -159,7 +159,8 @@ backendAgentHttpRequestServer.post('/updateApplicationStatus', async (httpReques
 });
 
 
-backendAgentHttpRequestServer.post('/selectFavoriteImages', async (httpRequest, httpResponse) => {
-  const selectFavoriteImagesResult = await agentManagementFunctions.selectFavoriteImages();
+backendAgentHttpRequestServer.post('/selectFavoriteCatalogImages', async (httpRequest, httpResponse) => {
+  const whatsappFavoriteImageCatalog = true;
+  const selectFavoriteImagesResult = await agentManagementFunctions.selectFavoriteImages(whatsappFavoriteImageCatalog);
   httpResponse.end(selectFavoriteImagesResult);
 });
