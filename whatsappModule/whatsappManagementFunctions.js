@@ -231,7 +231,7 @@ module.exports = {
   uploadWhatsappImageFile: async function(whatsappImageMessageFile){
     return new Promise(async (uploadWhatsappImageFilePromiseResolve) => {
       const uploadWhatsappImageMessageURL = `https://graph.facebook.com/${constants.credentials.apiVersion}/${constants.credentials.phoneNumberID}/media`;
-      const temporaryImageName = `whatsappModule/whatsappFiles/${uuidv4.v4()}-${Date.now()}.png`;
+      const temporaryImageName = `whatsappModule/${uuidv4.v4()}-${Date.now()}.png`;
       const temporaryImageBuffer = Buffer.from(whatsappImageMessageFile, 'base64');
       sharp(temporaryImageBuffer).toFormat('png').toBuffer().then((convertedImageBuffer) => {
         fs.writeFileSync(temporaryImageName, convertedImageBuffer);
@@ -341,8 +341,8 @@ module.exports = {
   uploadWhatsappAudioFile: async function(whatsappAudioMessageFile){
     return new Promise(async (uploadWhatsappAudioFilePromiseResolve) => {
       const uploadWhatsappAudioMessageURL = `https://graph.facebook.com/${constants.credentials.apiVersion}/${constants.credentials.phoneNumberID}/media`;
-      const originalAudioName = `whatsappModule/whatsappFiles/${uuidv4.v4()}-${Date.now()}.ogg`;
-      const convertedAudioName = `whatsappModule/whatsappFiles/${uuidv4.v4()}-${Date.now()}.ogg`;
+      const originalAudioName = `whatsappModule/${uuidv4.v4()}-${Date.now()}.ogg`;
+      const convertedAudioName = `whatsappModule/${uuidv4.v4()}-${Date.now()}.ogg`;
       whatsappAudioMessageFile = whatsappAudioMessageFile.split(',')[1];
       var whatsappAudioMessageFileBuffer = Buffer.from(whatsappAudioMessageFile, 'base64');
       fs.writeFileSync(originalAudioName, whatsappAudioMessageFileBuffer);
