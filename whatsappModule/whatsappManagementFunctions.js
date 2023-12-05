@@ -1185,12 +1185,12 @@ module.exports = {
   },
 
 
-  closeWhatsappConversation: async function(websocketConnection, whatsappConversationRecipientPhoneNumber, whatsappConversationCloseComment, whatsappConversationAmount, whatsappTextMessageBody){
+  closeWhatsappConversation: async function(websocketConnection, whatsappConversationRecipientPhoneNumber, whatsappConversationCloseComment, whatsappConversationAmount, whatsappConversationProducts, whatsappTextMessageBody){
     return new Promise(async (closeWhatsappConversationPromiseResolve) => {
       const selectOrCreateActiveWhatsappConversationIDResult = await whatsappDatabaseFunctions.selectOrCreateActiveWhatsappConversationID(whatsappConversationRecipientPhoneNumber);
       if (selectOrCreateActiveWhatsappConversationIDResult.success){
         const whatsappConversationID = selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationID;
-        const closeWhatsappConversationResult = await whatsappDatabaseFunctions.closeWhatsappConversation(whatsappConversationID, whatsappConversationCloseComment, whatsappConversationAmount);
+        const closeWhatsappConversationResult = await whatsappDatabaseFunctions.closeWhatsappConversation(whatsappConversationID, whatsappConversationCloseComment, whatsappConversationAmount, whatsappConversationProducts);
         const sendWhatsappMessageData =
         {
           'messaging_product': 'whatsapp',

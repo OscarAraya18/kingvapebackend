@@ -123,8 +123,9 @@ backendWhatsappHttpRequestServer.post('/closeWhatsappConversation', async (httpR
   const whatsappConversationRecipientPhoneNumber = httpRequestQuery.whatsappConversationRecipientPhoneNumber;
   const whatsappConversationCloseComment = httpRequestQuery.whatsappConversationCloseComment;
   const whatsappConversationAmount = httpRequestQuery.whatsappConversationAmount;
+  const whatsappConversationProducts = httpRequestQuery.whatsappConversationProducts;
   const whatsappTextMessageBody = httpRequestQuery.whatsappTextMessageBody;
-  const closeWhatsappConversationResult = await whatsappManagementFunctions.closeWhatsappConversation(websocketConnection, whatsappConversationRecipientPhoneNumber, whatsappConversationCloseComment, whatsappConversationAmount, whatsappTextMessageBody);
+  const closeWhatsappConversationResult = await whatsappManagementFunctions.closeWhatsappConversation(websocketConnection, whatsappConversationRecipientPhoneNumber, whatsappConversationCloseComment, whatsappConversationAmount, whatsappConversationProducts, whatsappTextMessageBody);
   httpResponse.end(closeWhatsappConversationResult);
 });
 

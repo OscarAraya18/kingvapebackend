@@ -187,12 +187,12 @@ module.exports = {
     });
   },
 
-  closeWhatsappConversation: async function(whatsappConversationID, whatsappConversationCloseComment, whatsappConversationAmount){
+  closeWhatsappConversation: async function(whatsappConversationID, whatsappConversationCloseComment, whatsappConversationAmount, whatsappConversationProducts){
     return new Promise (async (closeWhatsappConversationPromiseResolve) => {
       const whatsappConversationEndDateTime = Date().toString();
       const whatsappConversationIsActive = false;
-      const closeWhatsappConversationSQL = `UPDATE WhatsappConversations SET whatsappConversationEndDateTime=(?), whatsappConversationIsActive=(?), whatsappConversationCloseComment=(?), whatsappConversationAmount=(?) WHERE whatsappConversationID=(?);`;
-      const closeWhatsappConversationValues = [whatsappConversationEndDateTime, whatsappConversationIsActive, whatsappConversationCloseComment, parseFloat(whatsappConversationAmount), whatsappConversationID];
+      const closeWhatsappConversationSQL = `UPDATE WhatsappConversations SET whatsappConversationEndDateTime=(?), whatsappConversationIsActive=(?), whatsappConversationCloseComment=(?), whatsappConversationAmount=(?), whatsappConversationProducts=(?) WHERE whatsappConversationID=(?);`;
+      const closeWhatsappConversationValues = [whatsappConversationEndDateTime, whatsappConversationIsActive, whatsappConversationCloseComment, parseFloat(whatsappConversationAmount), whatsappConversationID, JSON.stringify(whatsappConversationProducts)];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(closeWhatsappConversationSQL, closeWhatsappConversationValues);
       closeWhatsappConversationPromiseResolve(databaseResult);
     });
@@ -386,6 +386,7 @@ module.exports = {
           WhatsappConversations.whatsappConversationEndDateTime, 
           WhatsappConversations.whatsappConversationCloseComment, 
           WhatsappConversations.whatsappConversationAmount, 
+          WhatsappConversations.whatsappConversationProducts,
           WhatsappConversations.whatsappConversationAssignedAgentID,
           Agents.agentName
         FROM WhatsappConversations JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
