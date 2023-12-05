@@ -6,7 +6,17 @@ module.exports = {
     {
         phoneNumberID: '158251570713513', 
         apiVersion: 'v17.0',
-        apiKey: 'EAAD2uKxXdvcBO4uIePEeD799atNDnsBOAUgPkrfkZBSxp6TMAnht7EouyfzHw4Juh1bS2BqVaU4ZAid5PZCAoWhebjKyc5R20rqBWXJzxb5eeiKRT7PEaCo6ORxpPwJa5Wo3gEkQzTOQESkZCvNZCFRvDjYdmSsgbTHRbNQhmG6QWsU3rnirG8ipUE7nlxxuzueN8ghdOqjTX9Bsu3ZCIZD',
+        apiKey: 'EAAD2uKxXdvcBO7bzpqZAiXn7spV5qN8vK2dGJ0oCXPZCoWxfy68up2X6QEqZBOVH7bBaE7d5oqZCZBzbjqSIZAKKObH4jduvKy3vX6aibgvC5W3SPn3XzNsCLSnmU2fqHF1gEMEs6ZCal3BQziCpu9BxaCm9ZAHlDZAWO7DRhn67CE0ZA2P57CtRMwzSZBcneLSB1Mndvp2xu9QqGWDyQl2xpYZD',
+    },
+
+    databaseCredentials: 
+    {
+      host: 'srv1230.hstgr.io',
+      database: 'u792983815_kingvape',
+      user: 'u792983815_kingvape',
+      password: 'kingvapedatabase123O',
+      charset: 'utf8mb4',
+      collation: 'utf8mb4_unicode_ci'
     },
 
     routes: 
