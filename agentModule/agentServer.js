@@ -163,3 +163,15 @@ backendAgentHttpRequestServer.post('/selectFavoriteImages', async (httpRequest, 
   const selectFavoriteImagesResult = await agentManagementFunctions.selectFavoriteImages();
   httpResponse.end(selectFavoriteImagesResult);
 });
+
+
+backendAgentHttpRequestServer.post('/rankingLogin', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const username = httpRequestQuery.username;
+  const password = httpRequestQuery.password;
+  if ((username == 'kv') && (password == 'kv')){
+    httpResponse.end(JSON.stringify({success: true}));
+  } else {
+    httpResponse.end(JSON.stringify({success: false}));
+  }
+});
