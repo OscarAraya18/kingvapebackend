@@ -1,32 +1,20 @@
-// INTERNAL MODULES IMPORT
 const constants = require('../constants.js');
-
-// EXTERNAL MODULES IMPORT
 const mysql = require('mysql');
+const util = require('util');
+
+// Create a connection pool
+const pool = mysql.createPool(constants.databaseCredentials);
 
 module.exports = {
-  executeDatabaseSQL: async function(databaseSQL, databaseValues){
-    return new Promise (async (executeDatabaseSQLPromiseResolve) => {
+  executeDatabaseSQL: async function (databaseSQL, databaseValues) {
+    return new Promise(async (executeDatabaseSQLPromiseResolve) => {
       try {
-        const databaseConnection = mysql.createConnection(constants.databaseCredentials);
-        databaseConnection.connect(function(connectionError){
-          if (connectionError){
-            executeDatabaseSQLPromiseResolve({success: false, result: connectionError});
-          } else {
-            databaseConnection.query(databaseSQL, databaseValues, function (queryError, queryResult) {
-              if (queryError) {
-                executeDatabaseSQLPromiseResolve({success: false, result: queryError});
-              } else {
-                executeDatabaseSQLPromiseResolve({success: true, result: queryResult});
-              }
-              databaseConnection.end();
-            });
-          }
-        });
-      } catch {
-
+        const query = util.promisify(pool.query).bind(pool);
+        const queryResult = await query(databaseSQL, databaseValues);
+        executeDatabaseSQLPromiseResolve({ success: true, result: queryResult });
+      } catch (error) {
+        executeDatabaseSQLPromiseResolve({ success: false, result: error });
       }
     });
   }
-
-}
+};
