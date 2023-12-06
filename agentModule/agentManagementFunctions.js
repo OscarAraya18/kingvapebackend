@@ -502,24 +502,13 @@ module.exports = {
       const selectAgentRankingInformationSQL = 
       `
       SELECT
-        a.agentID,
-        COUNT(DISTINCT CASE WHEN DATE(g.whatsappGeneralMessageCreationDateTime) = CURRENT_DATE THEN g.whatsappGeneralMessageID END) AS messages_today,
-        COUNT(DISTINCT CASE WHEN DATE(c.whatsappConversationStartDateTime) = CURRENT_DATE THEN c.whatsappConversationID END) AS conversations_today,
-        COUNT(DISTINCT CASE WHEN DATE(c.whatsappConversationStartDateTime) = CURRENT_DATE AND c.whatsappConversationCloseComment = 'Venta' THEN c.whatsappConversationID END) AS sold_conversations_today
-      FROM
-          Agents a
-      LEFT JOIN
-          WhatsappConversations c ON a.agentID = c.whatsappConversationAssignedAgentID
-      LEFT JOIN
-          whatsappGeneralMessages g ON c.whatsappConversationID = g.whatsappGeneralMessageWhatsappConversationID AND (g.whatsappGeneralMessageOwnerPhoneNumber IS NULL OR a.agentID = g.whatsappGeneralMessageOwnerPhoneNumber)
-      WHERE
-          a.agentType = 'agent'
-      GROUP BY
-          a.agentID
-      ORDER BY
-          sold_conversations_today;
+      DATE_FORMAT(g.whatsappGeneralMessageCreationDateTime, '%m/%d/%Y')
+FROM
+    WhatsappGeneralMessages g
+
       `;
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAgentRankingInformationSQL);
+      console.log(databaseResult);
       selectAgentRankingInformationPromiseResolve(JSON.stringify(databaseResult));
     });
   },
