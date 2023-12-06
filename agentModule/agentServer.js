@@ -175,3 +175,9 @@ backendAgentHttpRequestServer.post('/rankingLogin', async (httpRequest, httpResp
     httpResponse.end(JSON.stringify({success: false}));
   }
 });
+
+
+backendAgentHttpRequestServer.post('/selectAgentRankingInformation', async (httpRequest, httpResponse) => {
+  const selectAgentRankingInformationResult = await agentManagementFunctions.selectAgentRankingInformation();
+  httpResponse.end(selectFavoriteImagesResult);
+});
