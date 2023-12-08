@@ -16,6 +16,8 @@ const backendContactHttpRequestServer = require('./contactModule/contactServer.j
 const backendWhatsappHttpRequestServer = require('./whatsappModule/whatsappServer.js');
 const backendStoreHttpRequestServer = require('./storeModule/storeServer.js');
 
+backendHttpRequestServer.options('*', cors());
+
 backendHttpRequestServer.use(backendAgentHttpRequestServer);
 backendHttpRequestServer.use(backendContactHttpRequestServer);
 backendHttpRequestServer.use(backendWhatsappHttpRequestServer);
