@@ -6,6 +6,8 @@ const WebSocket = require('ws');
 
 const backendHttpRequestServer = express();
 backendHttpRequestServer.use(cors());
+backendHttpRequestServer.options('*', cors());
+
 backendHttpRequestServer.use(express.json({limit: '50mb'}));
 
 const server = backendHttpRequestServer.listen(constants.backendHttpRequestServerConnectionPort);
@@ -16,7 +18,7 @@ const backendContactHttpRequestServer = require('./contactModule/contactServer.j
 const backendWhatsappHttpRequestServer = require('./whatsappModule/whatsappServer.js');
 const backendStoreHttpRequestServer = require('./storeModule/storeServer.js');
 
-backendHttpRequestServer.options('*', cors());
+
 
 backendHttpRequestServer.use(backendAgentHttpRequestServer);
 backendHttpRequestServer.use(backendContactHttpRequestServer);
