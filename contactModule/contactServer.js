@@ -65,3 +65,8 @@ backendContactHttpRequestServer.post('/selectContact', async (httpRequest, httpR
   const selectContactResult = await contactsManagementFunctions.selectContact(contactPhoneNumber);
   httpResponse.end(selectContactResult);
 });
+
+backendContactHttpRequestServer.get('/loadContact', async (httpRequest, httpResponse) => {
+  const loadContactResult = await contactsManagementFunctions.loadContact();
+  httpResponse.end(loadContactResult);
+});

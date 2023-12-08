@@ -1,5 +1,6 @@
 const constants = require('../constants.js');
 const databaseManagementFunctions = require('../databaseModule/databaseManagementFunctions.js');
+const databaseFileManager = require('fs');
 
 
 module.exports = {
@@ -111,6 +112,26 @@ module.exports = {
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectContactSQL, selectContactValues);
       selectContactPromiseResolve(JSON.stringify(databaseResult));
     });
-  }
+  },
 
+
+  loadContact: async function(){
+    try {
+      const contactDatabase = JSON.parse(databaseFileManager.readFileSync('contactModule/contactDatabase.json', 'utf8'));
+      for (var contactPhoneNumber in contactDatabase){
+        const contactID = contactDatabase[contactPhoneNumber].contactID;
+        const contactName = contactDatabase[contactPhoneNumber].contactName;
+        const insertContactResult = await this.insertContact(contactPhoneNumber, contactID, contactName, 'NA', 'NA', 'NA');
+        if (insertContactResult.success == false){
+          return JSON.stringify({success: false});
+        }
+        console.log(contactPhoneNumber);
+        console.log(contactPhoneNumber + ': ' + contactName + ' is ready');
+      }
+      return JSON.stringify({success: true});
+    } catch (error) {
+      console.log(error);
+      return JSON.stringify({success: false});
+    }
+  }
 }
