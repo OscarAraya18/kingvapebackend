@@ -5,7 +5,7 @@ const cors = require('cors');
 const WebSocket = require('ws');
 
 const backendHttpRequestServer = express();
-backendHttpRequestServer.use(cors());
+backendHttpRequestServer.use(cors({origin: 'https://souqcr.com'}));
 backendHttpRequestServer.options('*', cors());
 
 backendHttpRequestServer.use(express.json({limit: '50mb'}));
