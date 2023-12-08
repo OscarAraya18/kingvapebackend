@@ -153,6 +153,5 @@ backendWhatsappHttpRequestServer.post('/selectWhatsappClosedConversationFromWhat
   const httpRequestQuery = httpRequest.body;
   const whatsappConversationRecipientPhoneNumber = httpRequestQuery.whatsappConversationRecipientPhoneNumber;
   const selectWhatsappClosedConversationFromWhatsappConversationRecipientPhoneNumberResult = await whatsappManagementFunctions.selectWhatsappClosedConversationFromWhatsappConversationRecipientPhoneNumber(whatsappConversationRecipientPhoneNumber);
-  console.log(selectWhatsappClosedConversationFromWhatsappConversationRecipientPhoneNumberResult);
   httpResponse.end(selectWhatsappClosedConversationFromWhatsappConversationRecipientPhoneNumberResult); 
 });

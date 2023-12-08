@@ -8,14 +8,9 @@ const backendHttpRequestServer = express();
 backendHttpRequestServer.use(cors({origin: 'https://souqcr.com'}));
 backendHttpRequestServer.options('*', cors());
 
-backendHttpRequestServer.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT");
-  next();
-  console.log(req);
+backendHttpRequestServer.use(function(httpRequest, httpResponse, next) {
+  httpResponse.header('Access-Control-Allow-Origin', true);
 });
-
-
 backendHttpRequestServer.use(express.json({limit: '50mb'}));
 
 const server = backendHttpRequestServer.listen(constants.backendHttpRequestServerConnectionPort);
