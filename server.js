@@ -8,7 +8,7 @@ const backendHttpRequestServer = express();
 backendHttpRequestServer.use(cors());
 backendHttpRequestServer.use(express.json({limit: '50mb'}));
 
-/*
+
 backendHttpRequestServer.use(function(httpRequest, httpResponse, next) {
   httpResponse.setHeader('Access-Control-Allow-Origin', '*');
   httpResponse.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -16,7 +16,7 @@ backendHttpRequestServer.use(function(httpRequest, httpResponse, next) {
   httpResponse.setHeader('Access-Control-Allow-Credentials', true);
   next();
 });
-*/
+
 const server = backendHttpRequestServer.listen(constants.backendHttpRequestServerConnectionPort);
 module.exports = server;
 

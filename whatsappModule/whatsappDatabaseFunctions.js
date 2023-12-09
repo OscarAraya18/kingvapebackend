@@ -91,20 +91,45 @@ module.exports = {
   },
 
   
-  selectWhatsappContactProfileName: async function(whatsappConversationRecipientPhoneNumber){
-    return new Promise(async (selectWhatsappContactProfileNamePromiseResolve) => {
-      const selectWhatsappContactProfileNameSQL = `SELECT contactName FROM Contacts WHERE contactPhoneNumber=(?);`;
-      const selectWhatsappContactProfileNameValues = [whatsappConversationRecipientPhoneNumber];
-      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectWhatsappContactProfileNameSQL, selectWhatsappContactProfileNameValues);
+  selectWhatsappContactInformation: async function(whatsappConversationRecipientPhoneNumber){
+    return new Promise(async (selectWhatsappContactInformationPromiseResolve) => {
+      const selectWhatsappContactInformationSQL = `SELECT * FROM Contacts WHERE contactPhoneNumber=(?);`;
+      const selectWhatsappContactInformationValues = [whatsappConversationRecipientPhoneNumber];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectWhatsappContactInformationSQL, selectWhatsappContactInformationValues);
       if (databaseResult.success){
         if (databaseResult.result.length == 0){
-          selectWhatsappContactProfileNamePromiseResolve({success: true, result: 'No registrado'});
+          selectWhatsappContactInformationPromiseResolve
+          ({
+            success: true, 
+            result: 
+            {
+              contactID: '', 
+              contactName: 'No registrado', 
+              contactEmail: 'NA', 
+              contactLocations:
+              JSON.stringify({
+                'CASA': {
+                  'latitude': 0,
+                  'longitude': 0
+                },
+                'TRABAJO': {
+                  'latitude': 0,
+                  'longitude': 0
+                },
+                'OTRO': {
+                  'latitude': 0,
+                  'longitude': 0
+                }
+              }),
+              contactLocationDetails: 'NA',
+              contactNote: 'NA' 
+            }
+          });
         } else {
-          const whatsappContactProfileName = databaseResult.result[0].contactName;
-          selectWhatsappContactProfileNamePromiseResolve({success: true, result: whatsappContactProfileName});
+          selectWhatsappContactInformationPromiseResolve({success: true, result: databaseResult.result});
         }
       } else {
-        selectWhatsappContactProfileNamePromiseResolve(databaseResult);
+        selectWhatsappContactInformationPromiseResolve(databaseResult);
       }
     });
   },
@@ -203,14 +228,23 @@ module.exports = {
       const selectWhatsappConversationAssignedAgentIDResult = await this.selectWhatsappConversationAssignedAgentID();
       if (selectWhatsappConversationAssignedAgentIDResult.success){
         const whatsappConversationAssignedAgentID = selectWhatsappConversationAssignedAgentIDResult.result;
-        const selectWhatsappContactProfileNameResult = await this.selectWhatsappContactProfileName(whatsappConversationRecipientPhoneNumber);
-        if (selectWhatsappContactProfileNameResult.success){
-          const whatsappConversationRecipientProfileName = selectWhatsappContactProfileNameResult.result;
+        const selectWhatsappContactInformationResult = await this.selectWhatsappContactInformation(whatsappConversationRecipientPhoneNumber);
+        if (selectWhatsappContactInformationResult.success){
+
+
+          const whatsappConversationRecipientProfileName = selectWhatsappContactInformationResult.result.contactName;
+          const whatsappConversationRecipientID = selectWhatsappContactInformationResult.contactID;
+          const whatsappConversationRecipientEmail = selectWhatsappContactInformationResult.contactEmail;
+          const whatsappConversationRecipientLocations = selectWhatsappContactInformationResult.contactLocations;
+          const whatsappConversationRecipientLocationDetails = selectWhatsappContactInformationResult.contactLocationDetails;
+          const whatsappConversationRecipientNote = selectWhatsappContactInformationResult.contactNote;
+
+
           const whatsappConversationStartDateTime = Date().toString();
           const whatsappConversationEndDateTime = null;
           const whatsappConversationIsActive = true;
-          const createWhatsappConversationSQL = `INSERT INTO WhatsappConversations (whatsappConversationAssignedAgentID, whatsappConversationRecipientPhoneNumber, whatsappConversationRecipientProfileName, whatsappConversationStartDateTime, whatsappConversationEndDateTime, whatsappConversationIsActive) VALUES (?,?,?,?,?,?);`;
-          const createWhatsappConversationValues = [whatsappConversationAssignedAgentID, whatsappConversationRecipientPhoneNumber, whatsappConversationRecipientProfileName, whatsappConversationStartDateTime, whatsappConversationEndDateTime, whatsappConversationIsActive];
+          const createWhatsappConversationSQL = `INSERT INTO WhatsappConversations (whatsappConversationAssignedAgentID, whatsappConversationRecipientPhoneNumber, whatsappConversationRecipientProfileName, whatsappConversationRecipientID, whatsappConversationRecipientEmail, whatsappConversationRecipientLocations, whatsappConversationRecipientLocationDetails, whatsappConversationRecipientNote, whatsappConversationStartDateTime, whatsappConversationEndDateTime, whatsappConversationIsActive) VALUES (?,?,?,?,?,?,?,?,?,?,?);`;
+          const createWhatsappConversationValues = [whatsappConversationAssignedAgentID, whatsappConversationRecipientPhoneNumber, whatsappConversationRecipientProfileName, whatsappConversationRecipientID, whatsappConversationRecipientEmail, whatsappConversationRecipientLocations, whatsappConversationRecipientLocationDetails, whatsappConversationRecipientNote, whatsappConversationStartDateTime, whatsappConversationEndDateTime, whatsappConversationIsActive];
           const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(createWhatsappConversationSQL, createWhatsappConversationValues);
           if (databaseResult.success){
             const whatsappConversationID = databaseResult.result.insertId;
@@ -239,12 +273,31 @@ module.exports = {
 
   createWhatsappConversationWithWhatsappConversationAssignedAgentID: async function(whatsappConversationAssignedAgentID, whatsappConversationRecipientPhoneNumber, whatsappConversationRecipientProfileName){
     return new Promise (async (createWhatsappConversationWithWhatsappConversationAssignedAgentIDPromiseResolve) => {
-      const whatsappConversationStartDateTime = Date().toString();
-      const whatsappConversationEndDateTime = null;
-      const whatsappConversationIsActive = true;
-      const createWhatsappConversationSQL = `INSERT INTO WhatsappConversations (whatsappConversationAssignedAgentID, whatsappConversationRecipientPhoneNumber, whatsappConversationRecipientProfileName, whatsappConversationStartDateTime, whatsappConversationEndDateTime, whatsappConversationIsActive) VALUES (?,?,?,?,?,?);`;
-      const createWhatsappConversationValues = [whatsappConversationAssignedAgentID, whatsappConversationRecipientPhoneNumber, whatsappConversationRecipientProfileName, whatsappConversationStartDateTime, whatsappConversationEndDateTime, whatsappConversationIsActive];
-      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(createWhatsappConversationSQL, createWhatsappConversationValues);
+          const whatsappConversationRecipientID = 0;
+          const whatsappConversationRecipientEmail = 'NA';
+          const whatsappConversationRecipientLocations = 
+          JSON.stringify({
+            'CASA': {
+              'latitude': 0,
+              'longitude': 0
+            },
+            'TRABAJO': {
+              'latitude': 0,
+              'longitude': 0
+            },
+            'OTRO': {
+              'latitude': 0,
+              'longitude': 0
+            }
+          });
+          const whatsappConversationRecipientLocationDetails = 'NA';
+          const whatsappConversationRecipientNote = 'NA';
+          const whatsappConversationStartDateTime = Date().toString();
+          const whatsappConversationEndDateTime = null;
+          const whatsappConversationIsActive = true;
+          const createWhatsappConversationSQL = `INSERT INTO WhatsappConversations (whatsappConversationAssignedAgentID, whatsappConversationRecipientPhoneNumber, whatsappConversationRecipientProfileName, whatsappConversationRecipientID, whatsappConversationRecipientEmail, whatsappConversationRecipientLocations, whatsappConversationRecipientLocationDetails, whatsappConversationRecipientNote, whatsappConversationStartDateTime, whatsappConversationEndDateTime, whatsappConversationIsActive) VALUES (?,?,?,?,?,?,?,?,?,?,?);`;
+          const createWhatsappConversationValues = [whatsappConversationAssignedAgentID, whatsappConversationRecipientPhoneNumber, whatsappConversationRecipientProfileName, whatsappConversationRecipientID, whatsappConversationRecipientEmail, whatsappConversationRecipientLocations, whatsappConversationRecipientLocationDetails, whatsappConversationRecipientNote, whatsappConversationStartDateTime, whatsappConversationEndDateTime, whatsappConversationIsActive];
+          const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(createWhatsappConversationSQL, createWhatsappConversationValues);
       if (databaseResult.success){
         const whatsappConversationID = databaseResult.result.insertId;
         createWhatsappConversationWithWhatsappConversationAssignedAgentIDPromiseResolve({success: true, result: whatsappConversationID});

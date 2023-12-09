@@ -253,6 +253,11 @@ module.exports = {
           WhatsappConversations.whatsappConversationAssignedAgentID,
           WhatsappConversations.whatsappConversationRecipientPhoneNumber,
           WhatsappConversations.whatsappConversationRecipientProfileName,
+          WhatsappConversations.whatsappConversationRecipientID,
+          WhatsappConversations.whatsappConversationRecipientEmail,
+          WhatsappConversations.whatsappConversationRecipientLocations,
+          WhatsappConversations.whatsappConversationRecipientLocationDetails,
+          WhatsappConversations.whatsappConversationRecipientNote,
           WhatsappConversations.whatsappConversationStartDateTime,
           WhatsappConversations.whatsappConversationEndDateTime,
           WhatsappConversations.whatsappConversationIsActive,
@@ -316,6 +321,11 @@ module.exports = {
           WhatsappConversations.whatsappConversationAssignedAgentID,
           WhatsappConversations.whatsappConversationRecipientPhoneNumber,
           WhatsappConversations.whatsappConversationRecipientProfileName,
+          WhatsappConversations.whatsappConversationRecipientID,
+          WhatsappConversations.whatsappConversationRecipientEmail,
+          WhatsappConversations.whatsappConversationRecipientLocations,
+          WhatsappConversations.whatsappConversationRecipientLocationDetails,
+          WhatsappConversations.whatsappConversationRecipientNote,
           WhatsappConversations.whatsappConversationStartDateTime,
           WhatsappConversations.whatsappConversationEndDateTime,
           WhatsappConversations.whatsappConversationIsActive,
@@ -377,6 +387,11 @@ module.exports = {
         if (!(whatsappConversationID in whatsappConversations)){
           var whatsappConversationRecipientPhoneNumber = whatsappGeneralMessage.whatsappConversationRecipientPhoneNumber;
           var whatsappConversationRecipientProfileName = whatsappGeneralMessage.whatsappConversationRecipientProfileName;
+          var whatsappConversationRecipientID = whatsappGeneralMessage.whatsappConversationRecipientID;
+          var whatsappConversationRecipientEmail = whatsappGeneralMessage.whatsappConversationRecipientEmail;
+          var whatsappConversationRecipientLocations = JSON.parse(whatsappGeneralMessage.whatsappConversationRecipientLocations);
+          var whatsappConversationRecipientLocationDetails = whatsappGeneralMessage.whatsappConversationRecipientLocationDetails;
+          var whatsappConversationRecipientNote = whatsappGeneralMessage.whatsappConversationRecipientNote;
           var whatsappConversationAssignedAgentID = whatsappGeneralMessage.whatsappConversationAssignedAgentID;
           var whatsappConversationStartDateTime = whatsappGeneralMessage.whatsappConversationStartDateTime;
           var whatsappConversationEndDateTime = whatsappGeneralMessage.whatsappConversationEndDateTime;
@@ -388,6 +403,11 @@ module.exports = {
             whatsappConversationEndDateTime: whatsappConversationEndDateTime,
             whatsappConversationRecipientPhoneNumber: whatsappConversationRecipientPhoneNumber,
             whatsappConversationRecipientProfileName: whatsappConversationRecipientProfileName,
+            whatsappConversationRecipientID: whatsappConversationRecipientID,
+            whatsappConversationRecipientEmail: whatsappConversationRecipientEmail,
+            whatsappConversationRecipientLocations: whatsappConversationRecipientLocations,
+            whatsappConversationRecipientLocationDetails: whatsappConversationRecipientLocationDetails,
+            whatsappConversationRecipientNote: whatsappConversationRecipientNote,
             whatsappConversationIsActive: whatsappConversationIsActive,
             whatsappConversationMessages: [],
             whatsappConversationProducts: []
