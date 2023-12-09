@@ -9,8 +9,9 @@ backendHttpRequestServer.use(cors({origin: 'https://souqcr.com'}));
 backendHttpRequestServer.options('*', cors());
 
 backendHttpRequestServer.use(function(httpRequest, httpResponse, next) {
-  httpResponse.header('Access-Control-Allow-Origin', true);
+  httpResponse.header('Access-Control-Allow-Origin', 'https://souqcr.com/');
 });
+
 backendHttpRequestServer.use(express.json({limit: '50mb'}));
 
 const server = backendHttpRequestServer.listen(constants.backendHttpRequestServerConnectionPort);
