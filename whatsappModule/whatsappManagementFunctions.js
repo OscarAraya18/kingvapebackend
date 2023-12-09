@@ -608,7 +608,6 @@ module.exports = {
     
   },
 
-
   receiveWhatsappMessage: async function(websocketConnection, httpRequest){
     try { 
       const whatsappConversationRecipientPhoneNumber = httpRequest['body']['entry'][0]['changes'][0]['value']['messages'][0]['from'];
@@ -1185,7 +1184,6 @@ module.exports = {
     });
   },
 
-
   closeWhatsappConversation: async function(websocketConnection, whatsappConversationRecipientPhoneNumber, whatsappConversationCloseComment, whatsappConversationAmount, whatsappConversationProducts, whatsappTextMessageBody){
     return new Promise(async (closeWhatsappConversationPromiseResolve) => {
       const selectOrCreateActiveWhatsappConversationIDResult = await whatsappDatabaseFunctions.selectOrCreateActiveWhatsappConversationID(whatsappConversationRecipientPhoneNumber);
@@ -1279,8 +1277,5 @@ module.exports = {
       selectWhatsappClosedConversationFromWhatsappConversationRecipientPhoneNumberPromiseResolve(JSON.stringify(selectWhatsappClosedConversationFromWhatsappConversationRecipientPhoneNumberResult));
     });
   },
-
-
-
 
 }

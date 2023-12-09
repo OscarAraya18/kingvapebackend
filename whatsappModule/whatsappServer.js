@@ -10,7 +10,6 @@ const express = require('express');
 const backendWhatsappHttpRequestServer = express.Router();
 module.exports = backendWhatsappHttpRequestServer;
 
-
 backendWhatsappHttpRequestServer.get('/webhookConnection', async (httpRequest, httpResponse) => {
   httpResponse.end(url.parse(httpRequest.url,true).query['hub.challenge']);
 });
@@ -43,7 +42,6 @@ backendWhatsappHttpRequestServer.get('/sendWhatsappTextMessage', async (httpRequ
   const sendWhatsappTextMessageResult = await whatsappManagementFunctions.sendWhatsappTextMessage(websocketConnection, whatsappConversationRecipientPhoneNumber, whatsappGeneralMessageRepliedMessageID, whatsappTextMessageBody);
   httpResponse.end(sendWhatsappTextMessageResult);
 });
-
 
 backendWhatsappHttpRequestServer.post('/sendWhatsappTextMessageFromContactList', async (httpRequest, httpResponse) => {
   const httpRequestQuery = httpRequest.body;
@@ -101,7 +99,6 @@ backendWhatsappHttpRequestServer.post('/sendWhatsappProductImageMessage', async 
   const sendWhatsappProductImageMessageResult = await whatsappManagementFunctions.sendWhatsappProductImageMessage(websocketConnection, whatsappConversationRecipientPhoneNumber, whatsappProductImageMessageURL, whatsappProductImageMessageCaption);
   httpResponse.end(sendWhatsappProductImageMessageResult);
 });
-
 
 backendWhatsappHttpRequestServer.get('/selectAllWhatsappPendingConversation', async (httpRequest, httpResponse) => {
   const selectAllPendingConversationResult = await whatsappManagementFunctions.selectAllWhatsappPendingConversation();
