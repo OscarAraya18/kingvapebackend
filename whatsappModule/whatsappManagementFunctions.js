@@ -657,7 +657,7 @@ module.exports = {
                   if (websocketMessageContent.whatsappConversationAssignedAgentID == null){
                     websocketConnection.sendWebsocketMessage('/receiveWhatsappPendingConversation', websocketMessageContent);
                   } else {
-                    websocketConnection.sendWebsocketMessage('', websocketMessageContent);
+                    websocketConnection.sendWebsocketMessage('/receiveWhatsappConversation', websocketMessageContent);
                   }
                 } else {
                   const websocketMessageContent = 
