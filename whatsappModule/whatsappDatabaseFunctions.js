@@ -126,7 +126,19 @@ module.exports = {
             }
           });
         } else {
-          selectWhatsappContactInformationPromiseResolve({success: true, result: databaseResult.result});
+          selectWhatsappContactInformationPromiseResolve
+          ({
+            success: true, 
+            result: 
+            {
+              contactID: databaseResult.result[0].contactID, 
+              contactName: databaseResult.result[0].contactName, 
+              contactEmail: databaseResult.result[0].contactEmail, 
+              contactLocations: databaseResult.result[0].contactLocations,
+              contactLocationDetails: databaseResult.result[0].contactLocationDetails,
+              contactNote: databaseResult.result[0].contactNote
+            }
+          });
         }
       } else {
         selectWhatsappContactInformationPromiseResolve(databaseResult);
@@ -233,11 +245,11 @@ module.exports = {
 
 
           const whatsappConversationRecipientProfileName = selectWhatsappContactInformationResult.result.contactName;
-          const whatsappConversationRecipientID = selectWhatsappContactInformationResult.contactID;
-          const whatsappConversationRecipientEmail = selectWhatsappContactInformationResult.contactEmail;
-          const whatsappConversationRecipientLocations = selectWhatsappContactInformationResult.contactLocations;
-          const whatsappConversationRecipientLocationDetails = selectWhatsappContactInformationResult.contactLocationDetails;
-          const whatsappConversationRecipientNote = selectWhatsappContactInformationResult.contactNote;
+          const whatsappConversationRecipientID = selectWhatsappContactInformationResult.result.contactID;
+          const whatsappConversationRecipientEmail = selectWhatsappContactInformationResult.result.contactEmail;
+          const whatsappConversationRecipientLocations = selectWhatsappContactInformationResult.result.contactLocations;
+          const whatsappConversationRecipientLocationDetails = selectWhatsappContactInformationResult.result.contactLocationDetails;
+          const whatsappConversationRecipientNote = selectWhatsappContactInformationResult.result.contactNote;
 
 
           const whatsappConversationStartDateTime = Date().toString();
@@ -245,7 +257,10 @@ module.exports = {
           const whatsappConversationIsActive = true;
           const createWhatsappConversationSQL = `INSERT INTO WhatsappConversations (whatsappConversationAssignedAgentID, whatsappConversationRecipientPhoneNumber, whatsappConversationRecipientProfileName, whatsappConversationRecipientID, whatsappConversationRecipientEmail, whatsappConversationRecipientLocations, whatsappConversationRecipientLocationDetails, whatsappConversationRecipientNote, whatsappConversationStartDateTime, whatsappConversationEndDateTime, whatsappConversationIsActive) VALUES (?,?,?,?,?,?,?,?,?,?,?);`;
           const createWhatsappConversationValues = [whatsappConversationAssignedAgentID, whatsappConversationRecipientPhoneNumber, whatsappConversationRecipientProfileName, whatsappConversationRecipientID, whatsappConversationRecipientEmail, whatsappConversationRecipientLocations, whatsappConversationRecipientLocationDetails, whatsappConversationRecipientNote, whatsappConversationStartDateTime, whatsappConversationEndDateTime, whatsappConversationIsActive];
+          console.log(createWhatsappConversationSQL);
+          console.log(createWhatsappConversationValues);
           const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(createWhatsappConversationSQL, createWhatsappConversationValues);
+          console.log(databaseResult);
           if (databaseResult.success){
             const whatsappConversationID = databaseResult.result.insertId;
             const createWhatsappConversationPromiseResult = 
