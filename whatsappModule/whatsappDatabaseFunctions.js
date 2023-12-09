@@ -267,7 +267,6 @@ module.exports = {
           const createWhatsappConversationSQL = `INSERT INTO WhatsappConversations (whatsappConversationAssignedAgentID, whatsappConversationRecipientPhoneNumber, whatsappConversationRecipientProfileName, whatsappConversationRecipientID, whatsappConversationRecipientEmail, whatsappConversationRecipientLocations, whatsappConversationRecipientLocationDetails, whatsappConversationRecipientNote, whatsappConversationStartDateTime, whatsappConversationEndDateTime, whatsappConversationIsActive) VALUES (?,?,?,?,?,?,?,?,?,?,?);`;
           const createWhatsappConversationValues = [whatsappConversationAssignedAgentID, whatsappConversationRecipientPhoneNumber, whatsappConversationRecipientProfileName, whatsappConversationRecipientID, whatsappConversationRecipientEmail, whatsappConversationRecipientLocations, whatsappConversationRecipientLocationDetails, whatsappConversationRecipientNote, whatsappConversationStartDateTime, whatsappConversationEndDateTime, whatsappConversationIsActive];
           const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(createWhatsappConversationSQL, createWhatsappConversationValues);
-          console.log(databaseResult);
           if (databaseResult.success){
             const whatsappConversationID = databaseResult.result.insertId;
             const createWhatsappConversationPromiseResult = 
@@ -276,6 +275,12 @@ module.exports = {
               whatsappConversationAssignedAgentID: whatsappConversationAssignedAgentID, 
               whatsappConversationRecipientPhoneNumber: whatsappConversationRecipientPhoneNumber,
               whatsappConversationRecipientProfileName: whatsappConversationRecipientProfileName,
+              whatsappConversationRecipientProfileName: selectWhatsappContactInformationResult.result.contactName,
+              whatsappConversationRecipientID: selectWhatsappContactInformationResult.result.contactID,
+              whatsappConversationRecipientEmail: selectWhatsappContactInformationResult.result.contactEmail,
+              whatsappConversationRecipientLocations: selectWhatsappContactInformationResult.result.contactLocations,
+              whatsappConversationRecipientLocationDetails: selectWhatsappContactInformationResult.result.contactLocationDetails,
+              whatsappConversationRecipientNote: selectWhatsappContactInformationResult.result.contactNote,
               whatsappConversationStartDateTime: whatsappConversationStartDateTime,
               whatsappConversationEndDateTime: whatsappConversationEndDateTime,
               whatsappConversationIsActive: whatsappConversationIsActive
