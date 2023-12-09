@@ -15,6 +15,7 @@ ffmpeg.setFfmpegPath(ffmpegPath);
 module.exports = {
   sendWhatsappMessage: async function(sendWhatsappMessageData){
     return new Promise((sendWhatsappMessagePromiseResolve) => {
+      console.log(sendWhatsappMessageData);
       const sendWhatsappMessageURL = `https://graph.facebook.com/${constants.credentials.apiVersion}/${constants.credentials.phoneNumberID}/messages`;
       const sendWhatsappMessageHeaders = {'Content-Type': 'application/json', 'Authorization': `Bearer ${constants.credentials.apiKey}`};
       axios.post(sendWhatsappMessageURL, sendWhatsappMessageData, {headers: sendWhatsappMessageHeaders}).then((response) => {
@@ -22,7 +23,6 @@ module.exports = {
         sendWhatsappMessagePromiseResolve({success: true, result: whatsappMessageID});
       })
       .catch((error) => {
-        console.log(error);
         sendWhatsappMessagePromiseResolve({success: false, result: error});
       });  
     });
