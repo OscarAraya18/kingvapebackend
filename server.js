@@ -5,8 +5,7 @@ const cors = require('cors');
 const WebSocket = require('ws');
 
 const backendHttpRequestServer = express();
-backendHttpRequestServer.use(cors({origin: '*'}));
-backendHttpRequestServer.options('*', cors());
+backendHttpRequestServer.use(cors());
 
 backendHttpRequestServer.use(function(httpRequest, httpResponse, next) {
   httpResponse.setHeader('Access-Control-Allow-Origin', '*');
