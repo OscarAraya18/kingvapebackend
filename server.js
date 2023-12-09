@@ -5,11 +5,22 @@ const cors = require('cors');
 const WebSocket = require('ws');
 
 const backendHttpRequestServer = express();
-backendHttpRequestServer.use(cors({origin: 'https://souqcr.com'}));
+backendHttpRequestServer.use(cors({origin: '*'}));
 backendHttpRequestServer.options('*', cors());
 
 backendHttpRequestServer.use(function(httpRequest, httpResponse, next) {
-  httpResponse.header('Access-Control-Allow-Origin', 'https://souqcr.com/');
+  httpResponse.setHeader('Access-Control-Allow-Origin', '*');
+
+  // Request methods you wish to allow
+  httpResponse.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+  // Request headers you wish to allow
+  httpResponse.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+
+  // Set to true if you need the website to include cookies in the requests sent
+  // to the API (e.g. in case you use sessions)
+  httpResponse.setHeader('Access-Control-Allow-Credentials', true);
+  next();
 });
 
 backendHttpRequestServer.use(express.json({limit: '50mb'}));
