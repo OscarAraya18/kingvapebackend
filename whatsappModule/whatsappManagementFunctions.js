@@ -637,23 +637,13 @@ module.exports = {
               const whatsappTextMessageBody = whatsappMessageContent.body;
               const createWhatsappTextMessageResult = await whatsappDatabaseFunctions.createWhatsappTextMessage(whatsappTextMessageID, whatsappTextMessageBody);
               if (createWhatsappTextMessageResult.success){
+                const websocketMessageContent = selectOrCreateActiveWhatsappConversationIDResult.result;
+
                 if (selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationIsActive){
-                  const websocketMessageContent = selectOrCreateActiveWhatsappConversationIDResult.result;
                   websocketMessageContent['whatsappConversationMessages'] = 
                   [
                     {
                       whatsappConversationID: whatsappConversationID,
-                      whatsappConversationAssignedAgentID: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationAssignedAgentID, 
-                      whatsappConversationRecipientPhoneNumber: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationRecipientPhoneNumber,
-                      whatsappConversationRecipientProfileName: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationRecipientProfileName,
-                      whatsappConversationRecipientID: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactID,
-                      whatsappConversationRecipientEmail: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactEmail,
-                      whatsappConversationRecipientLocations: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactLocations,
-                      whatsappConversationRecipientLocationDetails: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactLocationDetails,
-                      whatsappConversationRecipientNote: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactNote,
-                      whatsappConversationStartDateTime: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationStartDateTime,
-                      whatsappConversationEndDateTime: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationEndDateTime,
-                      whatsappConversationIsActive: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationIsActive,
                       whatsappGeneralMessageID: whatsappGeneralMessageID,
                       whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
                       whatsappGeneralMessageType: whatsappMessageType,
@@ -676,17 +666,6 @@ module.exports = {
                     result: 
                     {
                       whatsappConversationID: whatsappConversationID,
-                      whatsappConversationAssignedAgentID: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationAssignedAgentID, 
-                      whatsappConversationRecipientPhoneNumber: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationRecipientPhoneNumber,
-                      whatsappConversationRecipientProfileName: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationRecipientProfileName,
-                      whatsappConversationRecipientID: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactID,
-                      whatsappConversationRecipientEmail: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactEmail,
-                      whatsappConversationRecipientLocations: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactLocations,
-                      whatsappConversationRecipientLocationDetails: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactLocationDetails,
-                      whatsappConversationRecipientNote: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactNote,
-                      whatsappConversationStartDateTime: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationStartDateTime,
-                      whatsappConversationEndDateTime: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationEndDateTime,
-                      whatsappConversationIsActive: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationIsActive,
                       whatsappGeneralMessageID: whatsappGeneralMessageID,
                       whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
                       whatsappGeneralMessageType: whatsappMessageType,
@@ -707,23 +686,13 @@ module.exports = {
               const whatsappLocationMessageLongitude = whatsappMessageContent.longitude;
               const createWhatsappLocationMessageResult = await whatsappDatabaseFunctions.createWhatsappLocationMessage(whatsappLocationMessageID, whatsappLocationMessageLatitude, whatsappLocationMessageLongitude);
               if (createWhatsappLocationMessageResult.success){
+                const websocketMessageContent = selectOrCreateActiveWhatsappConversationIDResult.result;
+
                 if (selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationIsActive){
-                  const websocketMessageContent = selectOrCreateActiveWhatsappConversationIDResult.result;
                   websocketMessageContent['whatsappConversationMessages'] = 
                   [
                     {
                       whatsappConversationID: whatsappConversationID,
-                      whatsappConversationAssignedAgentID: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationAssignedAgentID, 
-                      whatsappConversationRecipientPhoneNumber: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationRecipientPhoneNumber,
-                      whatsappConversationRecipientProfileName: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationRecipientProfileName,
-                      whatsappConversationRecipientID: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactID,
-                      whatsappConversationRecipientEmail: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactEmail,
-                      whatsappConversationRecipientLocations: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactLocations,
-                      whatsappConversationRecipientLocationDetails: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactLocationDetails,
-                      whatsappConversationRecipientNote: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactNote,
-                      whatsappConversationStartDateTime: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationStartDateTime,
-                      whatsappConversationEndDateTime: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationEndDateTime,
-                      whatsappConversationIsActive: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationIsActive,
                       whatsappGeneralMessageID: whatsappGeneralMessageID,
                       whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
                       whatsappGeneralMessageType: whatsappMessageType,
@@ -747,17 +716,6 @@ module.exports = {
                     result: 
                     {
                       whatsappConversationID: whatsappConversationID,
-                      whatsappConversationAssignedAgentID: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationAssignedAgentID, 
-                      whatsappConversationRecipientPhoneNumber: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationRecipientPhoneNumber,
-                      whatsappConversationRecipientProfileName: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationRecipientProfileName,
-                      whatsappConversationRecipientID: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactID,
-                      whatsappConversationRecipientEmail: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactEmail,
-                      whatsappConversationRecipientLocations: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactLocations,
-                      whatsappConversationRecipientLocationDetails: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactLocationDetails,
-                      whatsappConversationRecipientNote: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactNote,
-                      whatsappConversationStartDateTime: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationStartDateTime,
-                      whatsappConversationEndDateTime: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationEndDateTime,
-                      whatsappConversationIsActive: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationIsActive,
                       whatsappGeneralMessageID: whatsappGeneralMessageID,
                       whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
                       whatsappGeneralMessageType: whatsappMessageType,
@@ -780,23 +738,13 @@ module.exports = {
               const whatsappContactMessagePhoneNumber = whatsappMessageContent[0].phones[0].wa_id;
               const createWhatsappContactMessageResult = await whatsappDatabaseFunctions.createWhatsappContactMessage(whatsappContactMessageID, whatsappContactMessageName, whatsappContactMessagePhoneNumber);
               if (createWhatsappContactMessageResult.success){
+                const websocketMessageContent = selectOrCreateActiveWhatsappConversationIDResult.result;
+
                 if (selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationIsActive){
-                  const websocketMessageContent = selectOrCreateActiveWhatsappConversationIDResult.result;
                   websocketMessageContent['whatsappConversationMessages'] = 
                   [
                     {
                       whatsappConversationID: whatsappConversationID,
-                      whatsappConversationAssignedAgentID: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationAssignedAgentID, 
-                      whatsappConversationRecipientPhoneNumber: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationRecipientPhoneNumber,
-                      whatsappConversationRecipientProfileName: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationRecipientProfileName,
-                      whatsappConversationRecipientID: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactID,
-                      whatsappConversationRecipientEmail: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactEmail,
-                      whatsappConversationRecipientLocations: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactLocations,
-                      whatsappConversationRecipientLocationDetails: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactLocationDetails,
-                      whatsappConversationRecipientNote: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactNote,
-                      whatsappConversationStartDateTime: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationStartDateTime,
-                      whatsappConversationEndDateTime: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationEndDateTime,
-                      whatsappConversationIsActive: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationIsActive,
                       whatsappGeneralMessageID: whatsappGeneralMessageID,
                       whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
                       whatsappGeneralMessageType: 'contact',
@@ -820,17 +768,6 @@ module.exports = {
                     result: 
                     {
                       whatsappConversationID: whatsappConversationID,
-                      whatsappConversationAssignedAgentID: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationAssignedAgentID, 
-                      whatsappConversationRecipientPhoneNumber: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationRecipientPhoneNumber,
-                      whatsappConversationRecipientProfileName: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationRecipientProfileName,
-                      whatsappConversationRecipientID: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactID,
-                      whatsappConversationRecipientEmail: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactEmail,
-                      whatsappConversationRecipientLocations: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactLocations,
-                      whatsappConversationRecipientLocationDetails: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactLocationDetails,
-                      whatsappConversationRecipientNote: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactNote,
-                      whatsappConversationStartDateTime: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationStartDateTime,
-                      whatsappConversationEndDateTime: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationEndDateTime,
-                      whatsappConversationIsActive: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationIsActive,
                       whatsappGeneralMessageID: whatsappGeneralMessageID,
                       whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
                       whatsappGeneralMessageType: 'contact',
@@ -858,23 +795,13 @@ module.exports = {
                 const whatsappImageMessageFile = getWhatsappImageMessageFileFromWhatsappImageMessageFileIDResult.result;
                 const createWhatsappImageMessageResult = await whatsappDatabaseFunctions.createWhatsappImageMessage(whatsappImageMessageID, whatsappImageMessageFile, whatsappImageMessageCaption);
                 if (createWhatsappImageMessageResult.success){
+                  const websocketMessageContent = selectOrCreateActiveWhatsappConversationIDResult.result;
+
                   if (selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationIsActive){
-                    const websocketMessageContent = selectOrCreateActiveWhatsappConversationIDResult.result;
                     websocketMessageContent['whatsappConversationMessages'] = 
                     [
                       {
                         whatsappConversationID: whatsappConversationID,
-                        whatsappConversationAssignedAgentID: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationAssignedAgentID, 
-                        whatsappConversationRecipientPhoneNumber: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationRecipientPhoneNumber,
-                        whatsappConversationRecipientProfileName: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationRecipientProfileName,
-                        whatsappConversationRecipientID: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactID,
-                        whatsappConversationRecipientEmail: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactEmail,
-                        whatsappConversationRecipientLocations: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactLocations,
-                        whatsappConversationRecipientLocationDetails: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactLocationDetails,
-                        whatsappConversationRecipientNote: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactNote,
-                        whatsappConversationStartDateTime: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationStartDateTime,
-                        whatsappConversationEndDateTime: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationEndDateTime,
-                        whatsappConversationIsActive: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationIsActive,
                         whatsappGeneralMessageID: whatsappGeneralMessageID,
                         whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
                         whatsappGeneralMessageType: 'image',
@@ -899,17 +826,6 @@ module.exports = {
                       result: 
                       {
                         whatsappConversationID: whatsappConversationID,
-                        whatsappConversationAssignedAgentID: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationAssignedAgentID, 
-                      whatsappConversationRecipientPhoneNumber: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationRecipientPhoneNumber,
-                      whatsappConversationRecipientProfileName: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationRecipientProfileName,
-                      whatsappConversationRecipientID: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactID,
-                      whatsappConversationRecipientEmail: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactEmail,
-                      whatsappConversationRecipientLocations: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactLocations,
-                      whatsappConversationRecipientLocationDetails: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactLocationDetails,
-                      whatsappConversationRecipientNote: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactNote,
-                      whatsappConversationStartDateTime: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationStartDateTime,
-                      whatsappConversationEndDateTime: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationEndDateTime,
-                      whatsappConversationIsActive: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationIsActive,
                         whatsappGeneralMessageID: whatsappGeneralMessageID,
                         whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
                         whatsappGeneralMessageType: 'image',
@@ -938,23 +854,13 @@ module.exports = {
                 const whatsappVideoMessageFile = getWhatsappVideoMessageFileFromWhatsappVideoMessageFileIDResult.result;
                 const createWhatsappVideoMessageResult = await whatsappDatabaseFunctions.createWhatsappVideoMessage(whatsappVideoMessageID, whatsappVideoMessageFile, whatsappVideoMessageCaption);
                 if (createWhatsappVideoMessageResult.success){
+                  const websocketMessageContent = selectOrCreateActiveWhatsappConversationIDResult.result;
+
                   if (selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationIsActive){
-                    const websocketMessageContent = selectOrCreateActiveWhatsappConversationIDResult.result;
                     websocketMessageContent['whatsappConversationMessages'] = 
                     [
                       {
                         whatsappConversationID: whatsappConversationID,
-                        whatsappConversationAssignedAgentID: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationAssignedAgentID, 
-                        whatsappConversationRecipientPhoneNumber: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationRecipientPhoneNumber,
-                        whatsappConversationRecipientProfileName: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationRecipientProfileName,
-                        whatsappConversationRecipientID: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactID,
-                        whatsappConversationRecipientEmail: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactEmail,
-                        whatsappConversationRecipientLocations: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactLocations,
-                        whatsappConversationRecipientLocationDetails: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactLocationDetails,
-                        whatsappConversationRecipientNote: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactNote,
-                        whatsappConversationStartDateTime: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationStartDateTime,
-                        whatsappConversationEndDateTime: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationEndDateTime,
-                        whatsappConversationIsActive: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationIsActive,
                         whatsappGeneralMessageID: whatsappGeneralMessageID,
                         whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
                         whatsappGeneralMessageType: whatsappMessageType,
@@ -979,17 +885,6 @@ module.exports = {
                       result: 
                       {
                         whatsappConversationID: whatsappConversationID,
-                        whatsappConversationAssignedAgentID: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationAssignedAgentID, 
-                      whatsappConversationRecipientPhoneNumber: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationRecipientPhoneNumber,
-                      whatsappConversationRecipientProfileName: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationRecipientProfileName,
-                      whatsappConversationRecipientID: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactID,
-                      whatsappConversationRecipientEmail: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactEmail,
-                      whatsappConversationRecipientLocations: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactLocations,
-                      whatsappConversationRecipientLocationDetails: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactLocationDetails,
-                      whatsappConversationRecipientNote: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactNote,
-                      whatsappConversationStartDateTime: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationStartDateTime,
-                      whatsappConversationEndDateTime: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationEndDateTime,
-                      whatsappConversationIsActive: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationIsActive,
                         whatsappGeneralMessageID: whatsappGeneralMessageID,
                         whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
                         whatsappGeneralMessageType: whatsappMessageType,
@@ -1014,23 +909,13 @@ module.exports = {
                 const whatsappAudioMessageFile = getWhatsappAudioMessageFileFromWhatsappAudioMessageFileIDResult.result;
                 const createWhatsappAudioMessageResult = await whatsappDatabaseFunctions.createWhatsappAudioMessage(whatsappAudioMessageID, whatsappAudioMessageFile);
                 if (createWhatsappAudioMessageResult.success){
+                  const websocketMessageContent = selectOrCreateActiveWhatsappConversationIDResult.result;
+
                   if (selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationIsActive){
-                    const websocketMessageContent = selectOrCreateActiveWhatsappConversationIDResult.result;
                     websocketMessageContent['whatsappConversationMessages'] = 
                     [
                       {
                         whatsappConversationID: whatsappConversationID,
-                        whatsappConversationAssignedAgentID: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationAssignedAgentID, 
-                        whatsappConversationRecipientPhoneNumber: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationRecipientPhoneNumber,
-                        whatsappConversationRecipientProfileName: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationRecipientProfileName,
-                        whatsappConversationRecipientID: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactID,
-                        whatsappConversationRecipientEmail: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactEmail,
-                        whatsappConversationRecipientLocations: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactLocations,
-                        whatsappConversationRecipientLocationDetails: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactLocationDetails,
-                        whatsappConversationRecipientNote: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactNote,
-                        whatsappConversationStartDateTime: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationStartDateTime,
-                        whatsappConversationEndDateTime: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationEndDateTime,
-                        whatsappConversationIsActive: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationIsActive,
                         whatsappGeneralMessageID: whatsappGeneralMessageID,
                         whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
                         whatsappGeneralMessageType: whatsappMessageType,
@@ -1054,17 +939,6 @@ module.exports = {
                       result: 
                       {
                         whatsappConversationID: whatsappConversationID,
-                        whatsappConversationAssignedAgentID: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationAssignedAgentID, 
-                        whatsappConversationRecipientPhoneNumber: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationRecipientPhoneNumber,
-                        whatsappConversationRecipientProfileName: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationRecipientProfileName,
-                        whatsappConversationRecipientID: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactID,
-                        whatsappConversationRecipientEmail: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactEmail,
-                        whatsappConversationRecipientLocations: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactLocations,
-                        whatsappConversationRecipientLocationDetails: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactLocationDetails,
-                        whatsappConversationRecipientNote: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactNote,
-                        whatsappConversationStartDateTime: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationStartDateTime,
-                        whatsappConversationEndDateTime: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationEndDateTime,
-                        whatsappConversationIsActive: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationIsActive,
                         whatsappGeneralMessageID: whatsappGeneralMessageID,
                         whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
                         whatsappGeneralMessageType: whatsappMessageType,
@@ -1091,23 +965,13 @@ module.exports = {
                 const whatsappDocumentMessageFile = getWhatsappDocumentessageFileFromWhatsappDocumentMessageFileIDResult.result;
                 const createWhatsappDocumentMessageResult = await whatsappDatabaseFunctions.createWhatsappDocumentMessage(whatsappDocumentMessageID, whatsappDocumentMessageFile, whatsappDocumentMessageMimeType, whatsappDocumentMessageFileName);
                 if (createWhatsappDocumentMessageResult.success){
+                  const websocketMessageContent = selectOrCreateActiveWhatsappConversationIDResult.result;
+
                   if (selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationIsActive){
-                    const websocketMessageContent = selectOrCreateActiveWhatsappConversationIDResult.result;
                     websocketMessageContent['whatsappConversationMessages'] = 
                     [
                       {
                         whatsappConversationID: whatsappConversationID,
-                        whatsappConversationAssignedAgentID: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationAssignedAgentID, 
-                        whatsappConversationRecipientPhoneNumber: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationRecipientPhoneNumber,
-                        whatsappConversationRecipientProfileName: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationRecipientProfileName,
-                        whatsappConversationRecipientID: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactID,
-                        whatsappConversationRecipientEmail: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactEmail,
-                        whatsappConversationRecipientLocations: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactLocations,
-                        whatsappConversationRecipientLocationDetails: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactLocationDetails,
-                        whatsappConversationRecipientNote: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactNote,
-                        whatsappConversationStartDateTime: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationStartDateTime,
-                        whatsappConversationEndDateTime: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationEndDateTime,
-                        whatsappConversationIsActive: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationIsActive,
                         whatsappGeneralMessageID: whatsappGeneralMessageID,
                         whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
                         whatsappGeneralMessageType: whatsappMessageType,
@@ -1133,17 +997,6 @@ module.exports = {
                       result: 
                       {
                         whatsappConversationID: whatsappConversationID,
-                        whatsappConversationAssignedAgentID: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationAssignedAgentID, 
-                        whatsappConversationRecipientPhoneNumber: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationRecipientPhoneNumber,
-                        whatsappConversationRecipientProfileName: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationRecipientProfileName,
-                        whatsappConversationRecipientID: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactID,
-                        whatsappConversationRecipientEmail: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactEmail,
-                        whatsappConversationRecipientLocations: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactLocations,
-                        whatsappConversationRecipientLocationDetails: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactLocationDetails,
-                        whatsappConversationRecipientNote: selectOrCreateActiveWhatsappConversationIDResult.result.selectWhatsappContactInformationResult.result.contactNote,
-                        whatsappConversationStartDateTime: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationStartDateTime,
-                        whatsappConversationEndDateTime: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationEndDateTime,
-                        whatsappConversationIsActive: selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationIsActive,e,
                         whatsappGeneralMessageID: whatsappGeneralMessageID,
                         whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
                         whatsappGeneralMessageType: whatsappMessageType,
