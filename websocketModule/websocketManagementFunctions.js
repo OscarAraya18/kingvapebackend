@@ -26,7 +26,7 @@ backendWebsocketServer.on('connection', (ws) => {
 const pingInterval = setInterval(() => {
   backendWebsocketServer.clients.forEach((client) => {
     if (client.readyState === WebSocket.OPEN) {
-      client.send(JSON.stringify({websocketMessageID: websocketMessageID, websocketMessageContent: {success: true, result: 'ping'}}));
+      client.send(JSON.stringify({websocketMessageID: 'ping', websocketMessageContent: {success: true, result: 'ping'}}));
     }
   });
 }, 120000);
