@@ -13,8 +13,6 @@ module.exports = {
 
   grabStoreConversation: async function(websocketConnection, storeMessageID, storeMessageStoreMessageID, storeMessageStoreName, storeMessageAssignedAgentID, storeMessageRecipientPhoneNumber, storeMessageRecipientProfileName, messageToClientContent){
     return new Promise(async (grabStoreConversationPromiseResolve) => {
-      console.log(storeMessageID);
-      console.log(storeMessageAssignedAgentID);
       const updateStoreMessageSQL = `UPDATE StoreMessages SET storeMessageAssignedAgentID=(?) WHERE storeMessageID=(?);`;
       const updateStoreMessageValues = [storeMessageAssignedAgentID, storeMessageID];
       const updateStoreMessageDatabaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateStoreMessageSQL, updateStoreMessageValues);
