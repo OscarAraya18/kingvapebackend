@@ -14,5 +14,19 @@ module.exports = {
         client.send(JSON.stringify(backendWebsocketMessage));
       }
     });
-  }
+  },  
 }
+
+backendWebsocketServer.on('connection', (ws) => {
+  ws.on('close', () => {
+    ws.close();
+  });
+});
+
+const pingInterval = setInterval(() => {
+  backendWebsocketServer.clients.forEach((client) => {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(JSON.stringify({ping: 'yes'}));
+    }
+  });
+}, 120000);
