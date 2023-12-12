@@ -1191,21 +1191,23 @@ module.exports = {
     });
   },
 
-  closeWhatsappConversation: async function(websocketConnection, whatsappConversationRecipientPhoneNumber, whatsappConversationCloseComment, whatsappConversationAmount, whatsappConversationProducts, whatsappTextMessageBody){
+  closeWhatsappConversation: async function(websocketConnection, whatsappConversationRecipientPhoneNumber, whatsappConversationCloseComment, whatsappConversationAmount, whatsappConversationProducts, whatsappTextMessageBody, sendAgentEndMessage){
     return new Promise(async (closeWhatsappConversationPromiseResolve) => {
       const selectOrCreateActiveWhatsappConversationIDResult = await whatsappDatabaseFunctions.selectOrCreateActiveWhatsappConversationID(whatsappConversationRecipientPhoneNumber);
       if (selectOrCreateActiveWhatsappConversationIDResult.success){
         const whatsappConversationID = selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationID;
         const closeWhatsappConversationResult = await whatsappDatabaseFunctions.closeWhatsappConversation(whatsappConversationID, whatsappConversationCloseComment, whatsappConversationAmount, whatsappConversationProducts);
-        const sendWhatsappMessageData =
-        {
-          'messaging_product': 'whatsapp',
-          'to': whatsappConversationRecipientPhoneNumber, 
-          'type': 'template', 'template': {'name': 'despedida', 'language': {'code': 'es'},
-          'components': [{'type': 'body', 'parameters': [{'type': 'text', 'text': whatsappTextMessageBody}]}]     
-          }
-        };
-        const sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
+        if (sendAgentEndMessage){
+          const sendWhatsappMessageData =
+          {
+            'messaging_product': 'whatsapp',
+            'to': whatsappConversationRecipientPhoneNumber, 
+            'type': 'template', 'template': {'name': 'despedida', 'language': {'code': 'es'},
+            'components': [{'type': 'body', 'parameters': [{'type': 'text', 'text': whatsappTextMessageBody}]}]     
+            }
+          };
+          const sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
+        }
         closeWhatsappConversationPromiseResolve(JSON.stringify({success: true, result: whatsappConversationID}));
       } else {
         closeWhatsappConversationPromiseResolve(JSON.stringify(selectOrCreateActiveWhatsappConversationIDResult));
