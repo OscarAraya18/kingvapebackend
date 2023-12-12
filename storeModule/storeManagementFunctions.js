@@ -13,6 +13,7 @@ module.exports = {
 
   grabStoreConversation: async function(websocketConnection, storeMessageID, storeMessageStoreMessageID, storeMessageStoreName, storeMessageAssignedAgentID, storeMessageRecipientPhoneNumber, storeMessageRecipientProfileName, messageToClientContent){
     return new Promise(async (grabStoreConversationPromiseResolve) => {
+      websocketConnection.sendWebsocketMessage('/grabStoreConversation', {success: true, result: {storeMessageID: storeMessageID, storeMessageStoreName: storeMessageStoreName}});
       const updateStoreMessageSQL = `UPDATE StoreMessages SET storeMessageAssignedAgentID=(?) WHERE storeMessageID=(?);`;
       const updateStoreMessageValues = [storeMessageAssignedAgentID, storeMessageID];
       const updateStoreMessageDatabaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateStoreMessageSQL, updateStoreMessageValues);
@@ -21,7 +22,6 @@ module.exports = {
         if (sendWhatsappStoreMessageResult.success){
           const startWhatsappStoreConversationResult = await whatsappManagementFunctions.startWhatsappStoreConversation(storeMessageAssignedAgentID, storeMessageRecipientPhoneNumber, storeMessageRecipientProfileName, messageToClientContent);
           const whatsappConversationID = startWhatsappStoreConversationResult.resultID;
-          websocketConnection.sendWebsocketMessage('/grabStoreConversation', {success: true, result: {storeMessageID: storeMessageID, storeMessageStoreName: storeMessageStoreName}});
           grabStoreConversationPromiseResolve(startWhatsappStoreConversationResult);
         } else {
           grabStoreConversationPromiseResolve(JSON.stringify(sendWhatsappStoreMessageResult));

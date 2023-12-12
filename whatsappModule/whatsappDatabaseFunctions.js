@@ -300,50 +300,37 @@ module.exports = {
 
   createWhatsappConversationWithWhatsappConversationAssignedAgentID: async function(whatsappConversationAssignedAgentID, whatsappConversationRecipientPhoneNumber, whatsappConversationRecipientProfileName){
     return new Promise (async (createWhatsappConversationWithWhatsappConversationAssignedAgentIDPromiseResolve) => {
-      const whatsappConversationIsActive = true;
-      const selectActiveWhatsappConversationSQL = `SELECT whatsappConversationID from WhatsappConversations WHERE whatsappConversationRecipientPhoneNumber=(?) AND whatsappConversationIsActive=(?);`;
-      const selectActiveWhatsappConversationValues = [whatsappConversationRecipientPhoneNumber, whatsappConversationIsActive];
-      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectActiveWhatsappConversationSQL, selectActiveWhatsappConversationValues);
-      if (databaseResult.success){
-        if (databaseResult.result.length == 0){
-          const whatsappConversationRecipientID = 0;
-          const whatsappConversationRecipientEmail = 'NA';
-          const whatsappConversationRecipientLocations = 
-          JSON.stringify({
-            'CASA': {
-              'latitude': 0,
-              'longitude': 0
-            },
-            'TRABAJO': {
-              'latitude': 0,
-              'longitude': 0
-            },
-            'OTRO': {
-              'latitude': 0,
-              'longitude': 0
-            }
-          });
-          const whatsappConversationRecipientLocationDetails = 'NA';
-          const whatsappConversationRecipientNote = 'NA';
-          const whatsappConversationStartDateTime = Date().toString();
-          const whatsappConversationEndDateTime = null;
-          const whatsappConversationIsActive = true;
-          const createWhatsappConversationSQL = `INSERT INTO WhatsappConversations (whatsappConversationAssignedAgentID, whatsappConversationRecipientPhoneNumber, whatsappConversationRecipientProfileName, whatsappConversationRecipientID, whatsappConversationRecipientEmail, whatsappConversationRecipientLocations, whatsappConversationRecipientLocationDetails, whatsappConversationRecipientNote, whatsappConversationStartDateTime, whatsappConversationEndDateTime, whatsappConversationIsActive) VALUES (?,?,?,?,?,?,?,?,?,?,?);`;
-          const createWhatsappConversationValues = [whatsappConversationAssignedAgentID, whatsappConversationRecipientPhoneNumber, whatsappConversationRecipientProfileName, whatsappConversationRecipientID, whatsappConversationRecipientEmail, whatsappConversationRecipientLocations, whatsappConversationRecipientLocationDetails, whatsappConversationRecipientNote, whatsappConversationStartDateTime, whatsappConversationEndDateTime, whatsappConversationIsActive];
-          const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(createWhatsappConversationSQL, createWhatsappConversationValues);
-          if (databaseResult.success){
-            const whatsappConversationID = databaseResult.result.insertId;
-            createWhatsappConversationWithWhatsappConversationAssignedAgentIDPromiseResolve({success: true, result: whatsappConversationID});
-          } else {
-            createWhatsappConversationWithWhatsappConversationAssignedAgentIDPromiseResolve(databaseResult);
-          }
-        } else {
-          createWhatsappConversationWithWhatsappConversationAssignedAgentIDPromiseResolve({success: false, result: 'duplicate'});
+      const whatsappConversationRecipientID = 0;
+      const whatsappConversationRecipientEmail = 'NA';
+      const whatsappConversationRecipientLocations = 
+      JSON.stringify({
+        'CASA': {
+          'latitude': 0,
+          'longitude': 0
+        },
+        'TRABAJO': {
+          'latitude': 0,
+          'longitude': 0
+        },
+        'OTRO': {
+          'latitude': 0,
+          'longitude': 0
         }
+      });
+      const whatsappConversationRecipientLocationDetails = 'NA';
+      const whatsappConversationRecipientNote = 'NA';
+      const whatsappConversationStartDateTime = Date().toString();
+      const whatsappConversationEndDateTime = null;
+      const whatsappConversationIsActive = true;
+      const createWhatsappConversationSQL = `INSERT INTO WhatsappConversations (whatsappConversationAssignedAgentID, whatsappConversationRecipientPhoneNumber, whatsappConversationRecipientProfileName, whatsappConversationRecipientID, whatsappConversationRecipientEmail, whatsappConversationRecipientLocations, whatsappConversationRecipientLocationDetails, whatsappConversationRecipientNote, whatsappConversationStartDateTime, whatsappConversationEndDateTime, whatsappConversationIsActive) VALUES (?,?,?,?,?,?,?,?,?,?,?);`;
+      const createWhatsappConversationValues = [whatsappConversationAssignedAgentID, whatsappConversationRecipientPhoneNumber, whatsappConversationRecipientProfileName, whatsappConversationRecipientID, whatsappConversationRecipientEmail, whatsappConversationRecipientLocations, whatsappConversationRecipientLocationDetails, whatsappConversationRecipientNote, whatsappConversationStartDateTime, whatsappConversationEndDateTime, whatsappConversationIsActive];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(createWhatsappConversationSQL, createWhatsappConversationValues);
+      if (databaseResult.success){
+        const whatsappConversationID = databaseResult.result.insertId;
+        createWhatsappConversationWithWhatsappConversationAssignedAgentIDPromiseResolve({success: true, result: whatsappConversationID});
       } else {
         createWhatsappConversationWithWhatsappConversationAssignedAgentIDPromiseResolve(databaseResult);
       }
-      
     });
   },
 
