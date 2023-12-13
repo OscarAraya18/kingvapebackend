@@ -521,14 +521,16 @@ module.exports = {
     return new Promise(async (selectAgentRankingInformationPromiseResolve) => {
       const selectAgentRankingInformationSQL = 
       `
-      SELECT
-      DATE_FORMAT(g.whatsappGeneralMessageCreationDateTime, '%m/%d/%Y')
-FROM
-    WhatsappGeneralMessages g
-
+      SELECT COUNT(whatsappGeneralMessageID)
+      FROM WhatsappGeneralMessages
+      WHERE 
+        CAST(STR_TO_DATE(whatsappGeneralMessageCreationDateTime, '%a %b %d %Y %H:%i:%s GMT+0000 (Coordinated Universal Time)') AS DATETIME) 
+        >=
+        CAST(STR_TO_DATE(?, '%a %b %d %Y %H:%i:%s GMT+0000 (Coordinated Universal Time)') AS DATETIME);      
       `;
-      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAgentRankingInformationSQL);
-      console.log(databaseResult);
+      const currentDate = new Date();
+      const selectAgentRankingInformationValues = [currentDate.toString()];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAgentRankingInformationSQL, selectAgentRankingInformationValues);
       selectAgentRankingInformationPromiseResolve(JSON.stringify(databaseResult));
     });
   },
