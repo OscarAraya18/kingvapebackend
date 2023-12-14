@@ -6,23 +6,13 @@ const WebSocket = require('ws');
 
 
 const backendHttpRequestServer = express();
-const corsOptions = {
-  origin: 'https://souqcr.com',
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true,
-  optionsSuccessStatus: 204,
-  allowedHeaders: 'Content-Type, Accept',
-};
-backendHttpRequestServer.use(cors(corsOptions));
-backendHttpRequestServer.options('*', cors());
+backendHttpRequestServer.use(cors());
 backendHttpRequestServer.use(function(httpRequest, httpResponse, next) {
-  httpResponse.header('Access-Control-Allow-Origin', '*');
-  httpResponse.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-  httpResponse.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  httpResponse.header("Access-Control-Allow-credentials", true);
+  httpResponse.setHeader('Access-Control-Allow-Origin', '*');
+  httpResponse.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  httpResponse.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
   next();
 });
-
 backendHttpRequestServer.use(express.json({limit: '50mb'}));
 
 
