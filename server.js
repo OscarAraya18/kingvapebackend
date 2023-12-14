@@ -9,8 +9,9 @@ const backendHttpRequestServer = express();
 const corsOptions = {
   origin: 'https://souqcr.com',
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true, // Enable credentials (cookies, authorization headers, etc.)
-  optionsSuccessStatus: 204, // Respond with 204 (No Content) for preflight requests
+  credentials: true,
+  optionsSuccessStatus: 204,
+  allowedHeaders: 'Content-Type, Accept',
 };
 backendHttpRequestServer.use(cors(corsOptions));
 backendHttpRequestServer.options('*', cors());
