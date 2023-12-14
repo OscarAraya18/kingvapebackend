@@ -233,7 +233,7 @@ module.exports = {
       const uploadWhatsappImageMessageURL = `https://graph.facebook.com/${constants.credentials.apiVersion}/${constants.credentials.phoneNumberID}/media`;
       const temporaryImageName = `whatsappModule/${uuidv4.v4()}-${Date.now()}.png`;
       const temporaryImageBuffer = Buffer.from(whatsappImageMessageFile, 'base64');
-      sharp(temporaryImageBuffer).toFormat('png').toBuffer().then((convertedImageBuffer) => {
+      sharp(temporaryImageBuffer).toFormat('jpeg').toBuffer().then((convertedImageBuffer) => {
         fs.writeFileSync(temporaryImageName, convertedImageBuffer);
         const temporaryImageStream = fs.createReadStream(temporaryImageName);
         const uploadWhatsappImageMessageParameters = new FormData();
@@ -1224,6 +1224,12 @@ module.exports = {
     });
   },
 
+  selectWhatsappGeneralMessage: async function(whatsappGeneralMessageID){
+    return new Promise(async (selectWhatsappGeneralMessagePromiseResolve) => {
+      const selectWhatsappGeneralMessageResult = await whatsappDatabaseFunctions.selectWhatsappGeneralMessage(whatsappGeneralMessageID);
+      selectWhatsappGeneralMessagePromiseResolve(JSON.stringify(selectWhatsappGeneralMessageResult));
+    });
+  },
 
   grabWhatsappPendingConversation: async function(websocketConnection, whatsappConversationID, whatsappConversationAssignedAgentID, whatsappConversationRecipientPhoneNumber, whatsappTextMessageBody){
     return new Promise(async (grabWhatsappPendingConversationPromiseResolve) => {
@@ -1262,7 +1268,6 @@ module.exports = {
     });
   },
 
-
   requestTransferWhatsappConversation: async function(websocketConnection, currentAgentID, currentAgentName, newAgentID, whatsappConversationID, whatsappConversationProducts){
     return new Promise(async (requestTransferWhatsappConversationPromiseResolve) => {
       websocketConnection.sendWebsocketMessage('/requestTransferWhatsappConversation', {success: true, result: {currentAgentID: currentAgentID, currentAgentName: currentAgentName, newAgentID: newAgentID, whatsappConversationID: whatsappConversationID, whatsappConversationProducts: whatsappConversationProducts}});    
@@ -1287,6 +1292,6 @@ module.exports = {
       const selectWhatsappClosedConversationFromWhatsappConversationRecipientPhoneNumberResult = await whatsappDatabaseFunctions.selectWhatsappClosedConversationFromWhatsappConversationRecipientPhoneNumber(whatsappConversationRecipientPhoneNumber);
       selectWhatsappClosedConversationFromWhatsappConversationRecipientPhoneNumberPromiseResolve(JSON.stringify(selectWhatsappClosedConversationFromWhatsappConversationRecipientPhoneNumberResult));
     });
-  },
+  }
 
 }

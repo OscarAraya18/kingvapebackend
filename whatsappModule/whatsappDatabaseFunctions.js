@@ -455,6 +455,94 @@ module.exports = {
     });
   },
 
+  composeWhatsappGeneralMessage: async function(whatsappGeneralMessageInformation){
+    return new Promise(async (composeWhatsappGeneralMessagePromiseResolve) => {
+      var whatsappGeneralMessage = 
+      {
+        whatsappGeneralMessageID: whatsappGeneralMessageInformation.whatsappGeneralMessageID,
+        whatsappGeneralMessageCreationDateTime: whatsappGeneralMessageInformation.whatsappGeneralMessageCreationDateTime,
+      };  
+      if (whatsappGeneralMessageInformation.whatsappTextMessageBody != null){
+        whatsappGeneralMessage['whatsappGeneralMessageType'] = 'text';
+        whatsappGeneralMessage['whatsappTextMessageBody'] = whatsappGeneralMessageInformation.whatsappTextMessageBody;
+      } else if ((whatsappGeneralMessageInformation.whatsappLocationMessageLatitude != null) && (whatsappGeneralMessageInformation.whatsappLocationMessageLongitude != null)){
+        whatsappGeneralMessage['whatsappGeneralMessageType'] = 'location';
+        whatsappGeneralMessage['whatsappLocationMessageLatitude'] = whatsappGeneralMessageInformation.whatsappLocationMessageLatitude;
+        whatsappGeneralMessage['whatsappLocationMessageLongitude'] = whatsappGeneralMessageInformation.whatsappLocationMessageLongitude;
+      } else if ((whatsappGeneralMessageInformation.whatsappContactMessageName != null) && (whatsappGeneralMessageInformation.whatsappContactMessagePhoneNumber != null)){
+        whatsappGeneralMessage['whatsappGeneralMessageType'] = 'contact';
+        whatsappGeneralMessage['whatsappContactMessagePhoneNumber'] = whatsappGeneralMessage.whatsappContactMessagePhoneNumber;
+        whatsappGeneralMessage['whatsappContactMessageName'] = whatsappGeneralMessage.whatsappContactMessageName;
+      } else if (whatsappGeneralMessageInformation.whatsappImageMessageFile != null){
+        whatsappGeneralMessage['whatsappGeneralMessageType'] = 'image';
+        whatsappGeneralMessage['whatsappImageMessageFile'] = Buffer.from(whatsappGeneralMessageInformation.whatsappImageMessageFile).toString('base64');
+        whatsappGeneralMessage['whatsappImageMessageCaption'] = whatsappGeneralMessageInformation.whatsappImageMessageCaption;
+      } else if (whatsappGeneralMessageInformation.whatsappVideoMessageFile != null){
+        whatsappGeneralMessage['whatsappGeneralMessageType'] = 'video';
+        whatsappGeneralMessage['whatsappVideoMessageFile'] = Buffer.from(whatsappGeneralMessageInformation.whatsappVideoMessageFile).toString('base64');
+        whatsappGeneralMessage['whatsappVideoMessageCaption'] = whatsappGeneralMessageInformation.whatsappVideoMessageCaption;
+      } else if (whatsappGeneralMessageInformation.whatsappAudioMessageFile != null){
+        whatsappGeneralMessage['whatsappGeneralMessageType'] = 'audio';
+        whatsappGeneralMessage['whatsappAudioMessageFile'] = Buffer.from(whatsappGeneralMessageInformation.whatsappAudioMessageFile).toString('base64');
+      } else if (whatsappGeneralMessageInformation.whatsappDocumentMessageFile != null){
+        whatsappGeneralMessage['whatsappGeneralMessageType'] = 'document';
+        whatsappGeneralMessage['whatsappDocumentMessageFile'] = Buffer.from(whatsappGeneralMessageInformation.whatsappDocumentMessageFile).toString('base64');
+        whatsappGeneralMessage['whatsappDocumentMessageMimeType'] = whatsappGeneralMessageInformation.whatsappDocumentMessageMimeType;
+        whatsappGeneralMessage['whatsappDocumentMessageFileName'] = whatsappGeneralMessageInformation.whatsappDocumentMessageFileName;
+      } else if (whatsappGeneralMessageInformation.whatsappFavoriteImageMessageDriveURL != null){
+        whatsappGeneralMessage['whatsappGeneralMessageType'] = 'favoriteImage';
+        whatsappGeneralMessage['whatsappFavoriteImageMessageDriveURL'] = whatsappGeneralMessageInformation.whatsappFavoriteImageMessageDriveURL;
+        whatsappGeneralMessage['whatsappFavoriteImageMessageCaption'] = whatsappGeneralMessageInformation.whatsappFavoriteImageMessageCaption;
+
+      }
+      composeWhatsappGeneralMessagePromiseResolve(whatsappGeneralMessage);
+    });
+  },
+
+  selectWhatsappGeneralMessage: async function(whatsappGeneralMessageID){
+    return new Promise(async (selectWhatsappGeneralMessagePromiseResolve) => {
+      const selectWhatsappGeneralMessageSQL = 
+      `
+        SELECT 
+          WhatsappGeneralMessages.whatsappGeneralMessageID,
+          WhatsappGeneralMessages.whatsappGeneralMessageCreationDateTime,
+          WhatsappTextMessages.whatsappTextMessageBody,
+          WhatsappLocationMessages.whatsappLocationMessageLatitude,
+          WhatsappLocationMessages.whatsappLocationMessageLongitude,
+          WhatsappContactMessages.whatsappContactMessageName,
+          WhatsappContactMessages.whatsappContactMessagePhoneNumber,
+          WhatsappImageMessages.whatsappImageMessageFile,
+          WhatsappImageMessages.whatsappImageMessageCaption,
+          WhatsappVideoMessages.whatsappVideoMessageFile,
+          WhatsappVideoMessages.whatsappVideoMessageCaption,
+          WhatsappAudioMessages.whatsappAudioMessageFile,
+          WhatsappDocumentMessages.whatsappDocumentMessageFile,
+          WhatsappDocumentMessages.whatsappDocumentMessageMimeType,
+          WhatsappDocumentMessages.whatsappDocumentMessageFileName,
+          WhatsappFavoriteImageMessages.whatsappFavoriteImageMessageDriveURL,
+          WhatsappFavoriteImageMessages.whatsappFavoriteImageMessageCaption
+        FROM WhatsappGeneralMessages
+          LEFT JOIN WhatsappTextMessages ON WhatsappGeneralMessages.whatsappGeneralMessageID = WhatsappTextMessages.whatsappTextMessageID
+          LEFT JOIN WhatsappLocationMessages ON WhatsappGeneralMessages.whatsappGeneralMessageID = WhatsappLocationMessages.whatsappLocationMessageID
+          LEFT JOIN WhatsappContactMessages ON WhatsappGeneralMessages.whatsappGeneralMessageID = WhatsappContactMessages.whatsappContactMessageID
+          LEFT JOIN WhatsappImageMessages ON WhatsappGeneralMessages.whatsappGeneralMessageID = WhatsappImageMessages.whatsappImageMessageID
+          LEFT JOIN WhatsappVideoMessages ON WhatsappGeneralMessages.whatsappGeneralMessageID = WhatsappVideoMessages.whatsappVideoMessageID
+          LEFT JOIN WhatsappAudioMessages ON WhatsappGeneralMessages.whatsappGeneralMessageID = WhatsappAudioMessages.whatsappAudioMessageID
+          LEFT JOIN WhatsappDocumentMessages ON WhatsappGeneralMessages.whatsappGeneralMessageID = WhatsappDocumentMessages.whatsappDocumentMessageID
+          LEFT JOIN WhatsappFavoriteImageMessages ON WhatsappGeneralMessages.whatsappGeneralMessageID = WhatsappFavoriteImageMessages.whatsappFavoriteImageMessageID
+        WHERE 
+        WhatsappGeneralMessages.whatsappGeneralMessageID=(?);`;
+      const selectWhatsappGeneralMessageValues = [whatsappGeneralMessageID];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectWhatsappGeneralMessageSQL, selectWhatsappGeneralMessageValues);
+      if (databaseResult.success){
+        const composeWhatsappGeneralMessageResult = await this.composeWhatsappGeneralMessage(databaseResult.result[0]);
+        selectWhatsappGeneralMessagePromiseResolve({success: true, result: composeWhatsappGeneralMessageResult});
+      } else {
+        selectWhatsappGeneralMessagePromiseResolve(databaseResult);
+      }
+    });
+  },
+
 
   selectWhatsappClosedConversationFromWhatsappConversationRecipientPhoneNumber: async function(whatsappConversationRecipientPhoneNumber){
     return new Promise(async (selectWhatsappClosedConversationFromWhatsappConversationRecipientPhoneNumberPromiseResolve) => {

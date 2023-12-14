@@ -350,7 +350,8 @@ module.exports = {
           WhatsappDocumentMessages.whatsappDocumentMessageFile,
           WhatsappDocumentMessages.whatsappDocumentMessageMimeType,
           WhatsappDocumentMessages.whatsappDocumentMessageFileName,
-          WhatsappFavoriteImageMessages.whatsappFavoriteImageMessageDriveURL
+          WhatsappFavoriteImageMessages.whatsappFavoriteImageMessageDriveURL,
+          WhatsappFavoriteImageMessages.whatsappFavoriteImageMessageCaption
         FROM WhatsappConversations
           LEFT JOIN WhatsappGeneralMessages ON WhatsappConversations.whatsappConversationID = WhatsappGeneralMessages.whatsappGeneralMessageWhatsappConversationID
           LEFT JOIN WhatsappTextMessages ON WhatsappGeneralMessages.whatsappGeneralMessageID = WhatsappTextMessages.whatsappTextMessageID
@@ -454,7 +455,7 @@ module.exports = {
         } else if (whatsappGeneralMessage.whatsappFavoriteImageMessageDriveURL != null){
           whatsappConversations[whatsappConversationID]['whatsappConversationMessages'][whatsappGeneralMessage.whatsappGeneralMessageIndex]['whatsappGeneralMessageType'] = 'favoriteImage';
           whatsappConversations[whatsappConversationID]['whatsappConversationMessages'][whatsappGeneralMessage.whatsappGeneralMessageIndex]['whatsappFavoriteImageMessageDriveURL'] = whatsappGeneralMessage.whatsappFavoriteImageMessageDriveURL;
-
+          whatsappConversations[whatsappConversationID]['whatsappConversationMessages'][whatsappGeneralMessage.whatsappGeneralMessageIndex]['whatsappFavoriteImageMessageCaption'] = whatsappGeneralMessage.whatsappFavoriteImageMessageCaption;
         }
       }
       composeWhatsappConversationsPromiseResolve(whatsappConversations);

@@ -71,6 +71,7 @@ backendWhatsappHttpRequestServer.post('/sendWhatsappImageMessage', async (httpRe
   const whatsappImageMessageCaption = httpRequestQuery.whatsappImageMessageCaption;
   const sendWhatsappImageMessageResult = await whatsappManagementFunctions.sendWhatsappImageMessage(websocketConnection, whatsappConversationRecipientPhoneNumber, whatsappGeneralMessageRepliedMessageID, whatsappImageMessageFile, whatsappImageMessageCaption);
   httpResponse.end(sendWhatsappImageMessageResult);
+
 });
 
 backendWhatsappHttpRequestServer.post('/sendWhatsappAudioMessage', async (httpRequest, httpResponse) => {
@@ -103,6 +104,13 @@ backendWhatsappHttpRequestServer.post('/sendWhatsappProductImageMessage', async 
 backendWhatsappHttpRequestServer.get('/selectAllWhatsappPendingConversation', async (httpRequest, httpResponse) => {
   const selectAllPendingConversationResult = await whatsappManagementFunctions.selectAllWhatsappPendingConversation();
   httpResponse.end(selectAllPendingConversationResult)
+});
+
+backendWhatsappHttpRequestServer.post('/selectWhatsappGeneralMessage', async (httpRequest, httpResponse) => {
+  const httpRequestBody = httpRequest.body;
+  const whatsappGeneralMessageID = httpRequestBody.whatsappGeneralMessageID;
+  const selectWhatsappGeneralMessageResult = await whatsappManagementFunctions.selectWhatsappGeneralMessage(whatsappGeneralMessageID);
+  httpResponse.end(selectWhatsappGeneralMessageResult)
 });
 
 backendWhatsappHttpRequestServer.post('/grabWhatsappPendingConversation', async (httpRequest, httpResponse) => {
