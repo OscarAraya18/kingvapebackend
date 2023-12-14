@@ -16,7 +16,11 @@ module.exports = {
       user: 'u792983815_kingvape',
       password: 'kingvapedatabase123O',
       charset: 'utf8mb4',
-      collation: 'utf8mb4_unicode_ci'
+      collation: 'utf8mb4_unicode_ci',
+      connectionLimit: 1000,
+      connectTimeout: 60*60*1000,
+      acquireTimeout: 60*60*1000,
+      timeout: 60*60*1000
     },
 
     routes: 
