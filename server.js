@@ -10,7 +10,8 @@ backendHttpRequestServer.use(cors());
 backendHttpRequestServer.use(function(httpRequest, httpResponse, next) {
   httpResponse.header('Access-Control-Allow-Origin', '*');
   httpResponse.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-  httpResponse.header('Access-Control-Allow-Headers', 'Content-Type');
+  httpResponse.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+  httpResponse.header("Access-Control-Allow-credentials", true);
   next();
 });
 backendHttpRequestServer.use(express.json({limit: '50mb'}));
