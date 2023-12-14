@@ -4,13 +4,9 @@ const express = require('express');
 const cors = require('cors');
 const WebSocket = require('ws');
 
-const corsOptions = {
-  origin: 'https://telasmasbackend.onrender.com',
-  optionsSuccessStatus: 200,
-};
 
 const backendHttpRequestServer = express();
-backendHttpRequestServer.use(cors(corsOptions));
+backendHttpRequestServer.use(cors());
 backendHttpRequestServer.use(express.json({limit: '50mb'}));
 
 
