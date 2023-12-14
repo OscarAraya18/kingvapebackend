@@ -6,7 +6,13 @@ const WebSocket = require('ws');
 
 
 const backendHttpRequestServer = express();
-backendHttpRequestServer.use(cors());
+const corsOptions = {
+  origin: 'https://souqcr.com',
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true, // Enable credentials (cookies, authorization headers, etc.)
+  optionsSuccessStatus: 204, // Respond with 204 (No Content) for preflight requests
+};
+backendHttpRequestServer.use(cors(corsOptions));
 backendHttpRequestServer.use(function(httpRequest, httpResponse, next) {
   httpResponse.header('Access-Control-Allow-Origin', '*');
   httpResponse.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
