@@ -1226,6 +1226,7 @@ module.exports = {
 
   selectWhatsappGeneralMessage: async function(whatsappGeneralMessageID){
     return new Promise(async (selectWhatsappGeneralMessagePromiseResolve) => {
+      console.log(whatsappGeneralMessageID);
       const selectWhatsappGeneralMessageResult = await whatsappDatabaseFunctions.selectWhatsappGeneralMessage(whatsappGeneralMessageID);
       selectWhatsappGeneralMessagePromiseResolve(JSON.stringify(selectWhatsappGeneralMessageResult));
     });
