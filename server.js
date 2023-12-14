@@ -9,7 +9,6 @@ const backendHttpRequestServer = express();
 backendHttpRequestServer.use(cors());
 backendHttpRequestServer.use(function(httpRequest, httpResponse, next) {
   httpResponse.header('Access-Control-Allow-Origin', '*');
-  httpResponse.header('Access-Control-Allow-Origin', 'https://souqcr.com');
   httpResponse.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
   httpResponse.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
   httpResponse.header("Access-Control-Allow-credentials", true);
