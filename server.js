@@ -13,6 +13,7 @@ const corsOptions = {
   optionsSuccessStatus: 204, // Respond with 204 (No Content) for preflight requests
 };
 backendHttpRequestServer.use(cors(corsOptions));
+backendHttpRequestServer.options('*', cors());
 backendHttpRequestServer.use(function(httpRequest, httpResponse, next) {
   httpResponse.header('Access-Control-Allow-Origin', '*');
   httpResponse.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
