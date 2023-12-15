@@ -10,10 +10,11 @@ backendHttpRequestServer.use(cors());
 backendHttpRequestServer.use(function(httpRequest, httpResponse, next) {
   httpResponse.setHeader('Access-Control-Allow-Origin', '*');
   httpResponse.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-  httpResponse.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+  httpResponse.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type');
   httpResponse.setHeader('Access-Control-Max-Age', '1728000');
   next();
 });
+
 backendHttpRequestServer.use(express.json({limit: '50mb'}));
 
 
