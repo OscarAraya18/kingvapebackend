@@ -12,6 +12,8 @@ const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 const ffmpeg = require('fluent-ffmpeg');
 ffmpeg.setFfmpegPath(ffmpegPath);
 
+var pendingRequests = {};
+
 module.exports = {
   sendWhatsappMessage: async function(sendWhatsappMessageData){
     return new Promise((sendWhatsappMessagePromiseResolve) => {
@@ -1234,37 +1236,44 @@ module.exports = {
 
   grabWhatsappPendingConversation: async function(websocketConnection, whatsappConversationID, whatsappConversationAssignedAgentID, whatsappConversationRecipientPhoneNumber, whatsappTextMessageBody){
     return new Promise(async (grabWhatsappPendingConversationPromiseResolve) => {
-      const sendWhatsappMessageData =
-      {
-        'messaging_product': 'whatsapp',
-        'to': whatsappConversationRecipientPhoneNumber, 
-        'type': 'template', 'template': {'name': 'bienvenida', 'language': {'code': 'es'},
-        'components': [{'type': 'body', 'parameters': [{'type': 'text', 'text': whatsappTextMessageBody}]}]     
-        }
-      };
-      const sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
-      if (sendWhatsappMessageResult.success){
-        const whatsappGeneralMessageID = sendWhatsappMessageResult.result;
-        const createWhatsappGeneralMessageResult = await whatsappDatabaseFunctions.createWhatsappGeneralMessage(whatsappConversationID, whatsappGeneralMessageID, null, null);
-        if (createWhatsappGeneralMessageResult.success){
-          const createWhatsappTextMessageResult = await whatsappDatabaseFunctions.createWhatsappTextMessage(whatsappGeneralMessageID, whatsappTextMessageBody);
-          if (createWhatsappTextMessageResult.success){
-            const updateAssignedAgentToConversation = await whatsappDatabaseFunctions.updateAssignedAgentToConversation(whatsappConversationID, whatsappConversationAssignedAgentID);
-            if (updateAssignedAgentToConversation.success){
-              websocketConnection.sendWebsocketMessage('/grabPendingConversation', {success: true, result: whatsappConversationID});
-              grabWhatsappPendingConversationPromiseResolve(JSON.stringify({success: true, result: whatsappConversationID}));
+      if (!(whatsappConversationRecipientPhoneNumber in pendingRequests)){
+        pendingRequests[whatsappConversationRecipientPhoneNumber] = true;
+
+        const sendWhatsappMessageData =
+        {
+          'messaging_product': 'whatsapp',
+          'to': whatsappConversationRecipientPhoneNumber, 
+          'type': 'template', 'template': {'name': 'bienvenida', 'language': {'code': 'es'},
+          'components': [{'type': 'body', 'parameters': [{'type': 'text', 'text': whatsappTextMessageBody}]}]     
+          }
+        };
+        const sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
+        if (sendWhatsappMessageResult.success){
+          const whatsappGeneralMessageID = sendWhatsappMessageResult.result;
+          const createWhatsappGeneralMessageResult = await whatsappDatabaseFunctions.createWhatsappGeneralMessage(whatsappConversationID, whatsappGeneralMessageID, null, null);
+          if (createWhatsappGeneralMessageResult.success){
+            const createWhatsappTextMessageResult = await whatsappDatabaseFunctions.createWhatsappTextMessage(whatsappGeneralMessageID, whatsappTextMessageBody);
+            if (createWhatsappTextMessageResult.success){
+              const updateAssignedAgentToConversation = await whatsappDatabaseFunctions.updateAssignedAgentToConversation(whatsappConversationID, whatsappConversationAssignedAgentID);
+              if (updateAssignedAgentToConversation.success){
+                websocketConnection.sendWebsocketMessage('/grabPendingConversation', {success: true, result: whatsappConversationID});
+                grabWhatsappPendingConversationPromiseResolve(JSON.stringify({success: true, result: whatsappConversationID}));
+              } else {
+                grabWhatsappPendingConversationPromiseResolve(JSON.stringify(updateAssignedAgentToConversation));
+              }
             } else {
-              grabWhatsappPendingConversationPromiseResolve(JSON.stringify(updateAssignedAgentToConversation));
+              grabWhatsappPendingConversationPromiseResolve(JSON.stringify(createWhatsappTextMessageResult));
             }
           } else {
-            grabWhatsappPendingConversationPromiseResolve(JSON.stringify(createWhatsappTextMessageResult));
+            grabWhatsappPendingConversationPromiseResolve(JSON.stringify(createWhatsappGeneralMessageResult));
           }
         } else {
-          grabWhatsappPendingConversationPromiseResolve(JSON.stringify(createWhatsappGeneralMessageResult));
+          grabWhatsappPendingConversationPromiseResolve(JSON.stringify(sendWhatsappMessageResult));
         }
-        
+        delete pendingRequests[whatsappConversationRecipientPhoneNumber];
+
       } else {
-        grabWhatsappPendingConversationPromiseResolve(JSON.stringify(sendWhatsappMessageResult));
+        grabWhatsappPendingConversationPromiseResolve(JSON.stringify({success: false, result: 'Duplicate'}));
       }
     });
   },
