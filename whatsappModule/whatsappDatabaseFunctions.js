@@ -36,6 +36,7 @@ module.exports = {
   selectWhatsappConversationAssignedAgentID: async function(){
     return new Promise (async (selectWhatsappConversationAssignedAgentIDPromiseResolve) => {
       const agentStatus = 'online';
+      const whatsappConversationIsActive = true;
       const selectWhatsappConversationAssignedAgentIDSQL = 
       `
         SELECT agentID
@@ -44,11 +45,14 @@ module.exports = {
         ORDER BY (
           SELECT COUNT(*)
           FROM WhatsappConversations
-          WHERE WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
+          WHERE 
+            WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
+            AND
+            WhatsappConversations.whatsappConversationIsActive = (?)
         ) ASC, RAND()
         LIMIT 1;
       `;
-      const selectWhatsappConversationAssignedAgentIDValues = [agentStatus];
+      const selectWhatsappConversationAssignedAgentIDValues = [agentStatus, whatsappConversationIsActive];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectWhatsappConversationAssignedAgentIDSQL, selectWhatsappConversationAssignedAgentIDValues);
       if (databaseResult.success){
         if (databaseResult.result[0]){
