@@ -28,6 +28,8 @@ backendHttpRequestServer.all('*', function(httpRequest, httpResponse, next) {
   httpResponse.header("Access-Control-Allow-Headers", (httpRequest.headers['access-control-request-headers']) ? httpRequest.headers['access-control-request-headers'] : "x-requested-with");
   httpResponse.header("Access-Control-Allow-Methods", (httpRequest.headers['access-control-request-method']) ? httpRequest.headers['access-control-request-method'] : responseSettings.AccessControlAllowMethods);
 
+  console.log(httpRequest);
+  console.log(httpResponse);
   if ('OPTIONS' == httpRequest.method) {
     httpResponse.send(200);
   }
