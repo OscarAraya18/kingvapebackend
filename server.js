@@ -8,31 +8,13 @@ const WebSocket = require('ws');
 const backendHttpRequestServer = express();
 backendHttpRequestServer.use(cors());
 backendHttpRequestServer.use(function(httpRequest, httpResponse, next) {
-  httpResponse.setHeader('Access-Control-Allow-Origin', '*');
-  httpResponse.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-  httpResponse.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type');
-  httpResponse.setHeader('Access-Control-Max-Age', '1728000');
+  httpResponse.header('Access-Control-Allow-Origin', '*');
+  httpResponse.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  httpResponse.header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type');
+  httpResponse.header('Access-Control-Max-Age', '1728000');
   next();
 });
 
-backendHttpRequestServer.all('*', function(httpRequest, httpResponse, next) {
-    var responseSettings = {
-      "AccessControlAllowOrigin": '*',
-      "AccessControlAllowHeaders": "Content-Type,X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5,  Date, X-Api-Version, X-File-Name",
-      "AccessControlAllowMethods": 'GET, POST, OPTIONS, PUT, PATCH, DELETE',
-  };
-
-  httpResponse.header("Access-Control-Allow-Origin",  responseSettings.AccessControlAllowOrigin);
-  httpResponse.header("Access-Control-Allow-Headers", (httpRequest.headers['access-control-request-headers']) ? httpRequest.headers['access-control-request-headers'] : "x-requested-with");
-  httpResponse.header("Access-Control-Allow-Methods", (httpRequest.headers['access-control-request-method']) ? httpRequest.headers['access-control-request-method'] : responseSettings.AccessControlAllowMethods);
-
-  if ('OPTIONS' == httpRequest.method) {
-    httpResponse.send(200);
-  }
-  else {
-    next();
-  }
-});
 
 backendHttpRequestServer.use(express.json({limit: '50mb'}));
 
