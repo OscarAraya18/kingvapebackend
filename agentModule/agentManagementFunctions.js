@@ -546,5 +546,46 @@ module.exports = {
       selectPieChartInformationPromiseResolve(JSON.stringify(agentsAndAmounts));
     });
   },
+
+  selectBarChartInformation: async function(){
+    return new Promise(async (selectBarChartInformationPromiseResolve) => {
+      const selectAgentRankingInformationSQL = 
+      `
+      SELECT 
+        Agents.agentName,
+        COUNT(CASE WHEN WhatsappConversations.whatsappConversationAmount != 0 THEN 1 END) AS whatsappSelledConversations,
+        COUNT(CASE WHEN WhatsappConversations.whatsappConversationAmount = 0 THEN 1 END) AS whatsappNotSelledConversations
+      FROM WhatsappConversations
+      JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
+      WHERE 
+          STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_ADD(CURDATE(), INTERVAL +6 HOUR)
+      GROUP BY 
+        Agents.agentName; 
+      `;
+      const currentDate = new Date();
+      const selectAgentRankingInformationValues = [currentDate.toString()];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAgentRankingInformationSQL, selectAgentRankingInformationValues);
+      selectBarChartInformationPromiseResolve(JSON.stringify(databaseResult));
+    });
+  },
+
+  selectTodayInformation: async function(){
+    return new Promise(async (selectTodayInformationPromiseResolve) => {
+      const selectAgentRankingInformationSQL = 
+      `
+      SELECT 
+        COUNT(WhatsappConversationID) AS whatsappTotalConversations,
+        COUNT(CASE WHEN WhatsappConversations.whatsappConversationAmount != 0 THEN 1 END) AS whatsappSelledConversations,
+        COUNT(CASE WHEN WhatsappConversations.whatsappConversationAmount = 0 THEN 1 END) AS whatsappNotSelledConversations
+      FROM WhatsappConversations
+      WHERE 
+          STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_ADD(CURDATE(), INTERVAL +6 HOUR)
+      `;
+      const currentDate = new Date();
+      const selectAgentRankingInformationValues = [currentDate.toString()];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAgentRankingInformationSQL, selectAgentRankingInformationValues);
+      selectTodayInformationPromiseResolve(JSON.stringify(databaseResult));
+    });
+  },
  
 }

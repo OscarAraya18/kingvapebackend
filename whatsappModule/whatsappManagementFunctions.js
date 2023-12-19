@@ -1212,6 +1212,7 @@ module.exports = {
           };
           const sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
         }
+        websocketConnection.sendWebsocketMessage('/updateRanking', {success: true});
         closeWhatsappConversationPromiseResolve(JSON.stringify({success: true, result: whatsappConversationID}));
       } else {
         closeWhatsappConversationPromiseResolve(JSON.stringify(selectOrCreateActiveWhatsappConversationIDResult));

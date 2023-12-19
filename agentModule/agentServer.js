@@ -181,3 +181,13 @@ backendAgentHttpRequestServer.get('/selectPieChartInformation', async (httpReque
   const selectPieChartInformationResult = await agentManagementFunctions.selectPieChartInformation();
   httpResponse.end(selectPieChartInformationResult);
 });
+
+backendAgentHttpRequestServer.get('/selectBarChartInformation', async (httpRequest, httpResponse) => {
+  const selectBarChartInformationResult = await agentManagementFunctions.selectBarChartInformation();
+  httpResponse.end(selectBarChartInformationResult);
+});
+
+backendAgentHttpRequestServer.get('/selectTodayInformation', async (httpRequest, httpResponse) => {
+  const selectBarChartInformationResult = await agentManagementFunctions.selectTodayInformation();
+  httpResponse.end(selectBarChartInformationResult);
+});
