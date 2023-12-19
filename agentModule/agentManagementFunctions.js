@@ -518,21 +518,32 @@ module.exports = {
     });
   },
 
-  selectAgentRankingInformation: async function(){
-    return new Promise(async (selectAgentRankingInformationPromiseResolve) => {
+  selectPieChartInformation: async function(){
+    return new Promise(async (selectPieChartInformationPromiseResolve) => {
       const selectAgentRankingInformationSQL = 
       `
-      SELECT COUNT(whatsappGeneralMessageID)
-      FROM WhatsappGeneralMessages
+      SELECT WhatsappConversations.whatsappConversationAmount, WhatsappConversations.whatsappConversationStartDateTime, Agents.agentName
+      FROM WhatsappConversations
+      JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
       WHERE 
-        CAST(STR_TO_DATE(whatsappGeneralMessageCreationDateTime, '%a %b %d %Y %H:%i:%s GMT+0000 (Coordinated Universal Time)') AS DATETIME) 
-        >=
-        CAST(STR_TO_DATE(?, '%a %b %d %Y %H:%i:%s GMT+0000 (Coordinated Universal Time)') AS DATETIME);      
+          STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_ADD(CURDATE(), INTERVAL +6 HOUR)
+        AND
+          WhatsappConversationAmount != (?); 
       `;
       const currentDate = new Date();
-      const selectAgentRankingInformationValues = [currentDate.toString()];
+      const selectAgentRankingInformationValues = [currentDate.toString(), 0];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAgentRankingInformationSQL, selectAgentRankingInformationValues);
-      selectAgentRankingInformationPromiseResolve(JSON.stringify(databaseResult));
+      var agentsAndAmounts = {};
+      for (var conversationIndex in databaseResult.result){
+        const agentName = databaseResult.result[conversationIndex].agentName;
+        const whatsappConversationAmount = databaseResult.result[conversationIndex].whatsappConversationAmount;
+        if (agentName in agentsAndAmounts){
+          agentsAndAmounts[agentName] = agentsAndAmounts[agentName] + whatsappConversationAmount;
+        } else {
+          agentsAndAmounts[agentName] = whatsappConversationAmount;
+        }
+      }
+      selectPieChartInformationPromiseResolve(JSON.stringify(agentsAndAmounts));
     });
   },
  
