@@ -581,9 +581,28 @@ module.exports = {
       WHERE 
           STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_ADD(CURDATE(), INTERVAL +6 HOUR)
       `;
+
+      /*
+      const prueba = 
+      `
+      WITH RankedConversations AS (
+        SELECT
+            WhatsappConversationID,
+            ROW_NUMBER() OVER (PARTITION BY WhatsappConversations.whatsappConversationRecipientPhoneNumber ORDER BY WhatsappConversations.whatsappConversationAmount DESC) AS RowNum
+        FROM WhatsappConversations
+        WHERE 
+            STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_ADD(CURDATE(), INTERVAL +6 HOUR)
+      )
+      SELECT 
+          COUNT(DISTINCT CASE WHEN RowNum = 1 AND WhatsappConversations.whatsappConversationAmount != 0 THEN WhatsappConversations.whatsappNumber END) AS whatsappSelledNumbers,
+          COUNT(DISTINCT CASE WHEN RowNum = 1 AND WhatsappConversations.whatsappConversationAmount = 0 THEN WhatsappConversations.whatsappNumber END) AS whatsappNotSelledNumbers
+      FROM RankedConversations;
+      `
+      */
       const currentDate = new Date();
       const selectAgentRankingInformationValues = [currentDate.toString()];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAgentRankingInformationSQL, selectAgentRankingInformationValues);
+      console.log(databaseResult);
       selectTodayInformationPromiseResolve(JSON.stringify(databaseResult));
     });
   },
