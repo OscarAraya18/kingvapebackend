@@ -526,7 +526,7 @@ module.exports = {
       FROM WhatsappConversations
       JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
       WHERE 
-          STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_ADD(CURDATE(), INTERVAL +6 HOUR)
+          STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_ADD(CURDATE(), INTERVAL +0 HOUR)
         AND
           WhatsappConversationAmount != (?); 
       `;
@@ -553,17 +553,28 @@ module.exports = {
       `
       SELECT 
         Agents.agentName,
-        COUNT(CASE WHEN WhatsappConversations.whatsappConversationAmount != 0 THEN 1 END) AS whatsappSelledConversations,
-        COUNT(CASE WHEN WhatsappConversations.whatsappConversationAmount = 0 THEN 1 END) AS whatsappNotSelledConversations
-      FROM WhatsappConversations
+        SUM(CASE WHEN WhatsappConversations.whatsappConversationAmount != 0 THEN 1 ELSE 0 END) AS whatsappSelledConversations,
+        SUM(CASE WHEN WhatsappConversations.whatsappConversationAmount = 0 THEN 1 ELSE 0 END) AS whatsappNotSelledConversations
+      FROM (
+        SELECT 
+          WhatsappConversations.whatsappConversationAssignedAgentID,
+          WhatsappConversations.whatsappConversationRecipientPhoneNumber,
+          MAX(whatsappConversationAmount) AS whatsappConversationAmount
+        FROM WhatsappConversations
+        WHERE 
+          STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_ADD(CURDATE(), INTERVAL +0 HOUR)
+            AND
+          whatsappConversationIsActive = (?)
+        GROUP BY 
+          WhatsappConversations.whatsappConversationAssignedAgentID,
+          WhatsappConversations.whatsappConversationRecipientPhoneNumber
+      ) AS WhatsappConversations
       JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
-      WHERE 
-          STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_ADD(CURDATE(), INTERVAL +6 HOUR)
       GROUP BY 
-        Agents.agentName; 
+        Agents.agentName;
       `;
-      const currentDate = new Date();
-      const selectAgentRankingInformationValues = [currentDate.toString()];
+      const whatsappConversationIsActive = false;
+      const selectAgentRankingInformationValues = [whatsappConversationIsActive];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAgentRankingInformationSQL, selectAgentRankingInformationValues);
       selectBarChartInformationPromiseResolve(JSON.stringify(databaseResult));
     });
@@ -574,35 +585,26 @@ module.exports = {
       const selectAgentRankingInformationSQL = 
       `
       SELECT 
-        COUNT(WhatsappConversationID) AS whatsappTotalConversations,
-        COUNT(CASE WHEN WhatsappConversations.whatsappConversationAmount != 0 THEN 1 END) AS whatsappSelledConversations,
-        COUNT(CASE WHEN WhatsappConversations.whatsappConversationAmount = 0 THEN 1 END) AS whatsappNotSelledConversations
-      FROM WhatsappConversations
-      WHERE 
-          STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_ADD(CURDATE(), INTERVAL +6 HOUR)
-      `;
-
-      /*
-      const prueba = 
-      `
-      WITH RankedConversations AS (
-        SELECT
-            WhatsappConversationID,
-            ROW_NUMBER() OVER (PARTITION BY WhatsappConversations.whatsappConversationRecipientPhoneNumber ORDER BY WhatsappConversations.whatsappConversationAmount DESC) AS RowNum
-        FROM WhatsappConversations
-        WHERE 
-            STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_ADD(CURDATE(), INTERVAL +6 HOUR)
-      )
-      SELECT 
-          COUNT(DISTINCT CASE WHEN RowNum = 1 AND WhatsappConversations.whatsappConversationAmount != 0 THEN WhatsappConversations.whatsappNumber END) AS whatsappSelledNumbers,
-          COUNT(DISTINCT CASE WHEN RowNum = 1 AND WhatsappConversations.whatsappConversationAmount = 0 THEN WhatsappConversations.whatsappNumber END) AS whatsappNotSelledNumbers
-      FROM RankedConversations;
-      `
-      */
-      const currentDate = new Date();
-      const selectAgentRankingInformationValues = [currentDate.toString()];
+        COUNT (*) AS whatsappTotalConversations,
+        SUM(CASE WHEN WhatsappConversations.whatsappConversationAmount != 0 THEN 1 ELSE 0 END) AS whatsappSelledConversations,
+        SUM(CASE WHEN WhatsappConversations.whatsappConversationAmount = 0 THEN 1 ELSE 0 END) AS whatsappNotSelledConversations
+      FROM 
+        (
+          SELECT 
+            whatsappConversationRecipientPhoneNumber,
+            MAX(whatsappConversationAmount) AS whatsappConversationAmount
+          FROM WhatsappConversations
+          WHERE 
+            STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_ADD(CURDATE(), INTERVAL +0 HOUR)
+              AND
+            whatsappConversationIsActive = (?)
+          GROUP BY whatsappConversationRecipientPhoneNumber
+        ) 
+      AS WhatsappConversations
+      ;`;
+      const whatsappConversationIsActive = false;
+      const selectAgentRankingInformationValues = [whatsappConversationIsActive];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAgentRankingInformationSQL, selectAgentRankingInformationValues);
-      console.log(databaseResult);
       selectTodayInformationPromiseResolve(JSON.stringify(databaseResult));
     });
   },
