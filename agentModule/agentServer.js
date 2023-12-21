@@ -191,3 +191,8 @@ backendAgentHttpRequestServer.get('/selectTodayInformation', async (httpRequest,
   const selectBarChartInformationResult = await agentManagementFunctions.selectTodayInformation();
   httpResponse.end(selectBarChartInformationResult);
 });
+
+backendAgentHttpRequestServer.get('/selectTodayTopSell', async (httpRequest, httpResponse) => {
+  const selectBarChartInformationResult = await agentManagementFunctions.selectTodayTopSell();
+  httpResponse.end(selectBarChartInformationResult);
+});

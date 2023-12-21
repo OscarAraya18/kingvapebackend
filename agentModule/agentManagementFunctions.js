@@ -526,12 +526,11 @@ module.exports = {
       FROM WhatsappConversations
       JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
       WHERE 
-          STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_ADD(CURDATE(), INTERVAL +0 HOUR)
-        AND
-          WhatsappConversationAmount != (?); 
+        STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_SUB(CURDATE(), INTERVAL 18 HOUR)
+          AND
+        WhatsappConversationAmount != (?); 
       `;
-      const currentDate = new Date();
-      const selectAgentRankingInformationValues = [currentDate.toString(), 0];
+      const selectAgentRankingInformationValues = [0];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAgentRankingInformationSQL, selectAgentRankingInformationValues);
       var agentsAndAmounts = {};
       for (var conversationIndex in databaseResult.result){
@@ -553,30 +552,59 @@ module.exports = {
       `
       SELECT 
         Agents.agentName,
-        SUM(CASE WHEN WhatsappConversations.whatsappConversationAmount != 0 THEN 1 ELSE 0 END) AS whatsappSelledConversations,
-        SUM(CASE WHEN WhatsappConversations.whatsappConversationAmount = 0 THEN 1 ELSE 0 END) AS whatsappNotSelledConversations
-      FROM (
-        SELECT 
-          WhatsappConversations.whatsappConversationAssignedAgentID,
-          WhatsappConversations.whatsappConversationRecipientPhoneNumber,
-          MAX(whatsappConversationAmount) AS whatsappConversationAmount
-        FROM WhatsappConversations
-        WHERE 
-          STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_ADD(CURDATE(), INTERVAL +0 HOUR)
-            AND
-          whatsappConversationIsActive = (?)
-        GROUP BY 
-          WhatsappConversations.whatsappConversationAssignedAgentID,
-          WhatsappConversations.whatsappConversationRecipientPhoneNumber
-      ) AS WhatsappConversations
+        WhatsappConversations.whatsappConversationAmount, 
+        WhatsappConversations.whatsappConversationRecipientPhoneNumber
+      FROM WhatsappConversations
       JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
-      GROUP BY 
-        Agents.agentName;
+      WHERE 
+        STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_SUB(CURDATE(), INTERVAL 18 HOUR)
+          AND
+        WhatsappConversations.whatsappConversationIsActive = (?)
       `;
       const whatsappConversationIsActive = false;
       const selectAgentRankingInformationValues = [whatsappConversationIsActive];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAgentRankingInformationSQL, selectAgentRankingInformationValues);
-      selectBarChartInformationPromiseResolve(JSON.stringify(databaseResult));
+      const sortedDatabaseResult = databaseResult.result.sort((a, b) => b.whatsappConversationAmount - a.whatsappConversationAmount);
+      var evaluatedNumbers = {};
+      var agentsAndConversations = {};
+      
+      for (var sortedDatabaseResultIndex in sortedDatabaseResult){
+        const sortedDatabaseResultObject = sortedDatabaseResult[sortedDatabaseResultIndex];
+        const whatsappConversationRecipientPhoneNumber = sortedDatabaseResultObject.whatsappConversationRecipientPhoneNumber;
+        const whatsappConversationAmount = sortedDatabaseResultObject.whatsappConversationAmount;
+        const agentName = sortedDatabaseResultObject.agentName;
+        if (!(whatsappConversationRecipientPhoneNumber in evaluatedNumbers)){
+          evaluatedNumbers[whatsappConversationRecipientPhoneNumber] = 'true';
+          if (agentName in agentsAndConversations){
+            if (whatsappConversationAmount == 0){
+              agentsAndConversations[agentName]['whatsappNotSelledConversations'] = agentsAndConversations[agentName]['whatsappNotSelledConversations'] + 1;
+            } else {
+              agentsAndConversations[agentName]['whatsappSelledConversations'] = agentsAndConversations[agentName]['whatsappSelledConversations'] + 1;
+            }
+          } else {
+            if (whatsappConversationAmount == 0){
+              agentsAndConversations[agentName] = {'whatsappSelledConversations': 0, 'whatsappNotSelledConversations': 1}
+            } else {
+              agentsAndConversations[agentName] = {'whatsappSelledConversations': 1, 'whatsappNotSelledConversations': 0}
+            }
+          }
+        }
+      }
+      var agentsAndConversationsArray = [];
+      for (var agentName in agentsAndConversations){
+        agentsAndConversationsArray.push
+        ({
+          'agentName': agentName,
+          'whatsappSelledConversations': agentsAndConversations[agentName].whatsappSelledConversations,
+          'whatsappNotSelledConversations': agentsAndConversations[agentName].whatsappNotSelledConversations
+        });
+      }
+      const result = 
+      {
+        success: true, 
+        result: agentsAndConversationsArray
+      };
+      selectBarChartInformationPromiseResolve(JSON.stringify(result));
     });
   },
 
@@ -584,29 +612,74 @@ module.exports = {
     return new Promise(async (selectTodayInformationPromiseResolve) => {
       const selectAgentRankingInformationSQL = 
       `
-      SELECT 
-        COUNT (*) AS whatsappTotalConversations,
-        SUM(CASE WHEN WhatsappConversations.whatsappConversationAmount != 0 THEN 1 ELSE 0 END) AS whatsappSelledConversations,
-        SUM(CASE WHEN WhatsappConversations.whatsappConversationAmount = 0 THEN 1 ELSE 0 END) AS whatsappNotSelledConversations
-      FROM 
-        (
-          SELECT 
-            whatsappConversationRecipientPhoneNumber,
-            MAX(whatsappConversationAmount) AS whatsappConversationAmount
-          FROM WhatsappConversations
-          WHERE 
-            STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_ADD(CURDATE(), INTERVAL +0 HOUR)
-              AND
-            whatsappConversationIsActive = (?)
-          GROUP BY whatsappConversationRecipientPhoneNumber
-        ) 
-      AS WhatsappConversations
+      SELECT whatsappConversationAmount, whatsappConversationRecipientPhoneNumber
+      FROM WhatsappConversations
+      WHERE 
+        STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_SUB(CURDATE(), INTERVAL 18 HOUR)
+          AND
+        whatsappConversationIsActive = (?)
       ;`;
       const whatsappConversationIsActive = false;
       const selectAgentRankingInformationValues = [whatsappConversationIsActive];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAgentRankingInformationSQL, selectAgentRankingInformationValues);
-      selectTodayInformationPromiseResolve(JSON.stringify(databaseResult));
+      
+      var evaluatedNumbers = {};
+      var whatsappSelledConversations = 0;
+      var whatsappNotSelledConversations = 0;
+      const sortedDatabaseResult = databaseResult.result.sort((a, b) => b.whatsappConversationAmount - a.whatsappConversationAmount);
+      for (var sortedDatabaseResultIndex in sortedDatabaseResult){
+        const sortedDatabaseResultObject = sortedDatabaseResult[sortedDatabaseResultIndex];
+        const whatsappConversationAmount = sortedDatabaseResultObject.whatsappConversationAmount;
+        const whatsappConversationRecipientPhoneNumber = sortedDatabaseResultObject.whatsappConversationRecipientPhoneNumber;
+        if ((whatsappConversationAmount != 0) && (!(whatsappConversationRecipientPhoneNumber in evaluatedNumbers))){
+          whatsappSelledConversations = whatsappSelledConversations + 1;
+        }
+        if ((whatsappConversationAmount == 0) && (!(whatsappConversationRecipientPhoneNumber in evaluatedNumbers))){
+          whatsappNotSelledConversations = whatsappNotSelledConversations + 1;
+        }
+        evaluatedNumbers[whatsappConversationRecipientPhoneNumber] = 'true';
+      }
+      const result = 
+      {
+        success: true, 
+        result: 
+        [{
+          whatsappTotalConversations: whatsappSelledConversations + whatsappNotSelledConversations,
+          whatsappSelledConversations: whatsappSelledConversations,
+          whatsappNotSelledConversations: whatsappNotSelledConversations
+        }]
+      }
+      selectTodayInformationPromiseResolve(JSON.stringify(result));
     });
   },
+
+  selectTodayTopSell: async function(){
+    return new Promise(async (selectTodayTopSellPromiseResolve) => {
+      const selectTodayTopSellSQL = 
+      `
+      SELECT 
+        Agents.agentName,
+        WhatsappConversations.whatsappConversationAmount, 
+      FROM WhatsappConversations
+      JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
+      WHERE 
+        STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_SUB(CURDATE(), INTERVAL 18 HOUR)
+          AND
+        WhatsappConversations.whatsappConversationIsActive = (?)
+      `;
+      const whatsappConversationIsActive = false;
+      const selectTodayTopSellValues = [whatsappConversationIsActive];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectTodayTopSellSQL, selectTodayTopSellValues);
+      const sortedDatabaseResult = databaseResult.result.sort((a, b) => b.whatsappConversationAmount - a.whatsappConversationAmount);
+      const result = 
+      {
+        success: true, 
+        result: sortedDatabaseResult[0].agentNames
+      };
+      selectBarChartInformationPromiseResolve(JSON.stringify(result));
+    });
+  }
+
+
  
 }
