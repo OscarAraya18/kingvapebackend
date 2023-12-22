@@ -659,7 +659,7 @@ module.exports = {
       `
       SELECT 
         Agents.agentName,
-        WhatsappConversations.whatsappConversationAmount, 
+        WhatsappConversations.whatsappConversationAmount
       FROM WhatsappConversations
       JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
       WHERE 
