@@ -563,7 +563,8 @@ module.exports = {
           WhatsappConversations.whatsappConversationAssignedAgentID,
           Agents.agentName
         FROM WhatsappConversations JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
-        WHERE whatsappConversationIsActive=(?) AND whatsappConversationRecipientPhoneNumber=(?);
+        WHERE whatsappConversationIsActive=(?) AND whatsappConversationRecipientPhoneNumber=(?)
+        ORDER BY STR_TO_DATE(WhatsappConversations.whatsappConversationStartDateTime, '%a %b %d %Y %H:%i:%s GMT+0000') ASC;
       `;
       const whatsappConversationIsActive = false;
       const selectWhatsappClosedConversationFromWhatsappConversationRecipientPhoneNumberValues = [whatsappConversationIsActive, whatsappConversationRecipientPhoneNumber];
