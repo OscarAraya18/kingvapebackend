@@ -674,9 +674,9 @@ module.exports = {
       const result = 
       {
         success: true, 
-        result: sortedDatabaseResult[0].agentNames
+        result: sortedDatabaseResult[0].agentName
       };
-      selectBarChartInformationPromiseResolve(JSON.stringify(result));
+      selectTodayTopSellPromiseResolve(JSON.stringify(result));
     });
   }
 
