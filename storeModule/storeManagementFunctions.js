@@ -19,8 +19,8 @@ module.exports = {
       if (!(storeMessageRecipientPhoneNumber in storeRequests)){
         storeRequests[storeMessageRecipientPhoneNumber] = true;
         websocketConnection.sendWebsocketMessage('/grabStoreConversation', {success: true, result: {storeMessageID: storeMessageID, storeMessageStoreName: storeMessageStoreName}});
-        const selectWhatsappConversationSQL = `SELECT whatsappConversationID FROM WhatsappConversations WHERE whatsappConversationRecipientPhoneNumber=(?);`;
-        const selectWhatsappConversationValues = [storeMessageRecipientPhoneNumber];
+        const selectWhatsappConversationSQL = `SELECT whatsappConversationID FROM WhatsappConversations WHERE whatsappConversationRecipientPhoneNumber=(?) AND whatsappConversationIsActive=(?);`;
+        const selectWhatsappConversationValues = [storeMessageRecipientPhoneNumber, true];
         const selectWhatsappConversationDatabaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectWhatsappConversationSQL, selectWhatsappConversationValues);
         if (selectWhatsappConversationDatabaseResult.success){
           if (selectWhatsappConversationDatabaseResult.result.length == 0){
