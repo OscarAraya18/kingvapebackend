@@ -19,22 +19,33 @@ module.exports = {
       if (!(storeMessageRecipientPhoneNumber in storeRequests)){
         storeRequests[storeMessageRecipientPhoneNumber] = true;
         websocketConnection.sendWebsocketMessage('/grabStoreConversation', {success: true, result: {storeMessageID: storeMessageID, storeMessageStoreName: storeMessageStoreName}});
-        const updateStoreMessageSQL = `UPDATE StoreMessages SET storeMessageAssignedAgentID=(?) WHERE storeMessageID=(?);`;
-        const updateStoreMessageValues = [storeMessageAssignedAgentID, storeMessageID];
-        const updateStoreMessageDatabaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateStoreMessageSQL, updateStoreMessageValues);
-        if (updateStoreMessageDatabaseResult.success){
-          const sendWhatsappStoreMessageResult = await whatsappManagementFunctions.sendWhatsappStoreMessage(storeMessageStoreName, storeMessageStoreMessageID);
-          if (sendWhatsappStoreMessageResult.success){
-            const startWhatsappStoreConversationResult = await whatsappManagementFunctions.startWhatsappStoreConversation(storeMessageAssignedAgentID, storeMessageRecipientPhoneNumber, storeMessageRecipientProfileName, messageToClientContent);
-            const whatsappConversationID = startWhatsappStoreConversationResult.resultID;
-            grabStoreConversationPromiseResolve(startWhatsappStoreConversationResult);
+        const selectWhatsappConversationSQL = `SELECT whatsappConversationID FROM WhatsappConversations WHERE whatsappConversationRecipientPhoneNumber=(?);`;
+        const selectWhatsappConversationValues = [storeMessageRecipientPhoneNumber];
+        const selectWhatsappConversationDatabaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectWhatsappConversationSQL, selectWhatsappConversationValues);
+        if (selectWhatsappConversationDatabaseResult.success){
+          if (selectWhatsappConversationDatabaseResult.result.length == 0){
+            const updateStoreMessageSQL = `UPDATE StoreMessages SET storeMessageAssignedAgentID=(?) WHERE storeMessageID=(?);`;
+            const updateStoreMessageValues = [storeMessageAssignedAgentID, storeMessageID];
+            const updateStoreMessageDatabaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateStoreMessageSQL, updateStoreMessageValues);
+            if (updateStoreMessageDatabaseResult.success){
+              const sendWhatsappStoreMessageResult = await whatsappManagementFunctions.sendWhatsappStoreMessage(storeMessageStoreName, storeMessageStoreMessageID);
+              if (sendWhatsappStoreMessageResult.success){
+                const startWhatsappStoreConversationResult = await whatsappManagementFunctions.startWhatsappStoreConversation(storeMessageAssignedAgentID, storeMessageRecipientPhoneNumber, storeMessageRecipientProfileName, messageToClientContent);
+                const whatsappConversationID = startWhatsappStoreConversationResult.resultID;
+                grabStoreConversationPromiseResolve(startWhatsappStoreConversationResult);
+              } else {
+                grabStoreConversationPromiseResolve(JSON.stringify(sendWhatsappStoreMessageResult));
+              }
+            } else {
+              grabStoreConversationPromiseResolve(JSON.stringify(updateStoreMessageDatabaseResult));
+            }
+            delete storeRequests[storeMessageRecipientPhoneNumber];
           } else {
-            grabStoreConversationPromiseResolve(JSON.stringify(sendWhatsappStoreMessageResult));
+            grabStoreConversationPromiseResolve(JSON.stringify({success: false, result: 'Duplicate'}));
           }
         } else {
-          grabStoreConversationPromiseResolve(JSON.stringify(updateStoreMessageDatabaseResult));
+          grabStoreConversationPromiseResolve(JSON.stringify(selectWhatsappConversationDatabaseResult));
         }
-        delete storeRequests[storeMessageRecipientPhoneNumber];
       } else {
         grabStoreConversationPromiseResolve(JSON.stringify({success: false, result: 'Duplicate'}));
       }
