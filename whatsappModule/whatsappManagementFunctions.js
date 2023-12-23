@@ -1031,6 +1031,9 @@ module.exports = {
 
   receiveWhatsappStoreMessage: async function(websocketConnection, whatsappConversationRecipientPhoneNumber, whatsappGeneralMessageID, whatsappMessageInformation){
     const storePhoneNumbers = {50670782096: 'Escazu', 50672527633: 'Zapote', 50670130555: 'Cartago'};
+    console.log(whatsappMessageInformation);
+    console.log(whatsappConversationRecipientPhoneNumber);
+    console.log(whatsappGeneralMessageID);
     if (whatsappConversationRecipientPhoneNumber in storePhoneNumbers){
       try {
         const whatsappMessageInformationToFormat = whatsappMessageInformation['text']['body'].split('\n');
@@ -1041,6 +1044,7 @@ module.exports = {
         const storeMessageRecipientOrder = whatsappMessageInformationToFormat[2].split('PEDIDO: ')[1];
         const storeMessageRecipientID = whatsappMessageInformationToFormat[3].split('CEDULA: ')[1];
         const insertStoreMessageResult = await whatsappDatabaseFunctions.insertStoreMessage(storeMessageStoreMessageID, storeMessageStoreName, storeMessageRecipientPhoneNumber, storeMessageRecipientProfileName, storeMessageRecipientOrder, storeMessageRecipientID);
+        console.log(insertStoreMessageResult);
         if (insertStoreMessageResult.success){
           websocketConnection.sendWebsocketMessage('/receiveWhatsappStoreMessage', insertStoreMessageResult);
           return insertStoreMessageResult;
