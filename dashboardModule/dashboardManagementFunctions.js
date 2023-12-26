@@ -175,6 +175,59 @@ module.exports = {
       selectAgentNamesPromiseResolve(JSON.stringify(databaseResult));
     });
   },
+
+  selectFilteredConversations: async function(initialDate, endDate, recipientPhoneNumber, agentName, store, conversation){
+    return new Promise(async (selectFilteredConversationsPromiseResolve) => {
+      const conditions = [];
+            
+      if (initialDate != ''){
+        initialDate = new Date(initialDate);
+        initialDate.setHours(initialDate.getHours() + 6);
+        initialDate = initialDate.toString();
+        initialDate = initialDate.replace('GMT-0600', 'GMT+0000');
+        conditions.push(`STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %H:%i:%s GMT+0000') >= STR_TO_DATE('${initialDate}', '%a %b %d %Y %H:%i:%s GMT+0000')`);
+      }
+
+      if (endDate != ''){
+        endDate = new Date(endDate);
+        endDate.setHours(endDate.getHours() + 6);
+        endDate = endDate.toString();
+        endDate = endDate.replace('GMT-0600', 'GMT+0000');
+        conditions.push(`STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %H:%i:%s GMT+0000') <= STR_TO_DATE('${endDate}', '%a %b %d %Y %H:%i:%s GMT+0000')`);
+      }
+
+      if (recipientPhoneNumber != '') conditions.push(`whatsappConversationRecipientPhoneNumber = '${recipientPhoneNumber}'`);
+      
+      if (agentName != '') conditions.push(`agentName = '${agentName}'`);
+
+      if (store != '') conditions.push(`whatsappConversationRecipientProfileName LIKE '%${store}%'`);
+      
+      if (conversation == 'Vendido'){
+        conditions.push(`whatsappConversationAmount != 0`);
+      } else if (conversation == 'No vendido') {
+        conditions.push(`whatsappConversationAmount == 0`);
+      }
+
+      const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+      
+      var selectFilteredConversationsSQL = 
+      `
+      SELECT
+        WhatsappConversations.whatsappConversationID,
+        WhatsappConversations.whatsappConversationRecipientPhoneNumber,
+        WhatsappConversations.whatsappConversationRecipientProfileName,
+        WhatsappConversations.whatsappConversationAmount,
+        Agents.agentName,
+        WhatsappConversations.whatsappConversationStartDateTime
+      FROM WhatsappConversations
+      LEFT JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
+      `;
+      var selectFilteredConversationsSQL = selectFilteredConversationsSQL + whereClause;
+
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectFilteredConversationsSQL);
+      selectFilteredConversationsPromiseResolve(JSON.stringify(databaseResult));
+    });
+  }
   
 
 }

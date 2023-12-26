@@ -23,3 +23,15 @@ backendDashboardHttpRequestServer.get('/selectAgentNames', async (httpRequest, h
   const selectAgentNamesResult = await dashboardManagementFunctions.selectAgentNames();
   httpResponse.end(selectAgentNamesResult);
 });
+
+backendDashboardHttpRequestServer.post('/selectFilteredConversations', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const initialDate = httpRequestQuery.initialDateFiltered;
+  const endDate = httpRequestQuery.endDateFiltered;
+  const recipientPhoneNumber = httpRequestQuery.numberFiltered;
+  const agentName = httpRequestQuery.agentFiltered;
+  const store = httpRequestQuery.storeFiltered;
+  const conversation = httpRequestQuery.conversionFiltered;
+  const selectAgentNamesResult = await dashboardManagementFunctions.selectFilteredConversations(initialDate, endDate, recipientPhoneNumber, agentName, store, conversation);
+  httpResponse.end(selectAgentNamesResult);
+});
