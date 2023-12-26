@@ -26,10 +26,11 @@ const backendAgentHttpRequestServer = require('./agentModule/agentServer.js');
 const backendContactHttpRequestServer = require('./contactModule/contactServer.js');
 const backendWhatsappHttpRequestServer = require('./whatsappModule/whatsappServer.js');
 const backendStoreHttpRequestServer = require('./storeModule/storeServer.js');
-
+const backendDashboardHttpRequestServer = require('./dashboardModule/dashboardServer.js');
 
 
 backendHttpRequestServer.use(backendAgentHttpRequestServer);
 backendHttpRequestServer.use(backendContactHttpRequestServer);
 backendHttpRequestServer.use(backendWhatsappHttpRequestServer);
 backendHttpRequestServer.use(backendStoreHttpRequestServer);
+backendHttpRequestServer.use(backendDashboardHttpRequestServer);
