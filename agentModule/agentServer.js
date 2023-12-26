@@ -176,7 +176,6 @@ backendAgentHttpRequestServer.post('/rankingLogin', async (httpRequest, httpResp
   }
 });
 
-
 backendAgentHttpRequestServer.get('/selectPieChartInformation', async (httpRequest, httpResponse) => {
   const selectPieChartInformationResult = await agentManagementFunctions.selectPieChartInformation();
   httpResponse.end(selectPieChartInformationResult);

@@ -45,7 +45,7 @@ module.exports = {
         whatsappConversationAssignedAgentID
       FROM WhatsappConversations
       WHERE 
-        STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_SUB(CURDATE(), INTERVAL 100 HOUR)
+        STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_ADD(CURDATE(), INTERVAL 6 HOUR)
       ;`;
       const selectTodayDashboardInformationDatabaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectTodayDashboardInformationSQL);
       var evaluatedNumbers = {};
@@ -79,7 +79,7 @@ module.exports = {
         SUM(CASE WHEN whatsappGeneralMessageOwnerPhoneNumber IS NOT NULL THEN 1 ELSE 0 END) AS whatsappReceivedMessages
       FROM WhatsappGeneralMessages
       WHERE 
-        STR_TO_DATE(whatsappGeneralMessageCreationDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_SUB(CURDATE(), INTERVAL 100 HOUR)
+        STR_TO_DATE(whatsappGeneralMessageCreationDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_ADD(CURDATE(), INTERVAL 6 HOUR)
       ;`;
       const selectTodayMessagesAmountDatabaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectTodayMessagesAmountSQL);
       const result = 
@@ -99,74 +99,6 @@ module.exports = {
       selectTodayDashboardInformationPromiseResolve(JSON.stringify(result));
     });
   },
-
-  /*
-  selectTodayDashboardReport: async function(){
-    return new Promise(async (selectTodayDashboardReportPromiseResolve) => {
-      const selectTodayDashboardReportSQL = 
-      `
-      SELECT 
-        Agents.agentName,
-        WhatsappConversations.whatsappConversationAmount, 
-        WhatsappConversations.whatsappConversationRecipientPhoneNumber
-      FROM WhatsappConversations
-      JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
-      WHERE 
-        STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_SUB(CURDATE(), INTERVAL 100 HOUR)
-      ;`;
-      const selectTodayDashboardReportDatabaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectTodayDashboardReportSQL);
-      var evaluatedNumbers = {};
-      var whatsappSelledConversations = 0;
-      var whatsappNotSelledConversations = 0;
-      var whatsappPendingConversations = 0;
-      var whatsappTotalSells = 0;
-      const sortedDatabaseResult = selectTodayDashboardInformationDatabaseResult.result.sort((a, b) => b.whatsappConversationAmount - a.whatsappConversationAmount);
-      for (var sortedDatabaseResultIndex in sortedDatabaseResult){
-        const sortedDatabaseResultObject = sortedDatabaseResult[sortedDatabaseResultIndex];
-        const whatsappConversationAmount = sortedDatabaseResultObject.whatsappConversationAmount;
-        const whatsappConversationRecipientPhoneNumber = sortedDatabaseResultObject.whatsappConversationRecipientPhoneNumber;
-        const whatsappConversationAssignedAgentID = sortedDatabaseResultObject.whatsappConversationAssignedAgentID;
-        whatsappTotalSells = whatsappTotalSells + whatsappConversationAmount;
-        if ((whatsappConversationAssignedAgentID == null) && (!(whatsappConversationRecipientPhoneNumber in evaluatedNumbers))){
-          whatsappPendingConversations = whatsappPendingConversations + 1;
-        }
-        else if ((whatsappConversationAmount != 0) && (!(whatsappConversationRecipientPhoneNumber in evaluatedNumbers))){
-          whatsappSelledConversations = whatsappSelledConversations + 1;
-        }
-        else if ((whatsappConversationAmount == 0) && (!(whatsappConversationRecipientPhoneNumber in evaluatedNumbers))){
-          whatsappNotSelledConversations = whatsappNotSelledConversations + 1;
-        }
-        evaluatedNumbers[whatsappConversationRecipientPhoneNumber] = 'true';
-      }
-
-      const selectTodayMessagesAmountSQL = 
-      `
-      SELECT
-        SUM(CASE WHEN whatsappGeneralMessageOwnerPhoneNumber IS NULL THEN 1 ELSE 0 END) AS whatsappSendedMessages,
-        SUM(CASE WHEN whatsappGeneralMessageOwnerPhoneNumber IS NOT NULL THEN 1 ELSE 0 END) AS whatsappReceivedMessages
-      FROM WhatsappGeneralMessages
-      WHERE 
-        STR_TO_DATE(whatsappGeneralMessageCreationDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_SUB(CURDATE(), INTERVAL 100 HOUR)
-      ;`;
-      const selectTodayMessagesAmountDatabaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectTodayMessagesAmountSQL);
-      const result = 
-      {
-        success: true, 
-        result: 
-        {
-          whatsappTotalConversations: whatsappSelledConversations + whatsappNotSelledConversations + whatsappPendingConversations,
-          whatsappSelledConversations: whatsappSelledConversations,
-          whatsappNotSelledConversations: whatsappNotSelledConversations,
-          whatsappPendingConversations: whatsappPendingConversations,
-          whatsappTotalSells: whatsappTotalSells,
-          whatsappSendedMessages: selectTodayMessagesAmountDatabaseResult.result[0].whatsappSendedMessages,
-          whatsappReceivedMessages: selectTodayMessagesAmountDatabaseResult.result[0].whatsappReceivedMessages
-        }
-      }
-      selectTodayDashboardInformationPromiseResolve(JSON.stringify(result));
-    });
-  },
-  */
 
   selectAgentNames: async function(){
     return new Promise(async (selectAgentNamesPromiseResolve) => {
