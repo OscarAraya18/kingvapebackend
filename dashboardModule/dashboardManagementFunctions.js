@@ -81,10 +81,9 @@ module.exports = {
         SUM(CASE WHEN whatsappGeneralMessageOwnerPhoneNumber IS NOT NULL THEN 1 ELSE 0 END) AS whatsappReceivedMessages
       FROM WhatsappGeneralMessages
       WHERE 
-      WHERE 
-        STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_SUB(CURDATE(), INTERVAL +18 HOUR)
+        STR_TO_DATE(whatsappGeneralMessageCreationDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_SUB(CURDATE(), INTERVAL +18 HOUR)
           AND
-        STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_ADD(CURDATE(), INTERVAL +6 HOUR)
+        STR_TO_DATE(whatsappGeneralMessageCreationDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_ADD(CURDATE(), INTERVAL +6 HOUR)
       ;`;
       const selectTodayMessagesAmountDatabaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectTodayMessagesAmountSQL);
       const result = 
