@@ -530,7 +530,7 @@ module.exports = {
           AND
         STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 30 HOUR, '%Y-%m-%d 06:00:00')
           AND
-        WhatsappConversationAmount != (?); 
+        WhatsappConversationAmount != (?);
       `;
       const selectAgentRankingInformationValues = [0];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAgentRankingInformationSQL, selectAgentRankingInformationValues);

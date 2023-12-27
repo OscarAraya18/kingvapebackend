@@ -11,6 +11,7 @@ module.exports = {
         WhatsappConversations.whatsappConversationRecipientPhoneNumber,
         WhatsappConversations.whatsappConversationRecipientProfileName,
         Agents.agentName,
+        WhatsappConversations.whatsappConversationStartDateTime,
         WhatsappGeneralMessages.whatsappGeneralMessageCreationDateTime,
         WhatsappGeneralMessages.whatsappGeneralMessageOwnerPhoneNumber
       FROM WhatsappConversations
