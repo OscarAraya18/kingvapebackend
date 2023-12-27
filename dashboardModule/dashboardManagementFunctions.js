@@ -132,6 +132,7 @@ module.exports = {
         initialDate.setHours(initialDate.getHours() + 6);
         initialDate = initialDate.toString();
         initialDate = initialDate.replace('GMT-0600', 'GMT+0000');
+        console.log(initialDate);
         conditions.push(`STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %H:%i:%s GMT+0000') >= STR_TO_DATE('${initialDate}', '%a %b %d %Y %H:%i:%s GMT+0000')`);
       }
 
@@ -145,7 +146,7 @@ module.exports = {
 
       if (recipientPhoneNumber != '') conditions.push(`whatsappConversationRecipientPhoneNumber = '${recipientPhoneNumber}'`);
       
-      if (agentName != '') conditions.push(`agentName = '${agentName}'`);
+      if (agentName != null) conditions.push(`agentName = '${agentName}'`);
 
       if (store != '') conditions.push(`whatsappConversationRecipientProfileName LIKE '%${store}%'`);
       
@@ -171,7 +172,12 @@ module.exports = {
       `;
       var selectFilteredConversationsSQL = selectFilteredConversationsSQL + whereClause;
 
+      console.log(selectFilteredConversationsSQL);
+      
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectFilteredConversationsSQL);
+
+      console.log(databaseResult);
+
       selectFilteredConversationsPromiseResolve(JSON.stringify(databaseResult));
     });
   },
