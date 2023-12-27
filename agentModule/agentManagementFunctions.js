@@ -601,6 +601,7 @@ module.exports = {
       const selectAgentRankingInformationSQL = 
       `
       SELECT 
+        Agents.agentID,
         Agents.agentName,
         WhatsappConversations.whatsappConversationAmount, 
         WhatsappConversations.whatsappConversationRecipientPhoneNumber
@@ -635,9 +636,9 @@ module.exports = {
             }
           } else {
             if (whatsappConversationAmount == 0){
-              agentsAndConversations[agentName] = {'whatsappSelledConversations': 0, 'whatsappNotSelledConversations': 1}
+              agentsAndConversations[agentName] = {'agentID': sortedDatabaseResultObject.agentID, 'whatsappSelledConversations': 0, 'whatsappNotSelledConversations': 1}
             } else {
-              agentsAndConversations[agentName] = {'whatsappSelledConversations': 1, 'whatsappNotSelledConversations': 0}
+              agentsAndConversations[agentName] = {'agentID': sortedDatabaseResultObject.agentID, 'whatsappSelledConversations': 1, 'whatsappNotSelledConversations': 0}
             }
           }
         }
@@ -647,6 +648,7 @@ module.exports = {
         agentsAndConversationsArray.push
         ({
           'agentName': agentName,
+          'agentID': agentsAndConversations[agentName].agentID,
           'whatsappSelledConversations': agentsAndConversations[agentName].whatsappSelledConversations,
           'whatsappNotSelledConversations': agentsAndConversations[agentName].whatsappNotSelledConversations
         });
@@ -686,6 +688,7 @@ module.exports = {
       var selectAgentRankingInformationSQL = 
       `
       SELECT 
+        Agents.agentID,
         Agents.agentName,
         WhatsappConversations.whatsappConversationAmount, 
         WhatsappConversations.whatsappConversationRecipientPhoneNumber
@@ -718,9 +721,9 @@ module.exports = {
             }
           } else {
             if (whatsappConversationAmount == 0){
-              agentsAndConversations[agentName] = {'whatsappSelledConversations': 0, 'whatsappNotSelledConversations': 1}
+              agentsAndConversations[agentName] = {'agentID': sortedDatabaseResultObject.agentID, 'whatsappSelledConversations': 0, 'whatsappNotSelledConversations': 1}
             } else {
-              agentsAndConversations[agentName] = {'whatsappSelledConversations': 1, 'whatsappNotSelledConversations': 0}
+              agentsAndConversations[agentName] = {'agentID': sortedDatabaseResultObject.agentID, 'whatsappSelledConversations': 1, 'whatsappNotSelledConversations': 0}
             }
           }
         }
@@ -730,6 +733,7 @@ module.exports = {
         agentsAndConversationsArray.push
         ({
           'agentName': agentName,
+          'agentID': agentsAndConversations[agentName].agentID,
           'whatsappSelledConversations': agentsAndConversations[agentName].whatsappSelledConversations,
           'whatsappNotSelledConversations': agentsAndConversations[agentName].whatsappNotSelledConversations
         });

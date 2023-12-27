@@ -86,6 +86,17 @@ module.exports = {
         STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
       ;`;
       const selectTodayMessagesAmountDatabaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectTodayMessagesAmountSQL);
+      
+      var temp1 = 0
+      var temp2 = 0
+
+      if (selectTodayMessagesAmountDatabaseResult.result[0]){
+        temp1 = selectTodayMessagesAmountDatabaseResult.result[0].whatsappSendedMessages;
+      }
+      if (selectTodayMessagesAmountDatabaseResult.result[0]){
+        temp2 = selectTodayMessagesAmountDatabaseResult.result[0].whatsappReceivedMessages;
+      }
+      
       const result = 
       {
         success: true, 
@@ -96,8 +107,8 @@ module.exports = {
           whatsappNotSelledConversations: whatsappNotSelledConversations,
           whatsappPendingConversations: whatsappPendingConversations,
           whatsappTotalSells: whatsappTotalSells,
-          whatsappSendedMessages: selectTodayMessagesAmountDatabaseResult.result[0].whatsappSendedMessages,
-          whatsappReceivedMessages: selectTodayMessagesAmountDatabaseResult.result[0].whatsappReceivedMessages
+          whatsappSendedMessages: temp1,
+          whatsappReceivedMessages: temp2
         }
       }
       selectTodayDashboardInformationPromiseResolve(JSON.stringify(result));
@@ -163,7 +174,51 @@ module.exports = {
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectFilteredConversationsSQL);
       selectFilteredConversationsPromiseResolve(JSON.stringify(databaseResult));
     });
-  }
+  },
+
+
+  selectRankingFilteredConversations: async function(agentID, initialDate, endDate){
+    return new Promise(async (selectRankingFilteredConversationsPromiseResolve) => {
+      const conditions = [];
+      
+      if (initialDate != ''){
+        initialDate = new Date(initialDate);
+        initialDate.setHours(initialDate.getHours() + 6);
+        initialDate = initialDate.toString();
+        initialDate = initialDate.replace('GMT-0600', 'GMT+0000');
+        conditions.push(`STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %H:%i:%s GMT+0000') >= STR_TO_DATE('${initialDate}', '%a %b %d %Y %H:%i:%s GMT+0000')`);
+      }
+
+      if (endDate != ''){
+        endDate = new Date(endDate);
+        endDate.setHours(endDate.getHours() + 6);
+        endDate = endDate.toString();
+        endDate = endDate.replace('GMT-0600', 'GMT+0000');
+        conditions.push(`STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %H:%i:%s GMT+0000') <= STR_TO_DATE('${endDate}', '%a %b %d %Y %H:%i:%s GMT+0000')`);
+      }
+
+      const whereClause = conditions.length > 0 ? `AND ${conditions.join(' AND ')}` : '';
+
+      var selectRankingFilteredConversationsSQL = 
+      `
+      SELECT 
+        whatsappConversationID,
+        whatsappConversationRecipientPhoneNumber,
+        whatsappConversationRecipientProfileName,
+        whatsappConversationAmount,
+        whatsappConversationStartDateTime,
+        whatsappConversationCloseComment
+      FROM WhatsappConversations
+      WHERE whatsappConversationAssignedAgentID = (?) AND whatsappConversationIsActive = (?)
+      `;
+      selectRankingFilteredConversationsSQL = selectRankingFilteredConversationsSQL + whereClause;
+
+      const selectRankingFilteredConversationsValues = [agentID, 0];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectRankingFilteredConversationsSQL, selectRankingFilteredConversationsValues);
+
+      selectRankingFilteredConversationsPromiseResolve(JSON.stringify(databaseResult));
+    });
+  },
   
 
 }
