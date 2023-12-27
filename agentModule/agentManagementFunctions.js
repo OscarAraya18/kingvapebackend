@@ -526,7 +526,9 @@ module.exports = {
       FROM WhatsappConversations
       JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
       WHERE 
-        STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_ADD(CURDATE(), INTERVAL 6 HOUR)
+        STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_SUB(CURDATE(), INTERVAL +18 HOUR)
+          AND
+        STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_ADD(CURDATE(), INTERVAL +6 HOUR)
           AND
         WhatsappConversationAmount != (?); 
       `;
@@ -557,7 +559,9 @@ module.exports = {
       FROM WhatsappConversations
       JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
       WHERE 
-        STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_ADD(CURDATE(), INTERVAL 6 HOUR)
+        STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_SUB(CURDATE(), INTERVAL +18 HOUR)
+          AND
+        STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_ADD(CURDATE(), INTERVAL +6 HOUR)
           AND
         WhatsappConversations.whatsappConversationIsActive = (?)
       `;
@@ -615,7 +619,9 @@ module.exports = {
       SELECT whatsappConversationAmount, whatsappConversationRecipientPhoneNumber
       FROM WhatsappConversations
       WHERE 
-        STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_ADD(CURDATE(), INTERVAL 6 HOUR)
+        STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_SUB(CURDATE(), INTERVAL +18 HOUR)
+          AND
+        STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_ADD(CURDATE(), INTERVAL +6 HOUR)
           AND
         whatsappConversationIsActive = (?)
       ;`;
@@ -663,7 +669,9 @@ module.exports = {
       FROM WhatsappConversations
       JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
       WHERE 
-        STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_ADD(CURDATE(), INTERVAL 6 HOUR)
+        STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_SUB(CURDATE(), INTERVAL +18 HOUR)
+          AND
+        STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_ADD(CURDATE(), INTERVAL +6 HOUR)
           AND
         WhatsappConversations.whatsappConversationIsActive = (?)
       `;
