@@ -526,9 +526,9 @@ module.exports = {
       FROM WhatsappConversations
       JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
       WHERE 
-        STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
+        STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
           AND
-        STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 30 HOUR, '%Y-%m-%d 06:00:00')
+        STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
           AND
         WhatsappConversationAmount != (?);
       `;
@@ -548,6 +548,54 @@ module.exports = {
     });
   },
 
+  selectFilteredPieChartInformation: async function(initialDate, endDate){
+    return new Promise(async (selectFilteredPieChartInformationPromiseResolve) => {
+      const conditions = [];
+            
+      if (initialDate != ''){
+        initialDate = new Date(initialDate);
+        initialDate.setHours(initialDate.getHours() + 6);
+        initialDate = initialDate.toString();
+        initialDate = initialDate.replace('GMT-0600', 'GMT+0000');
+        conditions.push(`STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %H:%i:%s GMT+0000') >= STR_TO_DATE('${initialDate}', '%a %b %d %Y %H:%i:%s GMT+0000')`);
+      }
+
+      if (endDate != ''){
+        endDate = new Date(endDate);
+        endDate.setHours(endDate.getHours() + 6);
+        endDate = endDate.toString();
+        endDate = endDate.replace('GMT-0600', 'GMT+0000');
+        conditions.push(`STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %H:%i:%s GMT+0000') <= STR_TO_DATE('${endDate}', '%a %b %d %Y %H:%i:%s GMT+0000')`);
+      }
+
+      const whereClause = conditions.length > 0 ? `AND ${conditions.join(' AND ')}` : '';
+
+      var selectAgentRankingInformationSQL = 
+      `
+      SELECT WhatsappConversations.whatsappConversationAmount, WhatsappConversations.whatsappConversationEndDateTime, Agents.agentName
+      FROM WhatsappConversations
+      JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
+      WHERE 
+        WhatsappConversationAmount != (?)
+      `;
+      selectAgentRankingInformationSQL = selectAgentRankingInformationSQL + whereClause;
+      const selectAgentRankingInformationValues = [0];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAgentRankingInformationSQL, selectAgentRankingInformationValues);
+      
+      var agentsAndAmounts = {};
+      for (var conversationIndex in databaseResult.result){
+        const agentName = databaseResult.result[conversationIndex].agentName;
+        const whatsappConversationAmount = databaseResult.result[conversationIndex].whatsappConversationAmount;
+        if (agentName in agentsAndAmounts){
+          agentsAndAmounts[agentName] = agentsAndAmounts[agentName] + whatsappConversationAmount;
+        } else {
+          agentsAndAmounts[agentName] = whatsappConversationAmount;
+        }
+      }
+      selectFilteredPieChartInformationPromiseResolve(JSON.stringify(agentsAndAmounts));
+    });
+  },
+
   selectBarChartInformation: async function(){
     return new Promise(async (selectBarChartInformationPromiseResolve) => {
       const selectAgentRankingInformationSQL = 
@@ -559,9 +607,9 @@ module.exports = {
       FROM WhatsappConversations
       JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
       WHERE 
-        STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
+        STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
           AND
-        STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 30 HOUR, '%Y-%m-%d 06:00:00')
+        STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
           AND
         WhatsappConversations.whatsappConversationIsActive = (?)
       `;
@@ -612,6 +660,89 @@ module.exports = {
     });
   },
 
+  
+  selectFilteredBarChartInformationResult: async function(initialDate, endDate){
+    return new Promise(async (selectBarFilteredBarChartInformationPromiseResolve) => {
+      const conditions = [];
+            
+      if (initialDate != ''){
+        initialDate = new Date(initialDate);
+        initialDate.setHours(initialDate.getHours() + 6);
+        initialDate = initialDate.toString();
+        initialDate = initialDate.replace('GMT-0600', 'GMT+0000');
+        conditions.push(`STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %H:%i:%s GMT+0000') >= STR_TO_DATE('${initialDate}', '%a %b %d %Y %H:%i:%s GMT+0000')`);
+      }
+
+      if (endDate != ''){
+        endDate = new Date(endDate);
+        endDate.setHours(endDate.getHours() + 6);
+        endDate = endDate.toString();
+        endDate = endDate.replace('GMT-0600', 'GMT+0000');
+        conditions.push(`STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %H:%i:%s GMT+0000') <= STR_TO_DATE('${endDate}', '%a %b %d %Y %H:%i:%s GMT+0000')`);
+      }
+
+      const whereClause = conditions.length > 0 ? `AND ${conditions.join(' AND ')}` : '';
+
+      var selectAgentRankingInformationSQL = 
+      `
+      SELECT 
+        Agents.agentName,
+        WhatsappConversations.whatsappConversationAmount, 
+        WhatsappConversations.whatsappConversationRecipientPhoneNumber
+      FROM WhatsappConversations
+      JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
+      WHERE 
+        WhatsappConversations.whatsappConversationIsActive = (?)
+      `;
+      selectAgentRankingInformationSQL = selectAgentRankingInformationSQL + whereClause;
+
+      const whatsappConversationIsActive = false;
+      const selectAgentRankingInformationValues = [whatsappConversationIsActive];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAgentRankingInformationSQL, selectAgentRankingInformationValues);
+      const sortedDatabaseResult = databaseResult.result.sort((a, b) => b.whatsappConversationAmount - a.whatsappConversationAmount);
+      var evaluatedNumbers = {};
+      var agentsAndConversations = {};
+      
+      for (var sortedDatabaseResultIndex in sortedDatabaseResult){
+        const sortedDatabaseResultObject = sortedDatabaseResult[sortedDatabaseResultIndex];
+        const whatsappConversationRecipientPhoneNumber = sortedDatabaseResultObject.whatsappConversationRecipientPhoneNumber;
+        const whatsappConversationAmount = sortedDatabaseResultObject.whatsappConversationAmount;
+        const agentName = sortedDatabaseResultObject.agentName;
+        if (!(whatsappConversationRecipientPhoneNumber in evaluatedNumbers)){
+          evaluatedNumbers[whatsappConversationRecipientPhoneNumber] = 'true';
+          if (agentName in agentsAndConversations){
+            if (whatsappConversationAmount == 0){
+              agentsAndConversations[agentName]['whatsappNotSelledConversations'] = agentsAndConversations[agentName]['whatsappNotSelledConversations'] + 1;
+            } else {
+              agentsAndConversations[agentName]['whatsappSelledConversations'] = agentsAndConversations[agentName]['whatsappSelledConversations'] + 1;
+            }
+          } else {
+            if (whatsappConversationAmount == 0){
+              agentsAndConversations[agentName] = {'whatsappSelledConversations': 0, 'whatsappNotSelledConversations': 1}
+            } else {
+              agentsAndConversations[agentName] = {'whatsappSelledConversations': 1, 'whatsappNotSelledConversations': 0}
+            }
+          }
+        }
+      }
+      var agentsAndConversationsArray = [];
+      for (var agentName in agentsAndConversations){
+        agentsAndConversationsArray.push
+        ({
+          'agentName': agentName,
+          'whatsappSelledConversations': agentsAndConversations[agentName].whatsappSelledConversations,
+          'whatsappNotSelledConversations': agentsAndConversations[agentName].whatsappNotSelledConversations
+        });
+      }
+      const result = 
+      {
+        success: true, 
+        result: agentsAndConversationsArray
+      };
+      selectBarFilteredBarChartInformationPromiseResolve(JSON.stringify(result));
+    });
+  },
+
   selectTodayInformation: async function(){
     return new Promise(async (selectTodayInformationPromiseResolve) => {
       const selectAgentRankingInformationSQL = 
@@ -619,9 +750,9 @@ module.exports = {
       SELECT whatsappConversationAmount, whatsappConversationRecipientPhoneNumber
       FROM WhatsappConversations
       WHERE 
-        STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
+        STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
           AND
-        STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 30 HOUR, '%Y-%m-%d 06:00:00')
+        STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
           AND
         whatsappConversationIsActive = (?)
       ;`;
@@ -659,6 +790,70 @@ module.exports = {
     });
   },
 
+  selectFilteredTodayInformation: async function(initialDate, endDate){
+    return new Promise(async (selectFilteredTodayInformationPromiseResolve) => {
+      const conditions = [];
+            
+      if (initialDate != ''){
+        initialDate = new Date(initialDate);
+        initialDate.setHours(initialDate.getHours() + 6);
+        initialDate = initialDate.toString();
+        initialDate = initialDate.replace('GMT-0600', 'GMT+0000');
+        conditions.push(`STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %H:%i:%s GMT+0000') >= STR_TO_DATE('${initialDate}', '%a %b %d %Y %H:%i:%s GMT+0000')`);
+      }
+
+      if (endDate != ''){
+        endDate = new Date(endDate);
+        endDate.setHours(endDate.getHours() + 6);
+        endDate = endDate.toString();
+        endDate = endDate.replace('GMT-0600', 'GMT+0000');
+        conditions.push(`STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %H:%i:%s GMT+0000') <= STR_TO_DATE('${endDate}', '%a %b %d %Y %H:%i:%s GMT+0000')`);
+      }
+
+      const whereClause = conditions.length > 0 ? `AND ${conditions.join(' AND ')}` : '';
+
+      var selectAgentRankingInformationSQL = 
+      `
+      SELECT whatsappConversationAmount, whatsappConversationRecipientPhoneNumber
+      FROM WhatsappConversations
+      WHERE 
+        whatsappConversationIsActive = (?)
+      `;
+      selectAgentRankingInformationSQL = selectAgentRankingInformationSQL + whereClause;
+      
+      const whatsappConversationIsActive = false;
+      const selectAgentRankingInformationValues = [whatsappConversationIsActive];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAgentRankingInformationSQL, selectAgentRankingInformationValues);
+      var evaluatedNumbers = {};
+      var whatsappSelledConversations = 0;
+      var whatsappNotSelledConversations = 0;
+      const sortedDatabaseResult = databaseResult.result.sort((a, b) => b.whatsappConversationAmount - a.whatsappConversationAmount);
+      for (var sortedDatabaseResultIndex in sortedDatabaseResult){
+        const sortedDatabaseResultObject = sortedDatabaseResult[sortedDatabaseResultIndex];
+        const whatsappConversationAmount = sortedDatabaseResultObject.whatsappConversationAmount;
+        const whatsappConversationRecipientPhoneNumber = sortedDatabaseResultObject.whatsappConversationRecipientPhoneNumber;
+        if ((whatsappConversationAmount != 0) && (!(whatsappConversationRecipientPhoneNumber in evaluatedNumbers))){
+          whatsappSelledConversations = whatsappSelledConversations + 1;
+        }
+        if ((whatsappConversationAmount == 0) && (!(whatsappConversationRecipientPhoneNumber in evaluatedNumbers))){
+          whatsappNotSelledConversations = whatsappNotSelledConversations + 1;
+        }
+        evaluatedNumbers[whatsappConversationRecipientPhoneNumber] = 'true';
+      }
+      const result = 
+      {
+        success: true, 
+        result: 
+        [{
+          whatsappTotalConversations: whatsappSelledConversations + whatsappNotSelledConversations,
+          whatsappSelledConversations: whatsappSelledConversations,
+          whatsappNotSelledConversations: whatsappNotSelledConversations
+        }]
+      }
+      selectFilteredTodayInformationPromiseResolve(JSON.stringify(result));
+    });
+  },
+
   selectTodayTopSell: async function(){
     return new Promise(async (selectTodayTopSellPromiseResolve) => {
       const selectTodayTopSellSQL = 
@@ -669,9 +864,9 @@ module.exports = {
       FROM WhatsappConversations
       JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
       WHERE 
-        STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
+        STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
           AND
-        STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 30 HOUR, '%Y-%m-%d 06:00:00')
+        STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
           AND
         WhatsappConversations.whatsappConversationIsActive = (?)
       `;
@@ -685,6 +880,61 @@ module.exports = {
         result: sortedDatabaseResult[0].agentName
       };
       selectTodayTopSellPromiseResolve(JSON.stringify(result));
+    });
+  },
+
+  selectFilteredTodayTopSell: async function(initialDate, endDate){
+    return new Promise(async (selectFilteredTodayTopSellPromiseResolve) => {
+      const conditions = [];
+            
+      if (initialDate != ''){
+        initialDate = new Date(initialDate);
+        initialDate.setHours(initialDate.getHours() + 6);
+        initialDate = initialDate.toString();
+        initialDate = initialDate.replace('GMT-0600', 'GMT+0000');
+        conditions.push(`STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %H:%i:%s GMT+0000') >= STR_TO_DATE('${initialDate}', '%a %b %d %Y %H:%i:%s GMT+0000')`);
+      }
+
+      if (endDate != ''){
+        endDate = new Date(endDate);
+        endDate.setHours(endDate.getHours() + 6);
+        endDate = endDate.toString();
+        endDate = endDate.replace('GMT-0600', 'GMT+0000');
+        conditions.push(`STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %H:%i:%s GMT+0000') <= STR_TO_DATE('${endDate}', '%a %b %d %Y %H:%i:%s GMT+0000')`);
+      }
+
+      const whereClause = conditions.length > 0 ? `AND ${conditions.join(' AND ')}` : '';
+
+      var selectTodayTopSellSQL = 
+      `
+      SELECT 
+        Agents.agentName,
+        WhatsappConversations.whatsappConversationAmount
+      FROM WhatsappConversations
+      JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
+      WHERE 
+        WhatsappConversations.whatsappConversationIsActive = (?)
+      `;
+      selectTodayTopSellSQL = selectTodayTopSellSQL + whereClause;
+
+      const whatsappConversationIsActive = false;
+      const selectTodayTopSellValues = [whatsappConversationIsActive];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectTodayTopSellSQL, selectTodayTopSellValues);
+      
+
+      const sortedDatabaseResult = databaseResult.result.sort((a, b) => b.whatsappConversationAmount - a.whatsappConversationAmount);
+      
+      var subresult = 'Sin datos';
+      if (sortedDatabaseResult[0]){
+        subresult = sortedDatabaseResult[0].agentName
+      } 
+
+      const result = 
+      {
+        success: true, 
+        result: subresult
+      };
+      selectFilteredTodayTopSellPromiseResolve(JSON.stringify(result));
     });
   }
 

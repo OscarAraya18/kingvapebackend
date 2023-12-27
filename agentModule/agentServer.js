@@ -181,9 +181,25 @@ backendAgentHttpRequestServer.get('/selectPieChartInformation', async (httpReque
   httpResponse.end(selectPieChartInformationResult);
 });
 
+backendAgentHttpRequestServer.post('/selectFilteredPieChartInformation', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const initialDate = httpRequestQuery.initialDate;
+  const endDate = httpRequestQuery.endDate;
+  const selectFilteredPieChartInformationResult = await agentManagementFunctions.selectFilteredPieChartInformation(initialDate, endDate);
+  httpResponse.end(selectFilteredPieChartInformationResult);
+});
+
 backendAgentHttpRequestServer.get('/selectBarChartInformation', async (httpRequest, httpResponse) => {
   const selectBarChartInformationResult = await agentManagementFunctions.selectBarChartInformation();
   httpResponse.end(selectBarChartInformationResult);
+});
+
+backendAgentHttpRequestServer.post('/selectFilteredBarChartInformation', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const initialDate = httpRequestQuery.initialDate;
+  const endDate = httpRequestQuery.endDate;
+  const selectFilteredBarChartInformationResult = await agentManagementFunctions.selectFilteredBarChartInformationResult(initialDate, endDate);
+  httpResponse.end(selectFilteredBarChartInformationResult);
 });
 
 backendAgentHttpRequestServer.get('/selectTodayInformation', async (httpRequest, httpResponse) => {
@@ -191,7 +207,23 @@ backendAgentHttpRequestServer.get('/selectTodayInformation', async (httpRequest,
   httpResponse.end(selectBarChartInformationResult);
 });
 
+backendAgentHttpRequestServer.post('/selectFilteredTodayInformation', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const initialDate = httpRequestQuery.initialDate;
+  const endDate = httpRequestQuery.endDate;
+  const selectFilteredTodayInformationResult = await agentManagementFunctions.selectFilteredTodayInformation(initialDate, endDate);
+  httpResponse.end(selectFilteredTodayInformationResult);
+});
+
 backendAgentHttpRequestServer.get('/selectTodayTopSell', async (httpRequest, httpResponse) => {
-  const selectBarChartInformationResult = await agentManagementFunctions.selectTodayTopSell();
-  httpResponse.end(selectBarChartInformationResult);
+  const selectTodayTopSellResult = await agentManagementFunctions.selectTodayTopSell();
+  httpResponse.end(selectTodayTopSellResult);
+});
+
+backendAgentHttpRequestServer.post('/selectFilteredTodayTopSell', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const initialDate = httpRequestQuery.initialDate;
+  const endDate = httpRequestQuery.endDate;
+  const selectFilteredTodayTopSellResult = await agentManagementFunctions.selectFilteredTodayTopSell(initialDate, endDate);
+  httpResponse.end(selectFilteredTodayTopSellResult);
 });
