@@ -132,7 +132,6 @@ module.exports = {
         initialDate.setHours(initialDate.getHours() + 6);
         initialDate = initialDate.toString();
         initialDate = initialDate.replace('GMT-0600', 'GMT+0000');
-        console.log(initialDate);
         conditions.push(`STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %H:%i:%s GMT+0000') >= STR_TO_DATE('${initialDate}', '%a %b %d %Y %H:%i:%s GMT+0000')`);
       }
 
@@ -153,7 +152,7 @@ module.exports = {
       if (conversation == 'Vendido'){
         conditions.push(`whatsappConversationAmount != 0`);
       } else if (conversation == 'No vendido') {
-        conditions.push(`whatsappConversationAmount == 0`);
+        conditions.push(`whatsappConversationAmount = 0`);
       }
 
       const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
@@ -166,18 +165,14 @@ module.exports = {
         WhatsappConversations.whatsappConversationRecipientProfileName,
         WhatsappConversations.whatsappConversationAmount,
         Agents.agentName,
-        WhatsappConversations.whatsappConversationStartDateTime
+        WhatsappConversations.whatsappConversationStartDateTime,
+        WhatsappConversations.whatsappConversationCloseComment,
+        WhatsappConversations.whatsappConversationIsActive
       FROM WhatsappConversations
       LEFT JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
       `;
-      var selectFilteredConversationsSQL = selectFilteredConversationsSQL + whereClause;
-
-      console.log(selectFilteredConversationsSQL);
-      
+      var selectFilteredConversationsSQL = selectFilteredConversationsSQL + whereClause;      
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectFilteredConversationsSQL);
-
-      console.log(databaseResult);
-
       selectFilteredConversationsPromiseResolve(JSON.stringify(databaseResult));
     });
   },
