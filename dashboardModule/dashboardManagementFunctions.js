@@ -37,18 +37,42 @@ module.exports = {
 
   selectTodayDashboardInformation: async function(){
     return new Promise(async (selectTodayDashboardInformationPromiseResolve) => {
-      const selectTodayDashboardInformationSQL = 
-      `
-      SELECT
-        whatsappConversationAmount,
-        whatsappConversationRecipientPhoneNumber,
-        whatsappConversationAssignedAgentID
-      FROM WhatsappConversations
-      WHERE 
-        STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
-          AND
-        STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
-      ;`;
+      
+      let currentDate = new Date();
+      currentDate.setHours(currentDate.getHours() - 6);
+      console.log(currentDate.toISOString());
+      let hourPart = currentDate.toISOString().substring(11, 13);
+      let hour = parseInt(hourPart, 10);
+
+      var selectTodayDashboardInformationSQL = '';
+      if (hour >= 18){
+        selectTodayDashboardInformationSQL = 
+        `
+        SELECT
+          whatsappConversationAmount,
+          whatsappConversationRecipientPhoneNumber,
+          whatsappConversationAssignedAgentID
+        FROM WhatsappConversations
+        WHERE 
+          STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW() - INTERVAL 1 DAY, '%Y-%m-%d 6:00:00')
+            AND
+          STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
+        ;`;
+      } else {
+        selectTodayDashboardInformationSQL = 
+        `
+        SELECT
+          whatsappConversationAmount,
+          whatsappConversationRecipientPhoneNumber,
+          whatsappConversationAssignedAgentID
+        FROM WhatsappConversations
+        WHERE 
+          STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
+            AND
+          STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
+        ;`;
+      }
+      
       const selectTodayDashboardInformationDatabaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectTodayDashboardInformationSQL);
       var evaluatedNumbers = {};
       var whatsappSelledConversations = 0;
@@ -111,6 +135,7 @@ module.exports = {
           whatsappReceivedMessages: temp2
         }
       }
+      console.log(result);
       selectTodayDashboardInformationPromiseResolve(JSON.stringify(result));
     });
   },
@@ -173,6 +198,8 @@ module.exports = {
       `;
       var selectFilteredConversationsSQL = selectFilteredConversationsSQL + whereClause;      
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectFilteredConversationsSQL);
+      console.log(databaseResult);
+
       selectFilteredConversationsPromiseResolve(JSON.stringify(databaseResult));
     });
   },

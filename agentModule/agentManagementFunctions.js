@@ -520,18 +520,41 @@ module.exports = {
 
   selectPieChartInformation: async function(){
     return new Promise(async (selectPieChartInformationPromiseResolve) => {
-      const selectAgentRankingInformationSQL = 
-      `
-      SELECT WhatsappConversations.whatsappConversationAmount, WhatsappConversations.whatsappConversationEndDateTime, Agents.agentName
-      FROM WhatsappConversations
-      JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
-      WHERE 
-        STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
-          AND
-        STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
-          AND
-        WhatsappConversationAmount != (?);
-      `;
+      let currentDate = new Date();
+      currentDate.setHours(currentDate.getHours() - 6);
+      console.log(currentDate.toISOString());
+      let hourPart = currentDate.toISOString().substring(11, 13);
+      let hour = parseInt(hourPart, 10);
+
+      var selectAgentRankingInformationSQL = '';
+      if (hour >= 18){
+        selectAgentRankingInformationSQL = 
+        `
+        SELECT WhatsappConversations.whatsappConversationAmount, WhatsappConversations.whatsappConversationEndDateTime, Agents.agentName
+        FROM WhatsappConversations
+        JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
+        WHERE 
+          STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW() - INTERVAL 1 DAY, '%Y-%m-%d 6:00:00')
+            AND
+          STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
+            AND
+          WhatsappConversationAmount != (?);
+        `; 
+      } else {
+        selectAgentRankingInformationSQL = 
+        `
+        SELECT WhatsappConversations.whatsappConversationAmount, WhatsappConversations.whatsappConversationEndDateTime, Agents.agentName
+        FROM WhatsappConversations
+        JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
+        WHERE 
+          STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
+            AND
+          STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
+            AND
+          WhatsappConversationAmount != (?);
+        `;        
+      }
+
       const selectAgentRankingInformationValues = [0];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAgentRankingInformationSQL, selectAgentRankingInformationValues);
       var agentsAndAmounts = {};
@@ -598,22 +621,49 @@ module.exports = {
 
   selectBarChartInformation: async function(){
     return new Promise(async (selectBarChartInformationPromiseResolve) => {
-      const selectAgentRankingInformationSQL = 
-      `
-      SELECT 
-        Agents.agentID,
-        Agents.agentName,
-        WhatsappConversations.whatsappConversationAmount, 
-        WhatsappConversations.whatsappConversationRecipientPhoneNumber
-      FROM WhatsappConversations
-      JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
-      WHERE 
-        STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
-          AND
-        STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
-          AND
-        WhatsappConversations.whatsappConversationIsActive = (?)
-      `;
+      let currentDate = new Date();
+      currentDate.setHours(currentDate.getHours() - 6);
+      console.log(currentDate.toISOString());
+      let hourPart = currentDate.toISOString().substring(11, 13);
+      let hour = parseInt(hourPart, 10);
+
+      var selectAgentRankingInformationSQL = '';
+      if (hour >= 18){
+        selectAgentRankingInformationSQL = 
+        `
+        SELECT 
+          Agents.agentID,
+          Agents.agentName,
+          WhatsappConversations.whatsappConversationAmount, 
+          WhatsappConversations.whatsappConversationRecipientPhoneNumber
+        FROM WhatsappConversations
+        JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
+        WHERE 
+          STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW() - INTERVAL 1 DAY, '%Y-%m-%d 6:00:00')
+            AND
+          STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
+            AND
+          WhatsappConversations.whatsappConversationIsActive = (?)
+        `;
+      } else {
+        selectAgentRankingInformationSQL = 
+        `
+        SELECT 
+          Agents.agentID,
+          Agents.agentName,
+          WhatsappConversations.whatsappConversationAmount, 
+          WhatsappConversations.whatsappConversationRecipientPhoneNumber
+        FROM WhatsappConversations
+        JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
+        WHERE 
+          STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
+            AND
+          STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
+            AND
+          WhatsappConversations.whatsappConversationIsActive = (?)
+        `;
+      }
+      
       const whatsappConversationIsActive = false;
       const selectAgentRankingInformationValues = [whatsappConversationIsActive];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAgentRankingInformationSQL, selectAgentRankingInformationValues);
@@ -749,17 +799,39 @@ module.exports = {
 
   selectTodayInformation: async function(){
     return new Promise(async (selectTodayInformationPromiseResolve) => {
-      const selectAgentRankingInformationSQL = 
-      `
-      SELECT whatsappConversationAmount, whatsappConversationRecipientPhoneNumber
-      FROM WhatsappConversations
-      WHERE 
-        STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
-          AND
-        STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
-          AND
-        whatsappConversationIsActive = (?)
-      ;`;
+      let currentDate = new Date();
+      currentDate.setHours(currentDate.getHours() - 6);
+      console.log(currentDate.toISOString());
+      let hourPart = currentDate.toISOString().substring(11, 13);
+      let hour = parseInt(hourPart, 10);
+
+      var selectAgentRankingInformationSQL = '';
+      if (hour >= 18){
+        selectAgentRankingInformationSQL = 
+        `
+        SELECT whatsappConversationAmount, whatsappConversationRecipientPhoneNumber
+        FROM WhatsappConversations
+        WHERE 
+          STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW() - INTERVAL 1 DAY, '%Y-%m-%d 6:00:00')
+            AND
+          STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
+            AND
+          whatsappConversationIsActive = (?)
+        ;`;
+      } else {
+        selectAgentRankingInformationSQL = 
+        `
+        SELECT whatsappConversationAmount, whatsappConversationRecipientPhoneNumber
+        FROM WhatsappConversations
+        WHERE 
+          STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
+            AND
+          STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
+            AND
+          whatsappConversationIsActive = (?)
+        ;`;
+      }
+  
       const whatsappConversationIsActive = false;
       const selectAgentRankingInformationValues = [whatsappConversationIsActive];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAgentRankingInformationSQL, selectAgentRankingInformationValues);
@@ -828,6 +900,7 @@ module.exports = {
       const whatsappConversationIsActive = false;
       const selectAgentRankingInformationValues = [whatsappConversationIsActive];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAgentRankingInformationSQL, selectAgentRankingInformationValues);
+            
       var evaluatedNumbers = {};
       var whatsappSelledConversations = 0;
       var whatsappNotSelledConversations = 0;
@@ -860,28 +933,57 @@ module.exports = {
 
   selectTodayTopSell: async function(){
     return new Promise(async (selectTodayTopSellPromiseResolve) => {
-      const selectTodayTopSellSQL = 
-      `
-      SELECT 
-        Agents.agentName,
-        WhatsappConversations.whatsappConversationAmount
-      FROM WhatsappConversations
-      JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
-      WHERE 
-        STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
-          AND
-        STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
-          AND
-        WhatsappConversations.whatsappConversationIsActive = (?)
-      `;
+      let currentDate = new Date();
+      currentDate.setHours(currentDate.getHours() - 6);
+      console.log(currentDate.toISOString());
+      let hourPart = currentDate.toISOString().substring(11, 13);
+      let hour = parseInt(hourPart, 10);
+
+      var selectTodayTopSellSQL = '';
+      if (hour >= 18){
+        selectTodayTopSellSQL = 
+        `
+        SELECT 
+          Agents.agentName,
+          WhatsappConversations.whatsappConversationAmount
+        FROM WhatsappConversations
+        JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
+        WHERE 
+          STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW() - INTERVAL 1 DAY, '%Y-%m-%d 6:00:00')
+            AND
+          STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
+            AND
+          WhatsappConversations.whatsappConversationIsActive = (?)
+        `;
+      } else {
+        selectTodayTopSellSQL = 
+        `
+        SELECT 
+          Agents.agentName,
+          WhatsappConversations.whatsappConversationAmount
+        FROM WhatsappConversations
+        JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
+        WHERE 
+          STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
+            AND
+          STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
+            AND
+          WhatsappConversations.whatsappConversationIsActive = (?)
+        `;
+      }
+      
       const whatsappConversationIsActive = false;
       const selectTodayTopSellValues = [whatsappConversationIsActive];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectTodayTopSellSQL, selectTodayTopSellValues);
       const sortedDatabaseResult = databaseResult.result.sort((a, b) => b.whatsappConversationAmount - a.whatsappConversationAmount);
+      var temp = 'Sin datos';
+      if (sortedDatabaseResult[0]){
+        temp = sortedDatabaseResult[0].agentName;
+      }
       const result = 
       {
         success: true, 
-        result: sortedDatabaseResult[0].agentName
+        result: temp
       };
       selectTodayTopSellPromiseResolve(JSON.stringify(result));
     });
