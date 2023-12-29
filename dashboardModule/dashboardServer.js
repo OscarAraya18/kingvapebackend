@@ -44,3 +44,14 @@ backendDashboardHttpRequestServer.post('/selectRankingFilteredConversations', as
   const selectRankingFilteredConversationsResult = await dashboardManagementFunctions.selectRankingFilteredConversations(agentID, initialDate, endDate);
   httpResponse.end(selectRankingFilteredConversationsResult);
 });
+
+backendDashboardHttpRequestServer.post('/selectPlotInformation', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const plotType = httpRequestQuery.plotType;
+  const initialDate = httpRequestQuery.initialDate;
+  const endDate = httpRequestQuery.endDate;
+  const agents = httpRequestQuery.agents;
+  const stores = httpRequestQuery.stores;
+  const selectPlotInformationResult = await dashboardManagementFunctions.selectPlotInformation(plotType, initialDate, endDate, agents, stores);
+  httpResponse.end(selectPlotInformationResult);
+});

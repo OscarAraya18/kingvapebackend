@@ -522,7 +522,6 @@ module.exports = {
     return new Promise(async (selectPieChartInformationPromiseResolve) => {
       let currentDate = new Date();
       currentDate.setHours(currentDate.getHours() - 6);
-      console.log(currentDate.toISOString());
       let hourPart = currentDate.toISOString().substring(11, 13);
       let hour = parseInt(hourPart, 10);
 
@@ -549,7 +548,7 @@ module.exports = {
         WHERE 
           STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
             AND
-          STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
+          STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
             AND
           WhatsappConversationAmount != (?);
         `;        
@@ -623,7 +622,6 @@ module.exports = {
     return new Promise(async (selectBarChartInformationPromiseResolve) => {
       let currentDate = new Date();
       currentDate.setHours(currentDate.getHours() - 6);
-      console.log(currentDate.toISOString());
       let hourPart = currentDate.toISOString().substring(11, 13);
       let hour = parseInt(hourPart, 10);
 
@@ -658,7 +656,7 @@ module.exports = {
         WHERE 
           STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
             AND
-          STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
+          STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
             AND
           WhatsappConversations.whatsappConversationIsActive = (?)
         `;
@@ -801,7 +799,7 @@ module.exports = {
     return new Promise(async (selectTodayInformationPromiseResolve) => {
       let currentDate = new Date();
       currentDate.setHours(currentDate.getHours() - 6);
-      console.log(currentDate.toISOString());
+
       let hourPart = currentDate.toISOString().substring(11, 13);
       let hour = parseInt(hourPart, 10);
 
@@ -826,7 +824,7 @@ module.exports = {
         WHERE 
           STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
             AND
-          STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
+          STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
             AND
           whatsappConversationIsActive = (?)
         ;`;
@@ -935,7 +933,6 @@ module.exports = {
     return new Promise(async (selectTodayTopSellPromiseResolve) => {
       let currentDate = new Date();
       currentDate.setHours(currentDate.getHours() - 6);
-      console.log(currentDate.toISOString());
       let hourPart = currentDate.toISOString().substring(11, 13);
       let hour = parseInt(hourPart, 10);
 
@@ -966,7 +963,7 @@ module.exports = {
         WHERE 
           STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
             AND
-          STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
+          STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
             AND
           WhatsappConversations.whatsappConversationIsActive = (?)
         `;
