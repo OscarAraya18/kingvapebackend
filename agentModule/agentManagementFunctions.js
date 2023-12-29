@@ -633,7 +633,8 @@ module.exports = {
           Agents.agentID,
           Agents.agentName,
           WhatsappConversations.whatsappConversationAmount, 
-          WhatsappConversations.whatsappConversationRecipientPhoneNumber
+          WhatsappConversations.whatsappConversationRecipientPhoneNumber,
+          WhatsappConversations.whatsappConversationCloseComment
         FROM WhatsappConversations
         JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
         WHERE 
@@ -650,7 +651,8 @@ module.exports = {
           Agents.agentID,
           Agents.agentName,
           WhatsappConversations.whatsappConversationAmount, 
-          WhatsappConversations.whatsappConversationRecipientPhoneNumber
+          WhatsappConversations.whatsappConversationRecipientPhoneNumber,
+          WhatsappConversations.whatsappConversationCloseComment
         FROM WhatsappConversations
         JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
         WHERE 
@@ -669,28 +671,46 @@ module.exports = {
       var evaluatedNumbers = {};
       var agentsAndConversations = {};
       
+      var A = [];
+      var repetidos = 0;
+      var total = 0;
       for (var sortedDatabaseResultIndex in sortedDatabaseResult){
         const sortedDatabaseResultObject = sortedDatabaseResult[sortedDatabaseResultIndex];
         const whatsappConversationRecipientPhoneNumber = sortedDatabaseResultObject.whatsappConversationRecipientPhoneNumber;
         const whatsappConversationAmount = sortedDatabaseResultObject.whatsappConversationAmount;
+        const whatsappConversationCloseComment = sortedDatabaseResultObject.whatsappConversationCloseComment;
+
         const agentName = sortedDatabaseResultObject.agentName;
         if (!(whatsappConversationRecipientPhoneNumber in evaluatedNumbers)){
           evaluatedNumbers[whatsappConversationRecipientPhoneNumber] = 'true';
           if (agentName in agentsAndConversations){
             if (whatsappConversationAmount == 0){
-              agentsAndConversations[agentName]['whatsappNotSelledConversations'] = agentsAndConversations[agentName]['whatsappNotSelledConversations'] + 1;
+              if (whatsappConversationCloseComment == 'Consulta sobre productos sin venta'){
+                agentsAndConversations[agentName]['whatsappNotSelledConversations'] = agentsAndConversations[agentName]['whatsappNotSelledConversations'] + 1;
+              }
             } else {
               agentsAndConversations[agentName]['whatsappSelledConversations'] = agentsAndConversations[agentName]['whatsappSelledConversations'] + 1;
             }
           } else {
             if (whatsappConversationAmount == 0){
-              agentsAndConversations[agentName] = {'agentID': sortedDatabaseResultObject.agentID, 'whatsappSelledConversations': 0, 'whatsappNotSelledConversations': 1}
+              if (whatsappConversationCloseComment == 'Consulta sobre productos sin venta'){
+
+                agentsAndConversations[agentName] = {'agentID': sortedDatabaseResultObject.agentID, 'whatsappSelledConversations': 0, 'whatsappNotSelledConversations': 1}
+              }
             } else {
               agentsAndConversations[agentName] = {'agentID': sortedDatabaseResultObject.agentID, 'whatsappSelledConversations': 1, 'whatsappNotSelledConversations': 0}
             }
           }
+        } else {
+          repetidos = repetidos + 1;
+          A.push(whatsappConversationRecipientPhoneNumber);
         }
+        total = total + 1;
       }
+      console.log(total);
+      console.log(repetidos);
+      console.log(A);
+      //console.log(agentsAndConversations);
       var agentsAndConversationsArray = [];
       for (var agentName in agentsAndConversations){
         agentsAndConversationsArray.push
