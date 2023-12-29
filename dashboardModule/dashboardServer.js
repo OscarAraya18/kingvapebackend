@@ -52,6 +52,11 @@ backendDashboardHttpRequestServer.post('/selectPlotInformation', async (httpRequ
   const endDate = httpRequestQuery.endDate;
   const agents = httpRequestQuery.agents;
   const stores = httpRequestQuery.stores;
-  const selectPlotInformationResult = await dashboardManagementFunctions.selectPlotInformation(plotType, initialDate, endDate, agents, stores);
-  httpResponse.end(selectPlotInformationResult);
+  if (plotType == 4){
+    const selectPlotConnectionInformationResult = await dashboardManagementFunctions.selectPlotConnectionInformation(initialDate, endDate, agents);
+    httpResponse.end(selectPlotConnectionInformationResult);
+  } else {
+    const selectPlotInformationResult = await dashboardManagementFunctions.selectPlotInformation(plotType, initialDate, endDate, agents, stores);
+    httpResponse.end(selectPlotInformationResult);
+  }
 });

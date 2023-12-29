@@ -141,7 +141,7 @@ module.exports = {
 
   selectAgentNames: async function(){
     return new Promise(async (selectAgentNamesPromiseResolve) => {
-      const selectAgentNamesSQL = `SELECT agentName, agentID FROM Agents;`;
+      const selectAgentNamesSQL = `SELECT agentName, agentID FROM Agents ORDER BY CASE WHEN agentType = 'admin' THEN 1 ELSE 0 END, agentName;`;
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAgentNamesSQL);
       selectAgentNamesPromiseResolve(JSON.stringify(databaseResult));
     });
@@ -253,16 +253,14 @@ module.exports = {
       if (initialDate != ''){
         initialDate = new Date(initialDate);
         initialDate.setHours(initialDate.getHours() + 6);
-        initialDate = initialDate.toString();
-        initialDate = initialDate.replace('GMT-0600', 'GMT+0000');
-        dateConditions.push(`STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %H:%i:%s GMT+0000') >= STR_TO_DATE('${initialDate}', '%a %b %d %Y %H:%i:%s GMT+0000')`);
+        initialDate = initialDate.toISOString();
+        dateConditions.push(`STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %H:%i:%s GMT+0000') >= STR_TO_DATE('${initialDate}', '%Y-%m-%dT%H:%i:%s.%fZ')`);
       }
       if (endDate != ''){
         endDate = new Date(endDate);
-        endDate.setHours(endDate.getHours() + 6);
-        endDate = endDate.toString();
-        endDate = endDate.replace('GMT-0600', 'GMT+0000');
-        dateConditions.push(`STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %H:%i:%s GMT+0000') <= STR_TO_DATE('${endDate}', '%a %b %d %Y %H:%i:%s GMT+0000')`);
+        endDate.setHours(endDate.getHours() + 30);
+        endDate = endDate.toISOString();
+        dateConditions.push(`STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %H:%i:%s GMT+0000') <= STR_TO_DATE('${endDate}', '%Y-%m-%dT%H:%i:%s.%fZ')`);
       }
       const dateWhereClause = dateConditions.length > 0 ? `AND ${dateConditions.join(' AND ')}` : '';
 
@@ -273,7 +271,6 @@ module.exports = {
         });
       }
       const agentWhereClause = agentConditions.length > 0 ? `AND (${agentConditions.join(' OR ')})` : '';
-
 
       const storeConditions = [];
       if (stores.length > 0) {
@@ -300,12 +297,238 @@ module.exports = {
 
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectPlotInformationSQL, selectPlotInformationValues);
       if (databaseResult.success){
-        console.log(databaseResult.result);
+        if (plotType == 1){
+          const plotInformation = this.plotBasedOnMoney(databaseResult.result);
+          selectPlotInformationPromiseResolve(JSON.stringify(plotInformation));
+        } else if (plotType == 2){
+          const plotInformation = this.plotBasedOnSelledConversations(databaseResult.result);
+          selectPlotInformationPromiseResolve(JSON.stringify(plotInformation));
+        } else if (plotType == 3){
+          const plotInformation = this.plotBasedOnNotSelledConversations(databaseResult.result);
+          selectPlotInformationPromiseResolve(JSON.stringify(plotInformation));
+        }
       } else {
         selectPlotInformationPromiseResolve(JSON.stringify(databaseResult));
       }
     });
   },
-  
+
+  selectPlotConnectionInformation: async function(initialDate, endDate, agents){
+    return new Promise(async (selectPlotConnectionInformationPromiseResolve) => {
+      
+      const dateConditions = []; 
+      if (initialDate != ''){
+        initialDate = new Date(initialDate);
+        initialDate.setHours(initialDate.getHours() + 6);
+        initialDate = initialDate.toISOString();
+        dateConditions.push(`STR_TO_DATE(agentStatusChangeDateTime, '%a %b %d %Y %H:%i:%s GMT+0000') >= STR_TO_DATE('${initialDate}', '%Y-%m-%dT%H:%i:%s.%fZ')`);
+      }
+      if (endDate != ''){
+        endDate = new Date(endDate);
+        endDate.setHours(endDate.getHours() + 30);
+        endDate = endDate.toISOString();
+        dateConditions.push(`STR_TO_DATE(agentStatusChangeDateTime, '%a %b %d %Y %H:%i:%s GMT+0000') <= STR_TO_DATE('${endDate}', '%Y-%m-%dT%H:%i:%s.%fZ')`);
+      }
+      const dateWhereClause = dateConditions.length > 0 ? `AND ${dateConditions.join(' AND ')}` : '';
+
+      const agentConditions = [];
+      if (agents.length > 0) {
+        agents.forEach(agent => {
+          agentConditions.push(`agentStatusChangeAgentID = '${agent}'`);
+        });
+      }
+      const agentWhereClause = agentConditions.length > 0 ? `AND (${agentConditions.join(' OR ')})` : '';
+
+      var selectPlotInformationSQL = 
+      `
+      SELECT
+        AgentStatusChanges.agentStatusChangeDateTime,
+        AgentStatusChanges.agentStatusChangeStatus,
+        Agents.agentName
+      FROM AgentStatusChanges
+      LEFT JOIN Agents ON Agents.agentID = AgentStatusChanges.agentStatusChangeAgentID
+      WHERE agentStatusChangeID IS NOT NULL
+      `;
+      selectPlotInformationSQL = selectPlotInformationSQL + dateWhereClause + agentWhereClause;
+
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectPlotInformationSQL);
+      if (databaseResult.success){
+
+        const agentData = {};
+        databaseResult.result.forEach(entry => {
+          const agentName = entry.agentName;
+          if (!agentData[agentName]) {
+            agentData[agentName] = [];
+          }
+          agentData[agentName].push({
+            x: new Date(entry.agentStatusChangeDateTime).getTime(),
+            y: entry.agentStatusChangeStatus == 'online' ? 1 : 0,
+          });
+        });
+        const seriesData = Object.entries(agentData).map(([agentName, agentStatusData]) => ({
+          name: agentName,
+          data: agentStatusData,
+        }));
+        selectPlotConnectionInformationPromiseResolve(JSON.stringify({success: true, result: seriesData}));
+      } else {
+        selectPlotConnectionInformationPromiseResolve(JSON.stringify(databaseResult));
+      }
+    });
+  },
+
+  plotBasedOnMoney: function(databaseResult){
+    var datesFiltered = {};
+    for (var databaseResultIndex in databaseResult){
+      const databaseResultObject = databaseResult[databaseResultIndex];
+      const databaseResultWhatsappConversationDateTime = databaseResultObject.whatsappConversationDateTime;
+      const databaseResultAgentName = databaseResultObject.agentName;
+      const databaseResultWhatsappConversationAmount = databaseResultObject.whatsappConversationAmount;
+      if (databaseResultWhatsappConversationDateTime != null){
+        if ((databaseResultWhatsappConversationDateTime in datesFiltered)){
+          if (databaseResultAgentName in datesFiltered[databaseResultWhatsappConversationDateTime]){
+            datesFiltered[databaseResultWhatsappConversationDateTime][databaseResultAgentName] = datesFiltered[databaseResultWhatsappConversationDateTime][databaseResultAgentName] + databaseResultWhatsappConversationAmount;
+          } else {
+            datesFiltered[databaseResultWhatsappConversationDateTime][databaseResultAgentName] = databaseResultWhatsappConversationAmount;
+          }
+        } else {
+          datesFiltered[databaseResultWhatsappConversationDateTime] = {};
+          datesFiltered[databaseResultWhatsappConversationDateTime][databaseResultAgentName] = databaseResultWhatsappConversationAmount;
+        }
+      }
+    }
+    var agentNames = new Set();
+    for (var dateFiltered in datesFiltered) {
+      Object.keys(datesFiltered[dateFiltered]).forEach(agent => agentNames.add(agent));
+    }
+    for (var dateFiltered in datesFiltered) {
+      agentNames.forEach(agent => {
+        if (!datesFiltered[dateFiltered][agent]) {
+          datesFiltered[dateFiltered][agent] = 0;
+        }
+      });
+    }
+    const datesArray = Object.keys(datesFiltered).sort();
+    const agentsArray = Array.from(new Set(Object.values(datesFiltered).flatMap(Object.keys)));
+    agentsArray.sort();
+    
+    var agentsData = agentsArray.map(agent => {
+      return {
+        name: agent,
+        data: datesArray.map(date => datesFiltered[date][agent] || 0)
+      };
+    });
+    const result = {success: true, result: {dates: datesArray, agents: agentsData}};
+    return result;
+  },
+
+  plotBasedOnSelledConversations: function(databaseResult){
+    var datesFiltered = {};
+    for (var databaseResultIndex in databaseResult){
+      const databaseResultObject = databaseResult[databaseResultIndex];
+      const databaseResultWhatsappConversationDateTime = databaseResultObject.whatsappConversationDateTime;
+      const databaseResultAgentName = databaseResultObject.agentName;
+      const databaseResultWhatsappConversationAmount = databaseResultObject.whatsappConversationAmount;
+      if (databaseResultWhatsappConversationDateTime != null){
+        if ((databaseResultWhatsappConversationDateTime in datesFiltered)){
+          if (databaseResultAgentName in datesFiltered[databaseResultWhatsappConversationDateTime]){
+            if (databaseResultWhatsappConversationAmount != 0){
+              datesFiltered[databaseResultWhatsappConversationDateTime][databaseResultAgentName] = datesFiltered[databaseResultWhatsappConversationDateTime][databaseResultAgentName] + 1;
+            }
+          } else {
+            if (databaseResultWhatsappConversationAmount != 0){
+              datesFiltered[databaseResultWhatsappConversationDateTime][databaseResultAgentName] = 1;
+            } else {
+              datesFiltered[databaseResultWhatsappConversationDateTime][databaseResultAgentName] = 0;
+            }
+          }
+        } else {
+          datesFiltered[databaseResultWhatsappConversationDateTime] = {};
+          if (databaseResultWhatsappConversationAmount != 0){
+            datesFiltered[databaseResultWhatsappConversationDateTime][databaseResultAgentName] = 1;
+          } else {
+            datesFiltered[databaseResultWhatsappConversationDateTime][databaseResultAgentName] = 0;
+          }
+        }
+      }
+    }
+    var agentNames = new Set();
+    for (var dateFiltered in datesFiltered) {
+      Object.keys(datesFiltered[dateFiltered]).forEach(agent => agentNames.add(agent));
+    }
+    for (var dateFiltered in datesFiltered) {
+      agentNames.forEach(agent => {
+        if (!datesFiltered[dateFiltered][agent]) {
+          datesFiltered[dateFiltered][agent] = 0;
+        }
+      });
+    }
+    const datesArray = Object.keys(datesFiltered).sort();
+    const agentsArray = Array.from(new Set(Object.values(datesFiltered).flatMap(Object.keys)));
+    agentsArray.sort();
+    
+    var agentsData = agentsArray.map(agent => {
+      return {
+        name: agent,
+        data: datesArray.map(date => datesFiltered[date][agent] || 0)
+      };
+    });
+    const result = {success: true, result: {dates: datesArray, agents: agentsData}};
+    return result;
+  },
+
+  plotBasedOnNotSelledConversations: function(databaseResult){
+    var datesFiltered = {};
+    for (var databaseResultIndex in databaseResult){
+      const databaseResultObject = databaseResult[databaseResultIndex];
+      const databaseResultWhatsappConversationDateTime = databaseResultObject.whatsappConversationDateTime;
+      const databaseResultAgentName = databaseResultObject.agentName;
+      const databaseResultWhatsappConversationAmount = databaseResultObject.whatsappConversationAmount;
+      if (databaseResultWhatsappConversationDateTime != null){
+        if ((databaseResultWhatsappConversationDateTime in datesFiltered)){
+          if (databaseResultAgentName in datesFiltered[databaseResultWhatsappConversationDateTime]){
+            if (databaseResultWhatsappConversationAmount == 0){
+              datesFiltered[databaseResultWhatsappConversationDateTime][databaseResultAgentName] = datesFiltered[databaseResultWhatsappConversationDateTime][databaseResultAgentName] + 1;
+            }
+          } else {
+            if (databaseResultWhatsappConversationAmount == 0){
+              datesFiltered[databaseResultWhatsappConversationDateTime][databaseResultAgentName] = 1;
+            } else {
+              datesFiltered[databaseResultWhatsappConversationDateTime][databaseResultAgentName] = 0;
+            }
+          }
+        } else {
+          datesFiltered[databaseResultWhatsappConversationDateTime] = {};
+          if (databaseResultWhatsappConversationAmount == 0){
+            datesFiltered[databaseResultWhatsappConversationDateTime][databaseResultAgentName] = 1;
+          } else {
+            datesFiltered[databaseResultWhatsappConversationDateTime][databaseResultAgentName] = 0;
+          }
+        }
+      }
+    }
+    var agentNames = new Set();
+    for (var dateFiltered in datesFiltered) {
+      Object.keys(datesFiltered[dateFiltered]).forEach(agent => agentNames.add(agent));
+    }
+    for (var dateFiltered in datesFiltered) {
+      agentNames.forEach(agent => {
+        if (!datesFiltered[dateFiltered][agent]) {
+          datesFiltered[dateFiltered][agent] = 0;
+        }
+      });
+    }
+    const datesArray = Object.keys(datesFiltered).sort();
+    const agentsArray = Array.from(new Set(Object.values(datesFiltered).flatMap(Object.keys)));
+    agentsArray.sort();
+    
+    var agentsData = agentsArray.map(agent => {
+      return {
+        name: agent,
+        data: datesArray.map(date => datesFiltered[date][agent] || 0)
+      };
+    });
+    const result = {success: true, result: {dates: datesArray, agents: agentsData}};
+    return result;
+  },
 
 }

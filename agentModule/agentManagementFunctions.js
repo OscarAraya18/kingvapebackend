@@ -746,7 +746,7 @@ module.exports = {
         Agents.agentID,
         Agents.agentName,
         WhatsappConversations.whatsappConversationAmount, 
-        WhatsappConversations.whatsappConversationRecipientPhoneNumber
+        WhatsappConversations.whatsappConversationRecipientPhoneNumber,
         WhatsappConversations.whatsappConversationCloseComment
       FROM WhatsappConversations
       JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
@@ -758,7 +758,11 @@ module.exports = {
       const whatsappConversationIsActive = false;
       const selectAgentRankingInformationValues = [whatsappConversationIsActive];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAgentRankingInformationSQL, selectAgentRankingInformationValues);
+      
       const sortedDatabaseResult = databaseResult.result.sort((a, b) => b.whatsappConversationAmount - a.whatsappConversationAmount);
+      
+      
+
       var evaluatedNumbers = {};
       var agentsAndConversations = {};
       
