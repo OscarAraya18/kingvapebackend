@@ -105,7 +105,7 @@ module.exports = {
           {
             'messaging_product': 'whatsapp',
             'to': whatsappConversationRecipientPhoneNumber, 
-            'type': 'template', 'template': {'name': 'mensajebienvenida', 'language': {'code': 'es'},
+            'type': 'template', 'template': {'name': 'bienvenida', 'language': {'code': 'es'},
             'components': [{'type': 'body', 'parameters': [{'type': 'text', 'text': whatsappTextMessageBody}]}]     
             }
           };
@@ -1085,11 +1085,16 @@ module.exports = {
       {
         'messaging_product': 'whatsapp',
         'to': storeMessageRecipientPhoneNumber, 
-        'type': 'template', 'template': {'name': 'mensajebienvenida', 'language': {'code': 'es'},
+        'type': 'template', 'template': {'name': 'bienvenida', 'language': {'code': 'es'},
         'components': [{'type': 'body', 'parameters': [{'type': 'text', 'text': messageToClientContent}]}]     
         }
       };
+      console.log(sendWhatsappMessageData);
       const sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
+      console.log(sendWhatsappMessageResult.result);
+      console.log(sendWhatsappMessageResult.data);
+      console.log(sendWhatsappMessageResult.result.data);
+
       if (sendWhatsappMessageResult.success){
         const createWhatsappConversationWithWhatsappConversationAssignedAgentIDResult = await whatsappDatabaseFunctions.createWhatsappConversationWithWhatsappConversationAssignedAgentID(storeMessageAssignedAgentID, storeMessageRecipientPhoneNumber, storeMessageRecipientProfileName);
         if (createWhatsappConversationWithWhatsappConversationAssignedAgentIDResult.success){
@@ -1206,7 +1211,7 @@ module.exports = {
           {
             'messaging_product': 'whatsapp',
             'to': whatsappConversationRecipientPhoneNumber, 
-            'type': 'template', 'template': {'name': 'mensajedespedida', 'language': {'code': 'es'},
+            'type': 'template', 'template': {'name': 'fin', 'language': {'code': 'es'},
             'components': [{'type': 'body', 'parameters': [{'type': 'text', 'text': whatsappTextMessageBody}, {'type': 'text', 'text': 'https://kingvapecr.com/pages/feedback'}]}]     
             }
           };
@@ -1244,7 +1249,7 @@ module.exports = {
         {
           'messaging_product': 'whatsapp',
           'to': whatsappConversationRecipientPhoneNumber, 
-          'type': 'template', 'template': {'name': 'mensajebienvenida', 'language': {'code': 'es'},
+          'type': 'template', 'template': {'name': 'bienvenida', 'language': {'code': 'es'},
           'components': [{'type': 'body', 'parameters': [{'type': 'text', 'text': whatsappTextMessageBody}]}]     
           }
         };
