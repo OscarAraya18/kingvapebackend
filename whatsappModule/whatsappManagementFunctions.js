@@ -105,7 +105,7 @@ module.exports = {
           {
             'messaging_product': 'whatsapp',
             'to': whatsappConversationRecipientPhoneNumber, 
-            'type': 'template', 'template': {'name': 'bienvenida', 'language': {'code': 'es'},
+            'type': 'template', 'template': {'name': 'mensajebienvenida', 'language': {'code': 'es'},
             'components': [{'type': 'body', 'parameters': [{'type': 'text', 'text': whatsappTextMessageBody}]}]     
             }
           };
@@ -1085,7 +1085,7 @@ module.exports = {
       {
         'messaging_product': 'whatsapp',
         'to': storeMessageRecipientPhoneNumber, 
-        'type': 'template', 'template': {'name': 'inicio', 'language': {'code': 'es'},
+        'type': 'template', 'template': {'name': 'mensajebienvenida', 'language': {'code': 'es'},
         'components': [{'type': 'body', 'parameters': [{'type': 'text', 'text': messageToClientContent}]}]     
         }
       };
@@ -1206,7 +1206,7 @@ module.exports = {
           {
             'messaging_product': 'whatsapp',
             'to': whatsappConversationRecipientPhoneNumber, 
-            'type': 'template', 'template': {'name': 'fin', 'language': {'code': 'es'},
+            'type': 'template', 'template': {'name': 'mensajedespedida', 'language': {'code': 'es'},
             'components': [{'type': 'body', 'parameters': [{'type': 'text', 'text': whatsappTextMessageBody}, {'type': 'text', 'text': 'https://kingvapecr.com/pages/feedback'}]}]     
             }
           };
@@ -1244,7 +1244,7 @@ module.exports = {
         {
           'messaging_product': 'whatsapp',
           'to': whatsappConversationRecipientPhoneNumber, 
-          'type': 'template', 'template': {'name': 'inicio', 'language': {'code': 'es'},
+          'type': 'template', 'template': {'name': 'mensajebienvenida', 'language': {'code': 'es'},
           'components': [{'type': 'body', 'parameters': [{'type': 'text', 'text': whatsappTextMessageBody}]}]     
           }
         };
