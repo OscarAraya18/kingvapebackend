@@ -21,6 +21,7 @@ module.exports = {
       const sendWhatsappMessageHeaders = {'Content-Type': 'application/json', 'Authorization': `Bearer ${constants.credentials.apiKey}`};
       axios.post(sendWhatsappMessageURL, sendWhatsappMessageData, {headers: sendWhatsappMessageHeaders}).then((response) => {
         const whatsappMessageID = response.data.messages[0].id;
+        console.log(response.data)
         sendWhatsappMessagePromiseResolve({success: true, result: whatsappMessageID});
       })
       .catch((error) => {
@@ -105,9 +106,7 @@ module.exports = {
           {
             'messaging_product': 'whatsapp',
             'to': whatsappConversationRecipientPhoneNumber, 
-            'type': 'template', 'template': {'name': 'bienvenida', 'language': {'code': 'es'},
-            'components': [{'type': 'body', 'parameters': [{'type': 'text', 'text': whatsappTextMessageBody}]}]     
-            }
+            'type': 'template', 'template': {'name': 'arreglo', 'language': {'code': 'es'}}
           };
           httpDataToSendWhatsappTextMessage = JSON.stringify(httpDataToSendWhatsappTextMessage);
           const sendWhatsappMessageResult = await this.sendWhatsappMessage(httpDataToSendWhatsappTextMessage);
@@ -1085,9 +1084,7 @@ module.exports = {
       {
         'messaging_product': 'whatsapp',
         'to': storeMessageRecipientPhoneNumber, 
-        'type': 'template', 'template': {'name': 'bienvenida', 'language': {'code': 'es'},
-        'components': [{'type': 'body', 'parameters': [{'type': 'text', 'text': messageToClientContent}]}]     
-        }
+        'type': 'template', 'template': {'name': 'arreglo', 'language': {'code': 'es'}}
       };
       console.log(sendWhatsappMessageData);
       const sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
@@ -1249,9 +1246,7 @@ module.exports = {
         {
           'messaging_product': 'whatsapp',
           'to': whatsappConversationRecipientPhoneNumber, 
-          'type': 'template', 'template': {'name': 'bienvenida', 'language': {'code': 'es'},
-          'components': [{'type': 'body', 'parameters': [{'type': 'text', 'text': whatsappTextMessageBody}]}]     
-          }
+          'type': 'template', 'template': {'name': 'arreglo', 'language': {'code': 'es'}}
         };
         const sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
         if (sendWhatsappMessageResult.success){

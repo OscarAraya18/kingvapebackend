@@ -19,6 +19,8 @@ backendWhatsappHttpRequestServer.post('/webhookConnection', async (httpRequest, 
     if (httpRequest.body['entry'][0]['changes'][0]['value']['messages']){
       const receiveWhatsappMessageResponse = await whatsappManagementFunctions.receiveWhatsappMessage(websocketConnection, httpRequest);
       httpResponse.end(receiveWhatsappMessageResponse);
+    } else {
+      console.log(httpRequest.body);
     }
   } catch (error) {
     console.log(error);
@@ -161,4 +163,10 @@ backendWhatsappHttpRequestServer.post('/selectWhatsappClosedConversationFromWhat
   const whatsappConversationRecipientPhoneNumber = httpRequestQuery.whatsappConversationRecipientPhoneNumber;
   const selectWhatsappClosedConversationFromWhatsappConversationRecipientPhoneNumberResult = await whatsappManagementFunctions.selectWhatsappClosedConversationFromWhatsappConversationRecipientPhoneNumber(whatsappConversationRecipientPhoneNumber);
   httpResponse.end(selectWhatsappClosedConversationFromWhatsappConversationRecipientPhoneNumberResult); 
+});
+
+
+backendWhatsappHttpRequestServer.get('/testing', async (httpRequest, httpResponse) => {
+  const testing = await whatsappManagementFunctions.testing();
+  httpResponse.end(testing); 
 });
