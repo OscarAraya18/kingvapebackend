@@ -14,7 +14,7 @@ module.exports = {
       host: 'srv1230.hstgr.io',
       database: 'u792983815_kingvape',
       user: 'u792983815_kingvape',
-      password: 'kingvapedatabase123O',
+      password: '123123hppO',
       charset: 'utf8mb4',
       collation: 'utf8mb4_unicode_ci',
       connectionLimit: 1000,
