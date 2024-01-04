@@ -15,13 +15,13 @@ ffmpeg.setFfmpegPath(ffmpegPath);
 var pendingRequests = {};
 
 module.exports = {
+
   sendWhatsappMessage: async function(sendWhatsappMessageData){
     return new Promise((sendWhatsappMessagePromiseResolve) => {
       const sendWhatsappMessageURL = `https://graph.facebook.com/${constants.credentials.apiVersion}/${constants.credentials.phoneNumberID}/messages`;
       const sendWhatsappMessageHeaders = {'Content-Type': 'application/json', 'Authorization': `Bearer ${constants.credentials.apiKey}`};
       axios.post(sendWhatsappMessageURL, sendWhatsappMessageData, {headers: sendWhatsappMessageHeaders}).then((response) => {
         const whatsappMessageID = response.data.messages[0].id;
-        console.log(response.data)
         sendWhatsappMessagePromiseResolve({success: true, result: whatsappMessageID});
       })
       .catch((error) => {

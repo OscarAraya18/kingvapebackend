@@ -10,6 +10,7 @@ const express = require('express');
 const backendWhatsappHttpRequestServer = express.Router();
 module.exports = backendWhatsappHttpRequestServer;
 
+
 backendWhatsappHttpRequestServer.get('/webhookConnection', async (httpRequest, httpResponse) => {
   httpResponse.end(url.parse(httpRequest.url,true).query['hub.challenge']);
 });
