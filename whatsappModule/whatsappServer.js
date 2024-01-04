@@ -21,7 +21,7 @@ backendWhatsappHttpRequestServer.post('/webhookConnection', async (httpRequest, 
       const receiveWhatsappMessageResponse = await whatsappManagementFunctions.receiveWhatsappMessage(websocketConnection, httpRequest);
       httpResponse.end(receiveWhatsappMessageResponse);
     } else {
-      console.log(httpRequest.body);
+      console.log(httpRequest.body['entry'][0]['changes'][0]['value']);
     }
   } catch (error) {
     console.log(error);
