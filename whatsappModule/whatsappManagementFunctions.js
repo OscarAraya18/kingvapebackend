@@ -609,6 +609,21 @@ module.exports = {
     
   },
 
+  updateWhatsappMessageStatus: async function(websocketConnection, whatsappGeneralMessageID, whatsappGeneralMessageStatus){
+    return new Promise(async (updateWhatsappMessageStatusPromiseResolve) => {
+      const updateWhatsappGeneralMessageStatusResponse = await whatsappDatabaseFunctions.updateWhatsappGeneralMessageStatus(whatsappGeneralMessageID, whatsappGeneralMessageStatus);
+      if (updateWhatsappGeneralMessageStatusResponse.success){
+        const websocketMessageContent = 
+        {
+          whatsappGeneralMessageID: whatsappGeneralMessageID,
+          whatsappGeneralMessageStatus: whatsappGeneralMessageStatus,
+          whatsappGeneralMessageStatusUpdateDateTime: new Date().toString()
+        };
+        websocketConnection.sendWebsocketMessage('/receiveWhatsappMessageStatusUpdate', websocketMessageContent);
+      }
+    });
+  },
+
   receiveWhatsappMessage: async function(websocketConnection, httpRequest){
     try { 
       if (httpRequest['body']['entry'][0]['changes'][0]['value']['messages'][0].type != 'reaction'){

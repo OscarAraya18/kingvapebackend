@@ -20,8 +20,11 @@ backendWhatsappHttpRequestServer.post('/webhookConnection', async (httpRequest, 
     if (httpRequest.body['entry'][0]['changes'][0]['value']['messages']){
       const receiveWhatsappMessageResponse = await whatsappManagementFunctions.receiveWhatsappMessage(websocketConnection, httpRequest);
       httpResponse.end(receiveWhatsappMessageResponse);
-    } else {
-      console.log(httpRequest.body['entry'][0]['changes'][0]['value']);
+    } else if (httpRequest.body['entry'][0]['changes'][0]['value']['statuses']){
+      const whatsappGeneralMessageID = httpRequest.body['entry'][0]['changes'][0]['value']['statuses'][0]['id'];
+      const whatsappGeneralMessageStatus = httpRequest.body['entry'][0]['changes'][0]['value']['statuses'][0]['status'];
+      const updateWhatsappMessageStatusResponse = await whatsappManagementFunctions.updateWhatsappMessageStatus(websocketConnection, whatsappGeneralMessageID, whatsappGeneralMessageStatus);
+      httpResponse.end(updateWhatsappMessageStatusResponse);
     }
   } catch (error) {
     console.log(error);

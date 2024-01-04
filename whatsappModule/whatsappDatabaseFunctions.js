@@ -377,6 +377,23 @@ module.exports = {
     });
   },
 
+  updateWhatsappGeneralMessageStatus: async function(whatsappGeneralMessageID, whatsappMessageStatus){
+    return new Promise(async (updateWhatsappGeneralMessageStatusPromiseResolve) => {
+      var updateWhatsappGeneralMessageSQL = '';
+      if (whatsappMessageStatus == 'sent'){
+        updateWhatsappGeneralMessageSQL = `UPDATE WhatsappGeneralMessages SET whatsappGeneralMessageSendingDateTime=(?) WHERE whatsappGeneralMessageID=(?);`;
+      } else if (whatsappMessageStatus == 'delivered'){
+        updateWhatsappGeneralMessageSQL = `UPDATE WhatsappGeneralMessages SET whatsappGeneralMessageDeliveringDateTime=(?) WHERE whatsappGeneralMessageID=(?);`;
+      } else if (whatsappMessageStatus == 'read'){
+        updateWhatsappGeneralMessageSQL = `UPDATE WhatsappGeneralMessages SET whatsappGeneralMessageReadingDateTime=(?) WHERE whatsappGeneralMessageID=(?);`;
+      }
+      const whatsappGeneralMessageStatusUpdateDateTime = new Date().toString();
+      const updateWhatsappGeneralMessageSQLValues = [whatsappGeneralMessageID, whatsappGeneralMessageStatusUpdateDateTime];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateWhatsappGeneralMessageSQL, updateWhatsappGeneralMessageSQLValues);
+      updateWhatsappGeneralMessageStatusPromiseResolve(databaseResult);
+    });
+  },
+
   createWhatsappTextMessage: async function(whatsappTextMessageID, whatsappTextMessageBody){
     return new Promise(async (createWhatsappTextMessagePromiseResolve) => {
       const createWhatsappTextMessageSQL = `INSERT INTO WhatsappTextMessages (whatsappTextMessageID, whatsappTextMessageBody) VALUES (?,?);`;
