@@ -381,17 +381,27 @@ module.exports = {
     return new Promise(async (updateWhatsappGeneralMessageStatusPromiseResolve) => {
       var updateWhatsappGeneralMessageSQL = '';
       if (whatsappMessageStatus == 'sent'){
-        updateWhatsappGeneralMessageSQL = `UPDATE WhatsappGeneralMessages SET whatsappGeneralMessageSendingDateTime=(?) WHERE whatsappGeneralMessageID=(?);`;
+        updateWhatsappGeneralMessageSQL = 
+        `
+          UPDATE WhatsappGeneralMessages SET whatsappGeneralMessageSendingDateTime=(?) WHERE whatsappGeneralMessageID=(?);
+          SELECT whatsappGeneralMessageWhatsappConversationID FROM WhatsappGeneralMessages WHERE whatsappGeneralMessageID=(?);
+        `;
       } else if (whatsappMessageStatus == 'delivered'){
-        updateWhatsappGeneralMessageSQL = `UPDATE WhatsappGeneralMessages SET whatsappGeneralMessageDeliveringDateTime=(?) WHERE whatsappGeneralMessageID=(?);`;
+        updateWhatsappGeneralMessageSQL = 
+        `
+          UPDATE WhatsappGeneralMessages SET whatsappGeneralMessageDeliveringDateTime=(?) WHERE whatsappGeneralMessageID=(?);
+          SELECT whatsappGeneralMessageWhatsappConversationID FROM WhatsappGeneralMessages WHERE whatsappGeneralMessageID=(?);
+        `;
       } else if (whatsappMessageStatus == 'read'){
-        updateWhatsappGeneralMessageSQL = `UPDATE WhatsappGeneralMessages SET whatsappGeneralMessageReadingDateTime=(?) WHERE whatsappGeneralMessageID=(?);`;
+        updateWhatsappGeneralMessageSQL = 
+        `
+          UPDATE WhatsappGeneralMessages SET whatsappGeneralMessageReadingDateTime=(?) WHERE whatsappGeneralMessageID=(?);
+          SELECT whatsappGeneralMessageWhatsappConversationID FROM WhatsappGeneralMessages WHERE whatsappGeneralMessageID=(?);
+        `;
       }                                                                                                                       
       const whatsappGeneralMessageStatusUpdateDateTime = new Date().toString();
-      const updateWhatsappGeneralMessageSQLValues = [whatsappGeneralMessageStatusUpdateDateTime, whatsappGeneralMessageID];
+      const updateWhatsappGeneralMessageSQLValues = [whatsappGeneralMessageStatusUpdateDateTime, whatsappGeneralMessageID, whatsappGeneralMessageID];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateWhatsappGeneralMessageSQL, updateWhatsappGeneralMessageSQLValues);
-      console.log(updateWhatsappGeneralMessageSQL);
-      console.log(updateWhatsappGeneralMessageSQLValues);
       console.log(databaseResult);
       updateWhatsappGeneralMessageStatusPromiseResolve(databaseResult);
     });

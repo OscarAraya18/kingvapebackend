@@ -615,10 +615,12 @@ module.exports = {
       if (updateWhatsappGeneralMessageStatusResponse.success){
         const websocketMessageContent = 
         {
+          whatsappConversationID: updateWhatsappGeneralMessageStatusResponse.result[0].whatsappGeneralMessageWhatsappConversationID,
           whatsappGeneralMessageID: whatsappGeneralMessageID,
           whatsappGeneralMessageStatus: whatsappGeneralMessageStatus,
-          whatsappGeneralMessageStatusUpdateDateTime: new Date().toString()
+          whatsappGeneralMessageStatusUpdateDateTime: new Date().toString(),
         };
+        console.log(websocketMessageContent);
         websocketConnection.sendWebsocketMessage('/receiveWhatsappMessageStatusUpdate', websocketMessageContent);
       }
     });
