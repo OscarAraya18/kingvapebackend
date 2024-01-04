@@ -390,6 +390,9 @@ module.exports = {
       const whatsappGeneralMessageStatusUpdateDateTime = new Date().toString();
       const updateWhatsappGeneralMessageSQLValues = [whatsappGeneralMessageID, whatsappGeneralMessageStatusUpdateDateTime];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateWhatsappGeneralMessageSQL, updateWhatsappGeneralMessageSQLValues);
+      console.log(updateWhatsappGeneralMessageSQL);
+      console.log(updateWhatsappGeneralMessageSQLValues);
+      console.log(databaseResult);
       updateWhatsappGeneralMessageStatusPromiseResolve(databaseResult);
     });
   },
