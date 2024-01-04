@@ -386,9 +386,9 @@ module.exports = {
         updateWhatsappGeneralMessageSQL = `UPDATE WhatsappGeneralMessages SET whatsappGeneralMessageDeliveringDateTime=(?) WHERE whatsappGeneralMessageID=(?);`;
       } else if (whatsappMessageStatus == 'read'){
         updateWhatsappGeneralMessageSQL = `UPDATE WhatsappGeneralMessages SET whatsappGeneralMessageReadingDateTime=(?) WHERE whatsappGeneralMessageID=(?);`;
-      }
+      }                                                                                                                       
       const whatsappGeneralMessageStatusUpdateDateTime = new Date().toString();
-      const updateWhatsappGeneralMessageSQLValues = [whatsappGeneralMessageID, whatsappGeneralMessageStatusUpdateDateTime];
+      const updateWhatsappGeneralMessageSQLValues = [whatsappGeneralMessageStatusUpdateDateTime, whatsappGeneralMessageID];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateWhatsappGeneralMessageSQL, updateWhatsappGeneralMessageSQLValues);
       console.log(updateWhatsappGeneralMessageSQL);
       console.log(updateWhatsappGeneralMessageSQLValues);
