@@ -276,6 +276,7 @@ module.exports = {
           WhatsappContactMessages.whatsappContactMessagePhoneNumber,
           WhatsappImageMessages.whatsappImageMessageFile,
           WhatsappImageMessages.whatsappImageMessageCaption,
+          WhatsappImageMessages.whatsappImageMessageType,
           WhatsappVideoMessages.whatsappVideoMessageFile,
           WhatsappVideoMessages.whatsappVideoMessageCaption,
           WhatsappAudioMessages.whatsappAudioMessageFile,
@@ -440,6 +441,7 @@ module.exports = {
           whatsappConversations[whatsappConversationID]['whatsappConversationMessages'][whatsappGeneralMessage.whatsappGeneralMessageIndex]['whatsappGeneralMessageType'] = 'image';
           whatsappConversations[whatsappConversationID]['whatsappConversationMessages'][whatsappGeneralMessage.whatsappGeneralMessageIndex]['whatsappImageMessageFile'] = Buffer.from(whatsappGeneralMessage.whatsappImageMessageFile).toString('base64');
           whatsappConversations[whatsappConversationID]['whatsappConversationMessages'][whatsappGeneralMessage.whatsappGeneralMessageIndex]['whatsappImageMessageCaption'] = whatsappGeneralMessage.whatsappImageMessageCaption;
+          whatsappConversations[whatsappConversationID]['whatsappConversationMessages'][whatsappGeneralMessage.whatsappGeneralMessageIndex]['whatsappImageMessageType'] = whatsappGeneralMessage.whatsappImageMessageType;
         } else if (whatsappGeneralMessage.whatsappVideoMessageFile != null){
           whatsappConversations[whatsappConversationID]['whatsappConversationMessages'][whatsappGeneralMessage.whatsappGeneralMessageIndex]['whatsappGeneralMessageType'] = 'video';
           whatsappConversations[whatsappConversationID]['whatsappConversationMessages'][whatsappGeneralMessage.whatsappGeneralMessageIndex]['whatsappVideoMessageFile'] = Buffer.from(whatsappGeneralMessage.whatsappVideoMessageFile).toString('base64');

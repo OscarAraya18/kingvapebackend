@@ -296,7 +296,7 @@ module.exports = {
               if (createWhatsappGeneralMessageResult.success){
                 const whatsappGeneralMessageIndex = createWhatsappGeneralMessageResult.result.whatsappGeneralMessageIndex;
                 const whatsappGeneralMessageCreationDateTime = createWhatsappGeneralMessageResult.result.whatsappGeneralMessageCreationDateTime;
-                const createWhatsappImageMessageResult = await whatsappDatabaseFunctions.createWhatsappImageMessage(whatsappImageMessageID, convertedWhatsappImageMessageFile, whatsappImageMessageCaption);
+                const createWhatsappImageMessageResult = await whatsappDatabaseFunctions.createWhatsappImageMessage(whatsappImageMessageID, convertedWhatsappImageMessageFile, whatsappImageMessageCaption, 'image');
                 if (createWhatsappImageMessageResult.success){
                   const websocketMessageContent = 
                   {
@@ -313,6 +313,7 @@ module.exports = {
                       whatsappImageMessageID: whatsappImageMessageID,
                       whatsappImageMessageFileID: whatsappImageMessageFileID,
                       whatsappImageMessageCaption: whatsappImageMessageCaption,
+                      whatsappImageMessageType: 'image',
                       whatsappImageMessageFile: Buffer.from(convertedWhatsappImageMessageFile).toString('base64')
                     }
                   };
@@ -565,7 +566,7 @@ module.exports = {
               if (createWhatsappGeneralMessageResult.success){
                 const whatsappGeneralMessageIndex = createWhatsappGeneralMessageResult.result.whatsappGeneralMessageIndex;
                 const whatsappGeneralMessageCreationDateTime = createWhatsappGeneralMessageResult.result.whatsappGeneralMessageCreationDateTime;
-                const createWhatsappImageMessageResult = await whatsappDatabaseFunctions.createWhatsappImageMessage(whatsappImageMessageID, convertedWhatsappImageMessageFile, whatsappProductImageMessageCaption);
+                const createWhatsappImageMessageResult = await whatsappDatabaseFunctions.createWhatsappImageMessage(whatsappImageMessageID, convertedWhatsappImageMessageFile, whatsappProductImageMessageCaption, 'image');
                 if (createWhatsappImageMessageResult.success){
                   const websocketMessageContent = 
                   {
@@ -582,6 +583,7 @@ module.exports = {
                       whatsappImageMessageID: whatsappImageMessageID,
                       whatsappImageMessageFileID: whatsappImageMessageFileID,
                       whatsappImageMessageCaption: whatsappProductImageMessageCaption,
+                      whatsappImageMessageType: 'image',
                       whatsappImageMessageFile: Buffer.from(convertedWhatsappImageMessageFile).toString('base64')
                     }
                   };
@@ -613,15 +615,16 @@ module.exports = {
     return new Promise(async (updateWhatsappMessageStatusPromiseResolve) => {
       const updateWhatsappGeneralMessageStatusResponse = await whatsappDatabaseFunctions.updateWhatsappGeneralMessageStatus(whatsappGeneralMessageID, whatsappGeneralMessageStatus);
       if (updateWhatsappGeneralMessageStatusResponse.success){
-        const websocketMessageContent = 
-        {
-          whatsappConversationID: updateWhatsappGeneralMessageStatusResponse.result[0].whatsappGeneralMessageWhatsappConversationID,
-          whatsappGeneralMessageID: whatsappGeneralMessageID,
-          whatsappGeneralMessageStatus: whatsappGeneralMessageStatus,
-          whatsappGeneralMessageStatusUpdateDateTime: new Date().toString(),
-        };
-        console.log(websocketMessageContent);
-        websocketConnection.sendWebsocketMessage('/receiveWhatsappMessageStatusUpdate', websocketMessageContent);
+        if (updateWhatsappGeneralMessageStatusResponse.result[0]){
+          const websocketMessageContent = 
+          {
+            whatsappConversationID: updateWhatsappGeneralMessageStatusResponse.result[0].whatsappGeneralMessageWhatsappConversationID,
+            whatsappGeneralMessageID: whatsappGeneralMessageID,
+            whatsappGeneralMessageStatus: whatsappGeneralMessageStatus,
+            whatsappGeneralMessageStatusUpdateDateTime: new Date().toString(),
+          };
+          websocketConnection.sendWebsocketMessage('/receiveWhatsappMessageStatusUpdate', websocketMessageContent);
+        }
       }
     });
   },
@@ -812,7 +815,7 @@ module.exports = {
                 const getWhatsappImageMessageFileFromWhatsappImageMessageFileIDResult = await this.getWhatsappImageMessageFileFromWhatsappImageMessageFileID(whatsappImageMessageFileID);
                 if (getWhatsappImageMessageFileFromWhatsappImageMessageFileIDResult.success){
                   const whatsappImageMessageFile = getWhatsappImageMessageFileFromWhatsappImageMessageFileIDResult.result;
-                  const createWhatsappImageMessageResult = await whatsappDatabaseFunctions.createWhatsappImageMessage(whatsappImageMessageID, whatsappImageMessageFile, whatsappImageMessageCaption);
+                  const createWhatsappImageMessageResult = await whatsappDatabaseFunctions.createWhatsappImageMessage(whatsappImageMessageID, whatsappImageMessageFile, whatsappImageMessageCaption, whatsappMessageType);
                   if (createWhatsappImageMessageResult.success){
                     const websocketMessageContent = selectOrCreateActiveWhatsappConversationIDResult.result;
 
@@ -830,6 +833,7 @@ module.exports = {
                           whatsappImageMessageID: whatsappImageMessageID,
                           whatsappImageMessageFileID: whatsappImageMessageFileID,
                           whatsappImageMessageCaption: whatsappImageMessageCaption,
+                          whatsappImageMessageType: whatsappMessageType,
                           whatsappImageMessageFile: Buffer.from(whatsappImageMessageFile).toString('base64')
                         }
                       ]

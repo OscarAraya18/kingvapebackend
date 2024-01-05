@@ -394,7 +394,6 @@ module.exports = {
         const selectWhatsappGeneralMessageWhatsappConversationIDSQL = `SELECT whatsappGeneralMessageWhatsappConversationID FROM WhatsappGeneralMessages WHERE whatsappGeneralMessageID=(?);`;
         const selectWhatsappGeneralMessageWhatsappConversationIDValues = [whatsappGeneralMessageID];
         const databaseResult2 = await databaseManagementFunctions.executeDatabaseSQL(selectWhatsappGeneralMessageWhatsappConversationIDSQL, selectWhatsappGeneralMessageWhatsappConversationIDValues);
-        console.log(databaseResult2);
         updateWhatsappGeneralMessageStatusPromiseResolve(databaseResult2);
       } else {
         updateWhatsappGeneralMessageStatusPromiseResolve(databaseResult);
@@ -430,10 +429,10 @@ module.exports = {
     });
   },
 
-  createWhatsappImageMessage: async function(whatsappImageMessageID, whatsappImageMessageFile, whatsappImageMessageCaption){
+  createWhatsappImageMessage: async function(whatsappImageMessageID, whatsappImageMessageFile, whatsappImageMessageCaption, whatsappImageMessageType){
     return new Promise(async (createWhatsappImageMessagePromiseResolve) => {
-      const createWhatsappImageMessageSQL = `INSERT INTO WhatsappImageMessages (whatsappImageMessageID, whatsappImageMessageFile, whatsappImageMessageCaption) VALUES (?, ?, ?);`;
-      const createWhatsappImageMessageValues = [whatsappImageMessageID, Buffer.from(whatsappImageMessageFile), whatsappImageMessageCaption];
+      const createWhatsappImageMessageSQL = `INSERT INTO WhatsappImageMessages (whatsappImageMessageID, whatsappImageMessageFile, whatsappImageMessageCaption, whatsappImageMessageType) VALUES (?, ?, ?, ?);`;
+      const createWhatsappImageMessageValues = [whatsappImageMessageID, Buffer.from(whatsappImageMessageFile), whatsappImageMessageCaption, whatsappImageMessageType];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(createWhatsappImageMessageSQL, createWhatsappImageMessageValues);
       createWhatsappImageMessagePromiseResolve(databaseResult);
     });
