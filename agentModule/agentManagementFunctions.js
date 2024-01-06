@@ -2,6 +2,41 @@ const constants = require('../constants.js');
 const databaseManagementFunctions = require('../databaseModule/databaseManagementFunctions.js');
 
 module.exports = {
+  insertSticker: async function(stickerAgentID, stickerName, stickerFile){
+    return new Promise(async (insertStickerPromiseResolve) => {
+      const insertStickerSQL = `INSERT INTO Stickers (stickerAgentID, stickerName, stickerFile) VALUES (?, ?, ?);`;
+      const insertStickerValues = [stickerAgentID, stickerName, Buffer.from(stickerFile.split(",")[1], 'base64')];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(insertStickerSQL, insertStickerValues);
+      insertStickerPromiseResolve(JSON.stringify(databaseResult));
+    });
+  },
+
+  selectMissingLocalStickers: async function(stickerCurrentIDS){
+    return new Promise(async (selectMissingLocalStickersPromiseResolve) => {
+      var selectMissingLocalStickersSQL = '';
+      if (stickerCurrentIDS.length == 0){
+        selectMissingLocalStickersSQL = `SELECT * FROM Stickers WHERE stickerID;`;
+      } else {
+        selectMissingLocalStickersSQL = `SELECT * FROM Stickers WHERE stickerID NOT IN (?);`;
+      }
+      const selectMissingLocalStickersValues = [stickerCurrentIDS];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectMissingLocalStickersSQL, selectMissingLocalStickersValues);
+      if (databaseResult.success){
+        const parsedStickers = databaseResult.result.map(sticker => {
+          return {
+            stickerID: sticker.stickerID,
+            stickerAgentID: sticker.stickerAgentID,
+            stickerName: sticker.stickerName,
+            stickerFile: Buffer.from(sticker.stickerFile).toString('base64')
+          };
+        });
+        selectMissingLocalStickersPromiseResolve(JSON.stringify({success: true, result: parsedStickers}));
+      } else {
+        selectMissingLocalStickersPromiseResolve(JSON.stringify(databaseResult));
+      }
+    });
+  },
+
   agentLogin: async function(websocketConnection, agentUsername, agentPassword){
     return new Promise(async (agentLoginPromiseResolve) => {
       const selectAgentSQL = `SELECT * FROM Agents WHERE agentUsername=(?) AND agentPassword=(?);`;

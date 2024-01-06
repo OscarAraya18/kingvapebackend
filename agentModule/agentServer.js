@@ -227,3 +227,19 @@ backendAgentHttpRequestServer.post('/selectFilteredTodayTopSell', async (httpReq
   const selectFilteredTodayTopSellResult = await agentManagementFunctions.selectFilteredTodayTopSell(initialDate, endDate);
   httpResponse.end(selectFilteredTodayTopSellResult);
 });
+
+backendAgentHttpRequestServer.post('/insertSticker', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const stickerAgentID = httpRequestQuery.stickerAgentID;
+  const stickerName = httpRequestQuery.stickerName;
+  const stickerFile = httpRequestQuery.stickerFile;
+  const insertStickerResult = await agentManagementFunctions.insertSticker(stickerAgentID, stickerName, stickerFile);
+  httpResponse.end(insertStickerResult);
+});
+
+backendAgentHttpRequestServer.post('/selectMissingLocalStickers', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const stickerCurrentIDS = httpRequestQuery.stickerCurrentIDS;
+  const selectMissingLocalStickersResult = await agentManagementFunctions.selectMissingLocalStickers(stickerCurrentIDS);
+  httpResponse.end(selectMissingLocalStickersResult);
+});

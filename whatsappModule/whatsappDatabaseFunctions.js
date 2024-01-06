@@ -3,6 +3,15 @@ const databaseManagementFunctions = require('../databaseModule/databaseManagemen
 
 
 module.exports = {
+  selectStickerFile: async function(stickerID){
+    return new Promise(async (selectStickerFilePromiseResolve) => {
+      const selectStickerFileSQL = `SELECT stickerFile FROM Stickers WHERE stickerID = (?);`;
+      const selectStickerFileValues = [stickerID];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectStickerFileSQL, selectStickerFileValues);
+      selectStickerFilePromiseResolve(databaseResult);
+    });
+  },
+
   insertStoreMessage: async function(storeMessageStoreMessageID, storeMessageStoreName, storeMessageRecipientPhoneNumber, storeMessageRecipientProfileName, storeMessageRecipientOrder, storeMessageRecipientID){
     return new Promise(async (insertStoreMessagesPromiseResolve) => {
       const insertStoreMessageSQL = `INSERT INTO StoreMessages (storeMessageStoreMessageID, storeMessageStoreName, storeMessageRecipientPhoneNumber, storeMessageRecipientProfileName, storeMessageRecipientOrder, storeMessageRecipientID, storeMessageStartDateTime) VALUES (?, ?, ?, ?, ?, ?, ?);`;

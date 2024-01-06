@@ -77,7 +77,15 @@ backendWhatsappHttpRequestServer.post('/sendWhatsappImageMessage', async (httpRe
   const whatsappImageMessageCaption = httpRequestQuery.whatsappImageMessageCaption;
   const sendWhatsappImageMessageResult = await whatsappManagementFunctions.sendWhatsappImageMessage(websocketConnection, whatsappConversationRecipientPhoneNumber, whatsappGeneralMessageRepliedMessageID, whatsappImageMessageFile, whatsappImageMessageCaption);
   httpResponse.end(sendWhatsappImageMessageResult);
+});
 
+backendWhatsappHttpRequestServer.post('/sendWhatsappStickerMessage', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const whatsappConversationRecipientPhoneNumber = httpRequestQuery.whatsappConversationRecipientPhoneNumber;
+  const whatsappGeneralMessageRepliedMessageID = httpRequestQuery.whatsappGeneralMessageRepliedMessageID;
+  const stickerID = httpRequestQuery.stickerID;
+  const sendWhatsappStickerMessageResult = await whatsappManagementFunctions.sendWhatsappStickerMessage(websocketConnection, whatsappConversationRecipientPhoneNumber, whatsappGeneralMessageRepliedMessageID, stickerID);
+  httpResponse.end(sendWhatsappStickerMessageResult);
 });
 
 backendWhatsappHttpRequestServer.post('/sendWhatsappAudioMessage', async (httpRequest, httpResponse) => {

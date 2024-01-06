@@ -340,6 +340,117 @@ module.exports = {
     });
   },
 
+  uploadWhatsappStickerFile: async function(stickerID){
+    return new Promise(async (uploadWhatsappStickerFilePromiseResolve) => {
+      const selectStickerFileResult = await whatsappDatabaseFunctions.selectStickerFile(stickerID);
+      if (selectStickerFileResult.success){
+        const stickerFile = selectStickerFileResult.result[0].stickerFile;
+        const uploadWhatsappStickerMessageURL = `https://graph.facebook.com/${constants.credentials.apiVersion}/${constants.credentials.phoneNumberID}/media`;
+        const temporaryStickerName = `whatsappModule/${uuidv4.v4()}-${Date.now()}.webp`;
+        fs.writeFileSync(temporaryStickerName, stickerFile);
+        const temporaryStickerStream = fs.createReadStream(temporaryStickerName);
+        const uploadWhatsappStickerMessageParameters = new FormData();
+        uploadWhatsappStickerMessageParameters.append('messaging_product', 'whatsapp');
+        uploadWhatsappStickerMessageParameters.append('type', 'image/webp');
+        uploadWhatsappStickerMessageParameters.append('file', temporaryStickerStream);
+        const uploadWhatsappStickerMessageHeaders = uploadWhatsappStickerMessageParameters.getHeaders();
+        uploadWhatsappStickerMessageHeaders['Authorization'] = `Bearer ${constants.credentials.apiKey}`;
+        axios.post(uploadWhatsappStickerMessageURL, uploadWhatsappStickerMessageParameters, {headers: uploadWhatsappStickerMessageHeaders}).then(async (httpResponse) => {
+          fs.unlink(temporaryStickerName, async (errorWhenDeletingTemporarySticker) => {
+            if (!errorWhenDeletingTemporarySticker) {
+              const whatsappStickerMessageFileID = httpResponse.data.id;
+              uploadWhatsappStickerFilePromiseResolve({success: true, result: {whatsappStickerMessageFileID: whatsappStickerMessageFileID, whatsappStickerMessageFile: stickerFile}});
+            } else {
+              uploadWhatsappStickerFilePromiseResolve({success: false, result: errorWhenDeletingTemporarySticker});
+            }
+          });
+        })
+        .catch((error) => {
+          uploadWhatsappStickerFilePromiseResolve({success: false, result: error});
+        });
+      } else {
+        uploadWhatsappStickerFilePromiseResolve(selectStickerFileResult);
+      }
+    });
+  },
+
+  sendWhatsappStickerMessage: async function(websocketConnection, whatsappConversationRecipientPhoneNumber, whatsappGeneralMessageRepliedMessageID, stickerID){
+    return new Promise(async (sendWhatsappStickerMessagePromiseResolve) => {
+      try {
+        const uploadWhatsappStickerFileResult = await this.uploadWhatsappStickerFile(stickerID);
+        if (uploadWhatsappStickerFileResult.success){
+          const whatsappStickerMessageFileID = uploadWhatsappStickerFileResult.result.whatsappStickerMessageFileID;
+          const whatsappStickerMessageFile = uploadWhatsappStickerFileResult.result.whatsappStickerMessageFile;
+          var httpDataToSendWhatsappStickerMessage =
+          {
+            'messaging_product': 'whatsapp', 
+            'to': whatsappConversationRecipientPhoneNumber, 
+            'type': 'sticker',
+            'sticker': {'id': whatsappStickerMessageFileID}
+          };
+          if (whatsappGeneralMessageRepliedMessageID != ''){
+            httpDataToSendWhatsappStickerMessage['context'] = {'message_id': whatsappGeneralMessageRepliedMessageID};
+          } else {
+            whatsappGeneralMessageRepliedMessageID = null;
+          }
+          httpDataToSendWhatsappStickerMessage = JSON.stringify(httpDataToSendWhatsappStickerMessage);
+          const sendWhatsappMessageResult = await this.sendWhatsappMessage(httpDataToSendWhatsappStickerMessage);
+          if (sendWhatsappMessageResult.success){
+            const whatsappGeneralMessageID = sendWhatsappMessageResult.result;
+            const whatsappImageMessageID = whatsappGeneralMessageID;
+            const whatsappGeneralMessageOwnerPhoneNumber = null;
+            const selectOrCreateActiveWhatsappConversationIDResult = await whatsappDatabaseFunctions.selectOrCreateActiveWhatsappConversationID(whatsappConversationRecipientPhoneNumber);
+            if (selectOrCreateActiveWhatsappConversationIDResult.success){
+              const whatsappConversationID = selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationID;
+              const createWhatsappGeneralMessageResult = await whatsappDatabaseFunctions.createWhatsappGeneralMessage(whatsappConversationID, whatsappImageMessageID, whatsappGeneralMessageRepliedMessageID, whatsappGeneralMessageOwnerPhoneNumber);
+              if (createWhatsappGeneralMessageResult.success){
+                const whatsappGeneralMessageIndex = createWhatsappGeneralMessageResult.result.whatsappGeneralMessageIndex;
+                const whatsappGeneralMessageCreationDateTime = createWhatsappGeneralMessageResult.result.whatsappGeneralMessageCreationDateTime;
+                const createWhatsappImageMessageResult = await whatsappDatabaseFunctions.createWhatsappImageMessage(whatsappImageMessageID, whatsappStickerMessageFile, '', 'sticker');
+                if (createWhatsappImageMessageResult.success){
+                  const websocketMessageContent = 
+                  {
+                    success: true,
+                    result: 
+                    {
+                      whatsappConversationID: whatsappConversationID,
+                      whatsappGeneralMessageID: whatsappGeneralMessageID,
+                      whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
+                      whatsappGeneralMessageType: 'image',
+                      whatsappGeneralMessageRepliedMessageID: whatsappGeneralMessageRepliedMessageID,
+                      whatsappGeneralMessageCreationDateTime: whatsappGeneralMessageCreationDateTime,
+                      whatsappGeneralMessageOwnerPhoneNumber: whatsappGeneralMessageOwnerPhoneNumber,
+                      whatsappImageMessageID: whatsappImageMessageID,
+                      whatsappImageMessageFileID: whatsappStickerMessageFile,
+                      whatsappImageMessageCaption: '',
+                      whatsappImageMessageType: 'sticker',
+                      whatsappImageMessageFile: Buffer.from(whatsappStickerMessageFile).toString('base64')
+                    }
+                  };
+                  sendWhatsappStickerMessagePromiseResolve(JSON.stringify(websocketMessageContent));
+                  websocketConnection.sendWebsocketMessage('/sendWhatsappMessage', websocketMessageContent);
+                } else {
+                  sendWhatsappStickerMessagePromiseResolve(JSON.stringify(createWhatsappImageMessageResult));
+                }
+              } else {
+                sendWhatsappStickerMessagePromiseResolve(JSON.stringify(createWhatsappGeneralMessageResult));
+              }
+            } else {
+              sendWhatsappStickerMessagePromiseResolve(JSON.stringify(selectOrCreateActiveWhatsappConversationIDResult));
+            }
+          } else {
+            sendWhatsappStickerMessagePromiseResolve(JSON.stringify(sendWhatsappMessageResult));
+          }
+        } else {
+          sendWhatsappStickerMessagePromiseResolve(JSON.stringify(uploadWhatsappStickerFileResult));
+        }
+
+      } catch (error) {
+        sendWhatsappStickerMessagePromiseResolve(JSON.stringify({success: false, result: error}));
+      }
+    });
+  },
+
   uploadWhatsappAudioFile: async function(whatsappAudioMessageFile){
     return new Promise(async (uploadWhatsappAudioFilePromiseResolve) => {
       const uploadWhatsappAudioMessageURL = `https://graph.facebook.com/${constants.credentials.apiVersion}/${constants.credentials.phoneNumberID}/media`;
