@@ -25,3 +25,13 @@ backendStoreHttpRequestServer.post('/grabStoreConversation', async (httpRequest,
   const grabStoreConversationResult = await storeManagementFunctions.grabStoreConversation(websocketConnection, storeMessageID, storeMessageStoreMessageID, storeMessageStoreName, storeMessageAssignedAgentID, storeMessageRecipientPhoneNumber, storeMessageRecipientProfileName, messageToClientContent);
   httpResponse.end(grabStoreConversationResult);
 });
+
+backendStoreHttpRequestServer.post('/deleteStoreMessage', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const storeMessageID = httpRequestQuery.storeMessageID;
+  const storeMessageStoreName = httpRequestQuery.storeMessageStoreName;
+  const storeMessageAssignedAgentID = httpRequestQuery.storeMessageAssignedAgentID;
+  const storeMessageDeleteReason = httpRequestQuery.storeMessageDeleteReason;
+  const deleteStoreMessageResult = await storeManagementFunctions.deleteStoreMessage(websocketConnection, storeMessageID, storeMessageStoreName, storeMessageAssignedAgentID, storeMessageDeleteReason);
+  httpResponse.end(deleteStoreMessageResult);
+});

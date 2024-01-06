@@ -50,6 +50,18 @@ module.exports = {
         grabStoreConversationPromiseResolve(JSON.stringify({success: false, result: 'Duplicate'}));
       }
     });
-  }
+  },
+
+  deleteStoreMessage: async function(websocketConnection, storeMessageID, storeMessageStoreName, storeMessageAssignedAgentID, storeMessageDeleteReason){
+    return new Promise(async (deleteStoreMessagePromiseResolve) => {
+      websocketConnection.sendWebsocketMessage('/grabStoreConversation', {success: true, result: {storeMessageID: storeMessageID, storeMessageStoreName: storeMessageStoreName}});
+      const updateStoreMessageSQL = `UPDATE StoreMessages SET storeMessageAssignedAgentID=(?), storeMessageDeleteReason=(?) WHERE storeMessageID=(?);`;
+      const updateStoreMessageValues = [storeMessageAssignedAgentID, storeMessageDeleteReason, storeMessageID];
+      const updateStoreMessageDatabaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateStoreMessageSQL, updateStoreMessageValues);
+      deleteStoreMessagePromiseResolve(JSON.stringify(updateStoreMessageDatabaseResult));
+    });
+  },
+
+
 
 }

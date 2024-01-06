@@ -121,7 +121,6 @@ backendWhatsappHttpRequestServer.get('/selectAllWhatsappPendingConversation', as
 });
 
 backendWhatsappHttpRequestServer.post('/selectWhatsappGeneralMessage', async (httpRequest, httpResponse) => {
-  console.log(httpRequest.body);
   const httpRequestBody = httpRequest.body;
   const whatsappGeneralMessageID = httpRequestBody.whatsappGeneralMessageID;
   const selectWhatsappGeneralMessageResult = await whatsappManagementFunctions.selectWhatsappGeneralMessage(whatsappGeneralMessageID);

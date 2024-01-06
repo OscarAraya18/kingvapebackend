@@ -1218,12 +1218,7 @@ module.exports = {
         'to': storeMessageRecipientPhoneNumber, 
         'type': 'template', 'template': {'name': 'arreglo', 'language': {'code': 'es'}}
       };
-      console.log(sendWhatsappMessageData);
       const sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
-      console.log(sendWhatsappMessageResult.result);
-      console.log(sendWhatsappMessageResult.data);
-      console.log(sendWhatsappMessageResult.result.data);
-
       if (sendWhatsappMessageResult.success){
         const createWhatsappConversationWithWhatsappConversationAssignedAgentIDResult = await whatsappDatabaseFunctions.createWhatsappConversationWithWhatsappConversationAssignedAgentID(storeMessageAssignedAgentID, storeMessageRecipientPhoneNumber, storeMessageRecipientProfileName);
         if (createWhatsappConversationWithWhatsappConversationAssignedAgentIDResult.success){
