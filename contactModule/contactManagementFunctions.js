@@ -143,8 +143,8 @@ module.exports = {
           await webPage.close();
           verifyClientPromiseResolve(JSON.stringify({success: false, result: '1'}));
         }
-      } catch {
-        verifyClientPromiseResolve(JSON.stringify({success: false, result: '2'}));
+      } catch (e) {
+        verifyClientPromiseResolve(JSON.stringify({success: false, result: e}));
       }
     });
   },
