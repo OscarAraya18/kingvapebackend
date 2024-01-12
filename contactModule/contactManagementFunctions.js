@@ -1,6 +1,8 @@
 const constants = require('../constants.js');
 const databaseManagementFunctions = require('../databaseModule/databaseManagementFunctions.js');
+
 const databaseFileManager = require('fs');
+const puppeteer = require('puppeteer');
 
 
 module.exports = {
@@ -114,6 +116,38 @@ module.exports = {
     });
   },
 
+  verifyClient: async function (clientID){
+    return new Promise(async (verifyClientPromiseResolve) => {
+      try {
+        const webBrowser = await puppeteer.launch({headless: true});
+        const webPage = await webBrowser.newPage();
+        await webPage.goto('https://servicioselectorales.tse.go.cr/chc/consulta_cedula.aspx');
+        const inputElement = await webPage.$('input[name="txtcedula"]');
+        await inputElement.type(clientID);
+        await webPage.click('#btnConsultaCedula');
+        await webPage.waitForNavigation();
+        try {
+          const clientName = await webPage.evaluate(() => {
+            const clientNameWordsToParse = document.getElementById('lblnombrecompleto').textContent.match(/\b[A-Z]+\b/g);
+            const clientName = clientNameWordsToParse.map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+            return clientName;
+          });
+          const clientVerified = await webPage.evaluate(() => {
+            const clientAgeWordsToParse = document.getElementById('lbledad').textContent.match(/\b(\d+)\s+AÑOS\b/i);
+            const clientAge = parseInt(clientAgeWordsToParse[1], 10);
+            return clientAge > 18 ? true : false;
+          });
+          await webPage.close();
+          verifyClientPromiseResolve(JSON.stringify({success: true, result: {clientName: clientName, clientVerified: clientVerified}}));
+        } catch {
+          await webPage.close();
+          verifyClientPromiseResolve(JSON.stringify({success: false, result: '1'}));
+        }
+      } catch {
+        verifyClientPromiseResolve(JSON.stringify({success: false, result: '2'}));
+      }
+    });
+  },
 
   loadContact: async function(){
     try {

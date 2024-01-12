@@ -4,7 +4,6 @@ const express = require('express');
 const cors = require('cors');
 const WebSocket = require('ws');
 
-
 const backendHttpRequestServer = express();
 backendHttpRequestServer.use(cors());
 backendHttpRequestServer.use(function(httpRequest, httpResponse, next) {
