@@ -243,3 +243,42 @@ backendAgentHttpRequestServer.post('/selectMissingLocalStickers', async (httpReq
   const selectMissingLocalStickersResult = await agentManagementFunctions.selectMissingLocalStickers(stickerCurrentIDS);
   httpResponse.end(selectMissingLocalStickersResult);
 });
+
+
+
+
+
+
+backendAgentHttpRequestServer.post('/insertNotification', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const notificationAgentID = httpRequestQuery.notificationAgentID;
+  const notificationName = httpRequestQuery.notificationName;
+  const notificationPhoneNumber = httpRequestQuery.notificationPhoneNumber;
+  const notificationDate = httpRequestQuery.notificationDate;
+  const notificationHour = httpRequestQuery.notificationHour;
+  const notificationDateTimeString = `${notificationDate} ${notificationHour}`;
+  const notificationDateTime = new Date(notificationDateTimeString).toString();
+  const insertNotificationResult = await agentManagementFunctions.insertNotification(notificationAgentID, notificationName, notificationPhoneNumber, notificationDateTime);
+  httpResponse.end(insertNotificationResult);
+});
+
+backendAgentHttpRequestServer.post('/selectAgentNotifications', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const notificationAgentID = httpRequestQuery.notificationAgentID;
+  const selectAgentNotificationsResult = await agentManagementFunctions.selectAgentNotifications(notificationAgentID);
+  httpResponse.end(selectAgentNotificationsResult);
+});
+
+backendAgentHttpRequestServer.post('/deleteNotification', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const notificationID = httpRequestQuery.notificationID;
+  const deleteNotificationResult = await agentManagementFunctions.deleteNotification(notificationID);
+  httpResponse.end(deleteNotificationResult);
+});
+
+backendAgentHttpRequestServer.post('/useNotification', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const notificationID = httpRequestQuery.notificationID;
+  const useNotificationResult = await agentManagementFunctions.useNotification(notificationID);
+  httpResponse.end(useNotificationResult);
+});

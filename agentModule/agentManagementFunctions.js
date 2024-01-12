@@ -11,6 +11,43 @@ module.exports = {
     });
   },
 
+  insertNotification: async function(notificationAgentID, notificationName, notificationPhoneNumber, notificationDateTime){
+    return new Promise(async (insertNotificationPromiseResolve) => {
+      const insertNotificationSQL = `INSERT INTO Notifications (notificationAgentID, notificationName, notificationPhoneNumber, notificationDateTime) VALUES (?, ?, ?, ?);`;
+      const insertNotificationValues = [notificationAgentID, notificationName, notificationPhoneNumber, notificationDateTime];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(insertNotificationSQL, insertNotificationValues);
+      insertNotificationPromiseResolve(JSON.stringify(databaseResult));
+    });
+  },
+
+  useNotification: async function(notificationID){
+    return new Promise(async (useNotificationPromiseResolve) => {
+      const useNotificationSQL = `UPDATE Notifications SET notificationUsed=(?) WHERE notificationID=(?);`;
+      const notificationUsed = true;
+      const useNotificationValues = [notificationUsed, notificationID];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(useNotificationSQL, useNotificationValues);
+      useNotificationPromiseResolve(JSON.stringify(databaseResult));
+    });
+  },
+
+  deleteNotification: async function(notificationID){
+    return new Promise(async (deleteNotificationPromiseResolve) => {
+      const deleteNotificationSQL = `DELETE FROM Notifications WHERE notificationID=(?);`;
+      const deleteNotificationValues = [notificationID];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(deleteNotificationSQL, deleteNotificationValues);
+      deleteNotificationPromiseResolve(JSON.stringify(databaseResult));
+    });
+  },
+
+  selectAgentNotifications: async function(notificationAgentID){
+    return new Promise(async (selectAgentNotificationsPromiseResolve) => {
+      const selectAgentNotificationsSQL = `SELECT * FROM Notifications WHERE notificationAgentID=(?);`;
+      const selectAgentNotificationsValues = [notificationAgentID];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAgentNotificationsSQL, selectAgentNotificationsValues);
+      selectAgentNotificationsPromiseResolve(JSON.stringify(databaseResult));
+    });
+  },
+
   selectMissingLocalStickers: async function(stickerCurrentIDS){
     return new Promise(async (selectMissingLocalStickersPromiseResolve) => {
       var selectMissingLocalStickersSQL = '';
