@@ -144,6 +144,7 @@ module.exports = {
           verifyClientPromiseResolve(JSON.stringify({success: false, result: '1'}));
         }
       } catch (e) {
+        console.log(e);
         verifyClientPromiseResolve(JSON.stringify({success: false, result: e}));
       }
     });
