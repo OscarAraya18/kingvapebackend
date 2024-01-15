@@ -69,8 +69,8 @@ backendContactHttpRequestServer.post('/selectContact', async (httpRequest, httpR
 backendContactHttpRequestServer.post('/verifyClient', async (httpRequest, httpResponse) => {
   const httpRequestQuery = httpRequest.body;
   const clientID = httpRequestQuery.clientID;
-  const verifyClientResult = await contactsManagementFunctions.verifyClient(clientID);
-  httpResponse.end(verifyClientResult);
+  //const verifyClientResult = await contactsManagementFunctions.verifyClient(clientID);
+  httpResponse.end(JSON.stringify({success: false}));
 });
 
 backendContactHttpRequestServer.get('/loadContact', async (httpRequest, httpResponse) => {
