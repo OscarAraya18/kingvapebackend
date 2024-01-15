@@ -572,8 +572,12 @@ module.exports = {
       const selectWhatsappGeneralMessageValues = [whatsappGeneralMessageID];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectWhatsappGeneralMessageSQL, selectWhatsappGeneralMessageValues);
       if (databaseResult.success){
-        const composeWhatsappGeneralMessageResult = await this.composeWhatsappGeneralMessage(databaseResult.result[0]);
-        selectWhatsappGeneralMessagePromiseResolve({success: true, result: composeWhatsappGeneralMessageResult});
+        if (databaseResult.result[0]){
+          const composeWhatsappGeneralMessageResult = await this.composeWhatsappGeneralMessage(databaseResult.result[0]);
+          selectWhatsappGeneralMessagePromiseResolve({success: true, result: composeWhatsappGeneralMessageResult});
+        } else {
+          selectWhatsappGeneralMessagePromiseResolve({success: false, result: ''});
+        }
       } else {
         selectWhatsappGeneralMessagePromiseResolve(databaseResult);
       }
