@@ -1069,17 +1069,19 @@ module.exports = {
       const whatsappConversationIsActive = false;
       const selectTodayTopSellValues = [whatsappConversationIsActive];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectTodayTopSellSQL, selectTodayTopSellValues);
-      const sortedDatabaseResult = databaseResult.result.sort((a, b) => b.whatsappConversationAmount - a.whatsappConversationAmount);
-      var temp = 'Sin datos';
-      if (sortedDatabaseResult[0]){
-        temp = sortedDatabaseResult[0].agentName;
+      if (databaseResult.result){
+        const sortedDatabaseResult = databaseResult.result.sort((a, b) => b.whatsappConversationAmount - a.whatsappConversationAmount);
+        var temp = 'Sin datos';
+        if (sortedDatabaseResult[0]){
+          temp = sortedDatabaseResult[0].agentName;
+        }
+        const result = 
+        {
+          success: true, 
+          result: temp
+        };
+        selectTodayTopSellPromiseResolve(JSON.stringify(result));
       }
-      const result = 
-      {
-        success: true, 
-        result: temp
-      };
-      selectTodayTopSellPromiseResolve(JSON.stringify(result));
     });
   },
 
