@@ -35,3 +35,11 @@ backendHttpRequestServer.use(backendWhatsappHttpRequestServer);
 backendHttpRequestServer.use(backendStoreHttpRequestServer);
 backendHttpRequestServer.use(backendDashboardHttpRequestServer);
 backendHttpRequestServer.use(backendPaymentHttpRequestServer);
+
+
+/*
+setInterval(() => {
+  const used = process.memoryUsage().heapUsed / 1024 / 1024;
+  console.log(`Memory usage: ${used.toFixed(2)} MB`);
+}, 1000);
+*/

@@ -138,9 +138,11 @@ module.exports = {
             return clientAge > 18 ? true : false;
           });
           await webPage.close();
+          await webBrowser.close();
           verifyClientPromiseResolve(JSON.stringify({success: true, result: {clientName: clientName, clientVerified: clientVerified}}));
         } catch {
           await webPage.close();
+          await webBrowser.close();
           verifyClientPromiseResolve(JSON.stringify({success: false, result: '1'}));
         }
       } catch (e) {

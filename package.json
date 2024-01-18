@@ -2,12 +2,12 @@
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "axios": "^1.4.0",
+    "chrome": "^0.1.0",
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "fluent-ffmpeg": "^2.1.2",
     "follow-redirects": "^1.15.2",
     "mysql": "^2.18.1",
-    "puppeteer": "^21.7.0",
     "sharp": "^0.32.6",
     "uuid": "^9.0.1",
     "uuidv4": "^6.2.13",
@@ -15,5 +15,8 @@
   },
   "scripts": {
     "start": "node server.js"
+  },
+  "devDependencies": {
+    "puppeteer": "^21.7.0"
   }
 }
