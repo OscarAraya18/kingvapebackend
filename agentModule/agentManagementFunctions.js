@@ -1,7 +1,33 @@
 const constants = require('../constants.js');
 const databaseManagementFunctions = require('../databaseModule/databaseManagementFunctions.js');
 
+const axios = require('axios');
+
 module.exports = {
+
+  traduceText: async function(textToTraduce, languageToTraduce){
+    return new Promise(async (traduceTextPromiseResolve) => {
+      axios.post('https://api-free.deepl.com/v2/translate',
+      {
+        text: [textToTraduce],
+        target_lang: languageToTraduce
+      },
+        {headers: {'Authorization': 'DeepL-Auth-Key 9be540ee-a00f-4710-a607-1d2fa1aa8fc8:fx', 'Content-Type': 'application/json'}}
+      ).then((response) =>{ 
+        try {
+          const traducedText = response.data.translations[0].text;
+          traduceTextPromiseResolve(JSON.stringify({success: true, result: traducedText}));
+        } catch (error) {
+          traduceTextPromiseResolve(JSON.stringify({success: false, result: error}));
+        }
+      })
+      .catch((error) =>{
+        traduceTextPromiseResolve(JSON.stringify({success: false, result: error}));
+      });
+    });
+  },
+
+
   insertSticker: async function(stickerAgentID, stickerName, stickerFile){
     return new Promise(async (insertStickerPromiseResolve) => {
       const insertStickerSQL = `INSERT INTO Stickers (stickerAgentID, stickerName, stickerFile) VALUES (?, ?, ?);`;

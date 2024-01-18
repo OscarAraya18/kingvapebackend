@@ -282,3 +282,11 @@ backendAgentHttpRequestServer.post('/useNotification', async (httpRequest, httpR
   const useNotificationResult = await agentManagementFunctions.useNotification(notificationID);
   httpResponse.end(useNotificationResult);
 });
+
+backendAgentHttpRequestServer.post('/traduceText', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const textToTraduce = httpRequestQuery.textToTraduce;
+  const languageToTraduce = httpRequestQuery.languageToTraduce;
+  const traduceTextResult = await agentManagementFunctions.traduceText(textToTraduce, languageToTraduce);
+  httpResponse.end(traduceTextResult);
+});

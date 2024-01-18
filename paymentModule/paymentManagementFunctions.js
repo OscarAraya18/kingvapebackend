@@ -39,4 +39,28 @@ module.exports = {
       selectNotUsedTransactionsPromiseResolve(JSON.stringify(databaseResult));
     });
   },
+
+  selectLocalityAgents: async function(localityAgentLocalityID){
+    return new Promise(async (selectLocalityAgentsPromiseResolve) => {
+      const selectLocalityAgentsSQL = `SELECT * FROM LocalityAgents WHERE localityAgentLocalityID = (?) AND localityAgentActive = (?);`;
+      const localityAgentActive = true;
+      const selectLocalityAgentsValues = [localityAgentLocalityID, localityAgentActive];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectLocalityAgentsSQL, selectLocalityAgentsValues);
+      selectLocalityAgentsPromiseResolve(JSON.stringify(databaseResult));
+    });
+  },
+
+  syncTransaction: async function(websocketConnection, transactionID, transactionStore, transactionApprover, transactionRelatedMessageID){
+    return new Promise(async (syncTransactionPromiseResolve) => {
+      const transactionApprovedDate = new Date().toString();
+      const transactionUsed = true;
+      const syncTransactionSQL = `UPDATE Transactions SET transactionStore=(?), transactionApprover=(?), transactionRelatedMessageID=(?), transactionApprovedDate=(?), transactionUsed=(?) WHERE transactionID=(?);`;
+      const syncTransactionSQLValues = [transactionStore, transactionApprover, transactionRelatedMessageID, transactionApprovedDate, transactionUsed, transactionID];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(syncTransactionSQL, syncTransactionSQLValues);
+      syncTransactionPromiseResolve(JSON.stringify(databaseResult));
+    });
+  },
+
+
+
 }

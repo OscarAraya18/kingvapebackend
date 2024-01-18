@@ -19,3 +19,20 @@ backendPaymentHttpRequestServer.post('/selectNotUsedTransactions', async (httpRe
   const selectNotUsedTransactionsResult = await paymentManagementFunctions.selectNotUsedTransactions();
   httpResponse.end(selectNotUsedTransactionsResult);
 });
+
+backendPaymentHttpRequestServer.post('/selectLocalityAgents', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const localityAgentLocalityID = httpRequestQuery.localityAgentLocalityID;
+  const selectLocalityAgentsResult = await paymentManagementFunctions.selectLocalityAgents(localityAgentLocalityID);
+  httpResponse.end(selectLocalityAgentsResult);
+});
+
+backendPaymentHttpRequestServer.post('/syncTransaction', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const transactionID = httpRequestQuery.transactionID;
+  const transactionStore = httpRequestQuery.transactionStore;
+  const transactionApprover = httpRequestQuery.transactionApprover;
+  const transactionRelatedMessageID = httpRequestQuery.transactionRelatedMessageID;
+  const syncTransactionResult = await paymentManagementFunctions.syncTransaction(websocketConnection, transactionID, transactionStore, transactionApprover, transactionRelatedMessageID);
+  httpResponse.end(syncTransactionResult);
+});
