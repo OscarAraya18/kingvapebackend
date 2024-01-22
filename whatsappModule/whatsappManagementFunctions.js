@@ -106,7 +106,7 @@ module.exports = {
           {
             'messaging_product': 'whatsapp',
             'to': whatsappConversationRecipientPhoneNumber, 
-            'type': 'template', 'template': {'name': 'arreglo', 'language': {'code': 'es'}}
+            'type': 'template', 'template': {'name': 'agentstartmessage', 'language': {'code': 'es'}}
           };
           httpDataToSendWhatsappTextMessage = JSON.stringify(httpDataToSendWhatsappTextMessage);
           const sendWhatsappMessageResult = await this.sendWhatsappMessage(httpDataToSendWhatsappTextMessage);
@@ -1216,7 +1216,7 @@ module.exports = {
       {
         'messaging_product': 'whatsapp',
         'to': storeMessageRecipientPhoneNumber, 
-        'type': 'template', 'template': {'name': 'arreglo', 'language': {'code': 'es'}}
+        'type': 'template', 'template': {'name': 'agentstartmessage', 'language': {'code': 'es'}}
       };
       const sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
       if (sendWhatsappMessageResult.success){
@@ -1373,7 +1373,7 @@ module.exports = {
         {
           'messaging_product': 'whatsapp',
           'to': whatsappConversationRecipientPhoneNumber, 
-          'type': 'template', 'template': {'name': 'arreglo', 'language': {'code': 'es'}}
+          'type': 'template', 'template': {'name': 'agentstartmessage', 'language': {'code': 'es'}}
         };
         const sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
         if (sendWhatsappMessageResult.success){
