@@ -2,7 +2,6 @@ const constants = require('./constants.js');
 
 const express = require('express');
 const cors = require('cors');
-const WebSocket = require('ws');
 
 const backendHttpRequestServer = express();
 backendHttpRequestServer.use(cors());
@@ -14,9 +13,7 @@ backendHttpRequestServer.use(function(httpRequest, httpResponse, next) {
   next();
 });
 
-
 backendHttpRequestServer.use(express.json({limit: '50mb'}));
-
 
 const server = backendHttpRequestServer.listen(constants.backendHttpRequestServerConnectionPort);
 module.exports = server;
@@ -28,18 +25,9 @@ const backendStoreHttpRequestServer = require('./storeModule/storeServer.js');
 const backendDashboardHttpRequestServer = require('./dashboardModule/dashboardServer.js');
 const backendPaymentHttpRequestServer = require('./paymentModule/paymentServer.js');
 
-
 backendHttpRequestServer.use(backendAgentHttpRequestServer);
 backendHttpRequestServer.use(backendContactHttpRequestServer);
 backendHttpRequestServer.use(backendWhatsappHttpRequestServer);
 backendHttpRequestServer.use(backendStoreHttpRequestServer);
 backendHttpRequestServer.use(backendDashboardHttpRequestServer);
 backendHttpRequestServer.use(backendPaymentHttpRequestServer);
-
-
-/*
-setInterval(() => {
-  const used = process.memoryUsage().heapUsed / 1024 / 1024;
-  console.log(`Memory usage: ${used.toFixed(2)} MB`);
-}, 1000);
-*/

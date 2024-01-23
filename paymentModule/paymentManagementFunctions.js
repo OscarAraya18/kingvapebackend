@@ -61,6 +61,14 @@ module.exports = {
     });
   },
 
+  selectLocalities: async function(){
+    return new Promise(async (selectLocalitiesPromiseResolve) => {
+      const selectLocalitiesSQL = `SELECT * FROM Localities;`;
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectLocalitiesSQL);
+      selectLocalitiesPromiseResolve(JSON.stringify(databaseResult));
+    });
+  },
+
 
 
 }

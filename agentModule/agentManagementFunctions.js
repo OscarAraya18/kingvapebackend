@@ -1,175 +1,73 @@
-const constants = require('../constants.js');
 const databaseManagementFunctions = require('../databaseModule/databaseManagementFunctions.js');
 
 const axios = require('axios');
 
 module.exports = {
-
-  traduceText: async function(textToTraduce, languageToTraduce){
-    return new Promise(async (traduceTextPromiseResolve) => {
-      axios.post('https://api-free.deepl.com/v2/translate',
-      {
-        text: [textToTraduce],
-        target_lang: languageToTraduce
-      },
-        {headers: {'Authorization': 'DeepL-Auth-Key 9be540ee-a00f-4710-a607-1d2fa1aa8fc8:fx', 'Content-Type': 'application/json'}}
-      ).then((response) =>{ 
-        try {
-          const traducedText = response.data.translations[0].text;
-          traduceTextPromiseResolve(JSON.stringify({success: true, result: traducedText}));
-        } catch (error) {
-          traduceTextPromiseResolve(JSON.stringify({success: false, result: error}));
-        }
-      })
-      .catch((error) =>{
-        traduceTextPromiseResolve(JSON.stringify({success: false, result: error}));
-      });
-    });
-  },
-
-
-  insertSticker: async function(stickerAgentID, stickerName, stickerFile){
-    return new Promise(async (insertStickerPromiseResolve) => {
-      const insertStickerSQL = `INSERT INTO Stickers (stickerAgentID, stickerName, stickerFile) VALUES (?, ?, ?);`;
-      const insertStickerValues = [stickerAgentID, stickerName, Buffer.from(stickerFile.split(",")[1], 'base64')];
-      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(insertStickerSQL, insertStickerValues);
-      insertStickerPromiseResolve(JSON.stringify(databaseResult));
-    });
-  },
-
-  insertNotification: async function(notificationAgentID, notificationName, notificationPhoneNumber, notificationDateTime){
-    return new Promise(async (insertNotificationPromiseResolve) => {
-      const insertNotificationSQL = `INSERT INTO Notifications (notificationAgentID, notificationName, notificationPhoneNumber, notificationDateTime) VALUES (?, ?, ?, ?);`;
-      const insertNotificationValues = [notificationAgentID, notificationName, notificationPhoneNumber, notificationDateTime];
-      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(insertNotificationSQL, insertNotificationValues);
-      insertNotificationPromiseResolve(JSON.stringify(databaseResult));
-    });
-  },
-
-  useNotification: async function(notificationID){
-    return new Promise(async (useNotificationPromiseResolve) => {
-      const useNotificationSQL = `UPDATE Notifications SET notificationUsed=(?) WHERE notificationID=(?);`;
-      const notificationUsed = true;
-      const useNotificationValues = [notificationUsed, notificationID];
-      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(useNotificationSQL, useNotificationValues);
-      useNotificationPromiseResolve(JSON.stringify(databaseResult));
-    });
-  },
-
-  deleteNotification: async function(notificationID){
-    return new Promise(async (deleteNotificationPromiseResolve) => {
-      const deleteNotificationSQL = `DELETE FROM Notifications WHERE notificationID=(?);`;
-      const deleteNotificationValues = [notificationID];
-      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(deleteNotificationSQL, deleteNotificationValues);
-      deleteNotificationPromiseResolve(JSON.stringify(databaseResult));
-    });
-  },
-
-  selectAgentNotifications: async function(notificationAgentID){
-    return new Promise(async (selectAgentNotificationsPromiseResolve) => {
-      const selectAgentNotificationsSQL = `SELECT * FROM Notifications WHERE notificationAgentID=(?);`;
-      const selectAgentNotificationsValues = [notificationAgentID];
-      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAgentNotificationsSQL, selectAgentNotificationsValues);
-      selectAgentNotificationsPromiseResolve(JSON.stringify(databaseResult));
-    });
-  },
-
-  selectMissingLocalStickers: async function(stickerCurrentIDS){
-    return new Promise(async (selectMissingLocalStickersPromiseResolve) => {
-      var selectMissingLocalStickersSQL = '';
-      if (stickerCurrentIDS.length == 0){
-        selectMissingLocalStickersSQL = `SELECT * FROM Stickers WHERE stickerID;`;
-      } else {
-        selectMissingLocalStickersSQL = `SELECT * FROM Stickers WHERE stickerID NOT IN (?);`;
-      }
-      const selectMissingLocalStickersValues = [stickerCurrentIDS];
-      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectMissingLocalStickersSQL, selectMissingLocalStickersValues);
-      if (databaseResult.success){
-        const parsedStickers = databaseResult.result.map(sticker => {
-          return {
-            stickerID: sticker.stickerID,
-            stickerAgentID: sticker.stickerAgentID,
-            stickerName: sticker.stickerName,
-            stickerFile: Buffer.from(sticker.stickerFile).toString('base64')
-          };
-        });
-        selectMissingLocalStickersPromiseResolve(JSON.stringify({success: true, result: parsedStickers}));
-      } else {
-        selectMissingLocalStickersPromiseResolve(JSON.stringify(databaseResult));
-      }
-    });
-  },
-
-  agentLogin: async function(websocketConnection, agentUsername, agentPassword){
+  
+  /* 
+    EXECUTE METHODS
+  */
+  agentLogin: async function(agentUsername, agentPassword){
     return new Promise(async (agentLoginPromiseResolve) => {
       const selectAgentSQL = `SELECT * FROM Agents WHERE agentUsername=(?) AND agentPassword=(?);`;
       const selectAgentValues = [agentUsername, agentPassword];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAgentSQL, selectAgentValues);
       if (databaseResult.success){
         if (databaseResult.result.length == 0){
-          const websocketMessageContent = {success: false};
-          websocketConnection.sendWebsocketMessage('/agentLogin', JSON.stringify(websocketMessageContent));
-          agentLoginPromiseResolve(JSON.stringify(websocketMessageContent));
+          const agentLoginResult = {success: false};
+          agentLoginPromiseResolve(JSON.stringify(agentLoginResult));
         } else {
-          const agentID = databaseResult.result[0].agentID;
-          const agentName = databaseResult.result[0].agentName;
-          const agentUsername = databaseResult.result[0].agentUsername;
-          const agentPassword = databaseResult.result[0].agentPassword;
-          const agentType = databaseResult.result[0].agentType;
-          const agentStatus = databaseResult.result[0].agentStatus;
-          const agentStartMessage = databaseResult.result[0].agentStartMessage;
-          const agentEndMessage = databaseResult.result[0].agentEndMessage;
-          const agentProfileImage = Buffer.from(databaseResult.result[0].agentProfileImage).toString('base64');
-          const websocketMessageContent = 
+          const agentLoginResult = 
           {
             success: true,
             result: 
             {
-              agentID: agentID,
-              agentName: agentName,
-              agentUsername: agentUsername,
-              agentPassword: agentPassword,
-              agentProfileImage: agentProfileImage,
-              agentType: agentType,
-              agentStatus: agentStatus,
-              agentStartMessage: agentStartMessage,
-              agentEndMessage: agentEndMessage
+              agentID: databaseResult.result[0].agentID,
+              agentName: databaseResult.result[0].agentName,
+              agentUsername: databaseResult.result[0].agentUsername,
+              agentPassword: databaseResult.result[0].agentPassword,
+              agentProfileImage: Buffer.from(databaseResult.result[0].agentProfileImage).toString('base64'),
+              agentType: databaseResult.result[0].agentType,
+              agentStatus: databaseResult.result[0].agentStatus,
+              agentStartMessage: databaseResult.result[0].agentStartMessage,
+              agentEndMessage: databaseResult.result[0].agentEndMessage
             }
           };
-          websocketConnection.sendWebsocketMessage('/agentLogin', websocketMessageContent);
-          agentLoginPromiseResolve(JSON.stringify(websocketMessageContent));
+          agentLoginPromiseResolve(JSON.stringify(agentLoginResult));
         }
       } else {
-        websocketConnection.sendWebsocketMessage('/agentLogin', databaseResult);
         agentLoginPromiseResolve(JSON.stringify(databaseResult));
       }
     });
   },
 
-  agentLogout: async function(websocketConnection, agentID){
+  agentLogout: async function(agentID){
     return new Promise(async (agentLogoutPromiseResolve) => {
       const updateAgentStatusSQL = `UPDATE Agents SET agentStatus=(?) WHERE agentID=(?);`;
       const agentStatus = 'offline';
       const updateAgentStatusValues = [agentStatus, agentID];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateAgentStatusSQL, updateAgentStatusValues);
       if (databaseResult.success){
-        const websocketMessageContent = {success: true, result: {agentID: agentID}};
-        websocketConnection.sendWebsocketMessage('/agentLogout', websocketMessageContent);
-        agentLogoutPromiseResolve(JSON.stringify(websocketMessageContent));
+        const agentLogoutResult = {success: true, result: {agentID: agentID}};
+        agentLogoutPromiseResolve(JSON.stringify(agentLogoutResult));
       } else {
-        websocketConnection.sendWebsocketMessage('/agentLogout', databaseResult);
         agentLogoutPromiseResolve(JSON.stringify(databaseResult));
       }
     });
   },
 
-  updateAgentLoginCredentials: async function(agentID, agentUsername, agentPassword, agentProfileImage){
+
+  /*
+    UPDATE METHODS
+  */
+  updateAgentLoginCredentials: async function(agentID, agentUsername, agentPassword, agentProfileImageAsBase64){
     return new Promise(async (updateAgentLoginCredentialsPromiseResolve) => {
       const updateAgentLoginCredentialsSQL = `UPDATE Agents SET agentUsername=(?), agentPassword=(?), agentProfileImage=(?) WHERE agentID=(?);`;
-      const updateAgentLoginCredentialsValues = [agentUsername, agentPassword, Buffer.from(agentProfileImage, 'base64'), agentID];
+      const agentProfileImageAsBlob = Buffer.from(agentProfileImageAsBase64, 'base64');
+      const updateAgentLoginCredentialsValues = [agentUsername, agentPassword, agentProfileImageAsBlob, agentID];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateAgentLoginCredentialsSQL, updateAgentLoginCredentialsValues);
       if (databaseResult.success){
-        const websocketMessageContent = 
+        const updateAgentLoginCredentialsResult = 
         {
           success: true, 
           result: 
@@ -180,19 +78,10 @@ module.exports = {
             agentProfileImage: agentProfileImage
           }
         };
-        updateAgentLoginCredentialsPromiseResolve(JSON.stringify(websocketMessageContent));
+        updateAgentLoginCredentialsPromiseResolve(JSON.stringify(updateAgentLoginCredentialsResult));
       } else {
         updateAgentLoginCredentialsPromiseResolve(JSON.stringify(databaseResult));
       }
-    });
-  },
-
-  updateAgentFromAdminPortal: async function(agentID, agentUsername, agentPassword, agentName){
-    return new Promise(async (updateAgentFromAdminPortalPromiseResolve) => {
-      const updateAgentFromAdminPortalSQL = `UPDATE Agents SET agentUsername=(?), agentPassword=(?), agentName=(?) WHERE agentID=(?);`;
-      const updateAgentFromAdminPortalValues = [agentUsername, agentPassword, agentName, agentID];
-      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateAgentFromAdminPortalSQL, updateAgentFromAdminPortalValues);
-      updateAgentFromAdminPortalPromiseResolve(JSON.stringify(databaseResult));
     });
   },
 
@@ -207,15 +96,24 @@ module.exports = {
         const insertAgentStatusChangeValues = [agentID, agentStatus, agentStatusChangeDateTime];
         const insertAgentStatusChangeDatabaseResult = await databaseManagementFunctions.executeDatabaseSQL(insertAgentStatusChangeSQL, insertAgentStatusChangeValues);
         if (insertAgentStatusChangeDatabaseResult.success){
-          const websocketMessageContent = {success: true, result: {agentID: agentID, agentName: agentName, agentStatus: agentStatus}};
-          websocketConnection.sendWebsocketMessage('/updateAgentStatus', websocketMessageContent);
+          const websocketMessageContent = 
+          {
+            success: true, 
+            result: 
+            {
+              agentID: agentID, 
+              agentName: agentName, 
+              agentStatus: agentStatus
+            }
+          };
+          websocketConnection.sendWebsocketMessage('/agent/update/agentStatus', websocketMessageContent);
           updateAgentStatusPromiseResolve(JSON.stringify(websocketMessageContent));
         } else {
-          websocketConnection.sendWebsocketMessage('/updateAgentStatus', insertAgentStatusChangeDatabaseResult);
+          websocketConnection.sendWebsocketMessage('/agent/update/agentStatus', insertAgentStatusChangeDatabaseResult);
           updateAgentStatusPromiseResolve(JSON.stringify(insertAgentStatusChangeDatabaseResult));
         }
       } else {
-        websocketConnection.sendWebsocketMessage('/updateAgentStatus', updateAgentStatusDatabaseResult);
+        websocketConnection.sendWebsocketMessage('/agent/update/agentStatus', updateAgentStatusDatabaseResult);
         updateAgentStatusPromiseResolve(JSON.stringify(updateAgentStatusDatabaseResult));
       }
     });
@@ -227,7 +125,16 @@ module.exports = {
       const updateAgentAutomaticMessagesValues = [agentStartMessage, agentEndMessage, agentID];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateAgentAutomaticMessagesSQL, updateAgentAutomaticMessagesValues);
       if (databaseResult.success){
-        const websocketMessageContent = {success: true, result: {agentID: agentID, agentStartMessage: agentStartMessage, agentEndMessage: agentEndMessage}};
+        const websocketMessageContent = 
+        {
+          success: true, 
+          result: 
+          {
+            agentID: agentID, 
+            agentStartMessage: agentStartMessage, 
+            agentEndMessage: agentEndMessage
+          }
+        };
         updateAgentAutomaticMessagesPromiseResolve(JSON.stringify(websocketMessageContent));
       } else {
         updateAgentAutomaticMessagesPromiseResolve(JSON.stringify(databaseResult));
@@ -235,14 +142,31 @@ module.exports = {
     });
   },
 
-  selectAllAgents: async function (){
-    return new Promise(async (selectAllAgentsPromiseResolve) => {
+  updateAgentFromAdminPortal: async function(agentID, agentUsername, agentPassword, agentName){
+    return new Promise(async (updateAgentFromAdminPortalPromiseResolve) => {
+      const updateAgentFromAdminPortalSQL = `UPDATE Agents SET agentUsername=(?), agentPassword=(?), agentName=(?) WHERE agentID=(?);`;
+      const updateAgentFromAdminPortalValues = [agentUsername, agentPassword, agentName, agentID];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateAgentFromAdminPortalSQL, updateAgentFromAdminPortalValues);
+      updateAgentFromAdminPortalPromiseResolve(JSON.stringify(databaseResult));
+    });
+  },
+
+
+  /*
+    SELECT METHODS
+  */
+  selectAgents: async function (){
+    return new Promise(async (selectAgentsPromiseResolve) => {
       const selectAllAgentsSQL = `SELECT * FROM Agents;`;
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAllAgentsSQL);
-      for (var agent in databaseResult.result){
-        databaseResult.result[agent].agentProfileImage = Buffer.from(databaseResult.result[agent].agentProfileImage).toString('base64');
+      if (databaseResult.success){
+        for (var agent in databaseResult.result){
+          databaseResult.result[agent].agentProfileImage = Buffer.from(databaseResult.result[agent].agentProfileImage).toString('base64');
+        }
+        selectAgentsPromiseResolve(JSON.stringify(databaseResult));
+      } else {
+        selectAgentsPromiseResolve(JSON.stringify(databaseResult));
       }
-      selectAllAgentsPromiseResolve(JSON.stringify(databaseResult));
     });
   },
 
@@ -1163,6 +1087,102 @@ module.exports = {
         result: subresult
       };
       selectFilteredTodayTopSellPromiseResolve(JSON.stringify(result));
+    });
+  },
+
+
+  traduceText: async function(textToTraduce, languageToTraduce){
+    return new Promise(async (traduceTextPromiseResolve) => {
+      axios.post('https://api-free.deepl.com/v2/translate',
+      {
+        text: [textToTraduce],
+        target_lang: languageToTraduce
+      },
+        {headers: {'Authorization': 'DeepL-Auth-Key 9be540ee-a00f-4710-a607-1d2fa1aa8fc8:fx', 'Content-Type': 'application/json'}}
+      ).then((response) =>{ 
+        try {
+          const traducedText = response.data.translations[0].text;
+          traduceTextPromiseResolve(JSON.stringify({success: true, result: traducedText}));
+        } catch (error) {
+          traduceTextPromiseResolve(JSON.stringify({success: false, result: error}));
+        }
+      })
+      .catch((error) =>{
+        traduceTextPromiseResolve(JSON.stringify({success: false, result: error}));
+      });
+    });
+  },
+
+
+  insertSticker: async function(stickerAgentID, stickerName, stickerFile){
+    return new Promise(async (insertStickerPromiseResolve) => {
+      const insertStickerSQL = `INSERT INTO Stickers (stickerAgentID, stickerName, stickerFile) VALUES (?, ?, ?);`;
+      const insertStickerValues = [stickerAgentID, stickerName, Buffer.from(stickerFile.split(",")[1], 'base64')];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(insertStickerSQL, insertStickerValues);
+      insertStickerPromiseResolve(JSON.stringify(databaseResult));
+    });
+  },
+
+  insertNotification: async function(notificationAgentID, notificationName, notificationPhoneNumber, notificationDateTime){
+    return new Promise(async (insertNotificationPromiseResolve) => {
+      const insertNotificationSQL = `INSERT INTO Notifications (notificationAgentID, notificationName, notificationPhoneNumber, notificationDateTime) VALUES (?, ?, ?, ?);`;
+      const insertNotificationValues = [notificationAgentID, notificationName, notificationPhoneNumber, notificationDateTime];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(insertNotificationSQL, insertNotificationValues);
+      insertNotificationPromiseResolve(JSON.stringify(databaseResult));
+    });
+  },
+
+  useNotification: async function(notificationID){
+    return new Promise(async (useNotificationPromiseResolve) => {
+      const useNotificationSQL = `UPDATE Notifications SET notificationUsed=(?) WHERE notificationID=(?);`;
+      const notificationUsed = true;
+      const useNotificationValues = [notificationUsed, notificationID];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(useNotificationSQL, useNotificationValues);
+      useNotificationPromiseResolve(JSON.stringify(databaseResult));
+    });
+  },
+
+  deleteNotification: async function(notificationID){
+    return new Promise(async (deleteNotificationPromiseResolve) => {
+      const deleteNotificationSQL = `DELETE FROM Notifications WHERE notificationID=(?);`;
+      const deleteNotificationValues = [notificationID];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(deleteNotificationSQL, deleteNotificationValues);
+      deleteNotificationPromiseResolve(JSON.stringify(databaseResult));
+    });
+  },
+
+  selectAgentNotifications: async function(notificationAgentID){
+    return new Promise(async (selectAgentNotificationsPromiseResolve) => {
+      const selectAgentNotificationsSQL = `SELECT * FROM Notifications WHERE notificationAgentID=(?);`;
+      const selectAgentNotificationsValues = [notificationAgentID];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAgentNotificationsSQL, selectAgentNotificationsValues);
+      selectAgentNotificationsPromiseResolve(JSON.stringify(databaseResult));
+    });
+  },
+
+  selectMissingLocalStickers: async function(stickerCurrentIDS){
+    return new Promise(async (selectMissingLocalStickersPromiseResolve) => {
+      var selectMissingLocalStickersSQL = '';
+      if (stickerCurrentIDS.length == 0){
+        selectMissingLocalStickersSQL = `SELECT * FROM Stickers WHERE stickerID;`;
+      } else {
+        selectMissingLocalStickersSQL = `SELECT * FROM Stickers WHERE stickerID NOT IN (?);`;
+      }
+      const selectMissingLocalStickersValues = [stickerCurrentIDS];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectMissingLocalStickersSQL, selectMissingLocalStickersValues);
+      if (databaseResult.success){
+        const parsedStickers = databaseResult.result.map(sticker => {
+          return {
+            stickerID: sticker.stickerID,
+            stickerAgentID: sticker.stickerAgentID,
+            stickerName: sticker.stickerName,
+            stickerFile: Buffer.from(sticker.stickerFile).toString('base64')
+          };
+        });
+        selectMissingLocalStickersPromiseResolve(JSON.stringify({success: true, result: parsedStickers}));
+      } else {
+        selectMissingLocalStickersPromiseResolve(JSON.stringify(databaseResult));
+      }
     });
   }
 

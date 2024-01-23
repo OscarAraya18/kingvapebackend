@@ -36,3 +36,9 @@ backendPaymentHttpRequestServer.post('/syncTransaction', async (httpRequest, htt
   const syncTransactionResult = await paymentManagementFunctions.syncTransaction(websocketConnection, transactionID, transactionStore, transactionApprover, transactionRelatedMessageID);
   httpResponse.end(syncTransactionResult);
 });
+
+backendPaymentHttpRequestServer.post('/selectLocalities', async (httpRequest, httpResponse) => {
+  const selectLocalitiesResult = await paymentManagementFunctions.selectLocalities();
+  httpResponse.end(selectLocalitiesResult);
+});
+

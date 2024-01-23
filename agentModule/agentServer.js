@@ -8,32 +8,39 @@ const backendAgentHttpRequestServer = express.Router();
 module.exports = backendAgentHttpRequestServer;
 
 
-backendAgentHttpRequestServer.post('/agentLogin', async (httpRequest, httpResponse) => {
+/*
+  EXECUTE ROUTES
+*/
+backendAgentHttpRequestServer.post('/agent/login', async (httpRequest, httpResponse) => {
   const httpRequestQuery = httpRequest.body;
   const agentUsername = httpRequestQuery.agentUsername;
   const agentPassword = httpRequestQuery.agentPassword;
-  const agentLoginResult = await agentManagementFunctions.agentLogin(websocketConnection, agentUsername, agentPassword);
+  const agentLoginResult = await agentManagementFunctions.agentLogin(agentUsername, agentPassword);
   httpResponse.end(agentLoginResult);
 });
 
-backendAgentHttpRequestServer.post('/agentLogout', async (httpRequest, httpResponse) => {
+backendAgentHttpRequestServer.post('/agent/logout', async (httpRequest, httpResponse) => {
   const httpRequestQuery = httpRequest.body;
   const agentID = httpRequestQuery.agentID;
-  const agentLogoutResult = await agentManagementFunctions.agentLogout(websocketConnection, agentID);
+  const agentLogoutResult = await agentManagementFunctions.agentLogout(agentID);
   httpResponse.end(agentLogoutResult);
 });
 
-backendAgentHttpRequestServer.post('/updateAgentLoginCredentials', async (httpRequest, httpResponse) => {
+
+/*
+  UPDATE ROUTES
+*/
+backendAgentHttpRequestServer.post('/agent/update/loginCredentials', async (httpRequest, httpResponse) => {
   const httpRequestQuery = httpRequest.body;
   const agentID = httpRequestQuery.agentID;
   const agentUsername = httpRequestQuery.agentUsername;
   const agentPassword = httpRequestQuery.agentPassword;
-  const agentProfileImage = httpRequestQuery.agentProfileImage;
-  const updateAgentLoginCredentialsResult = await agentManagementFunctions.updateAgentLoginCredentials(agentID, agentUsername, agentPassword, agentProfileImage);
+  const agentProfileImageAsBase64 = httpRequestQuery.agentProfileImageAsBase64;
+  const updateAgentLoginCredentialsResult = await agentManagementFunctions.updateAgentLoginCredentials(agentID, agentUsername, agentPassword, agentProfileImageAsBase64);
   httpResponse.end(updateAgentLoginCredentialsResult);
 });
 
-backendAgentHttpRequestServer.post('/updateAgentStatus', async (httpRequest, httpResponse) => {
+backendAgentHttpRequestServer.post('/agent/update/agentStatus', async (httpRequest, httpResponse) => {
   const httpRequestQuery = httpRequest.body;
   const agentID = httpRequestQuery.agentID;
   const agentName = httpRequestQuery.agentName;
@@ -42,7 +49,7 @@ backendAgentHttpRequestServer.post('/updateAgentStatus', async (httpRequest, htt
   httpResponse.end(updateAgentStatusResult);
 });
 
-backendAgentHttpRequestServer.post('/updateAgentAutomaticMessages', async (httpRequest, httpResponse) => {
+backendAgentHttpRequestServer.post('/agent/update/automaticMessages', async (httpRequest, httpResponse) => {
   const httpRequestQuery = httpRequest.body;
   const agentID = httpRequestQuery.agentID;
   const agentStartMessage = httpRequestQuery.agentStartMessage;
@@ -51,8 +58,22 @@ backendAgentHttpRequestServer.post('/updateAgentAutomaticMessages', async (httpR
   httpResponse.end(updateAgentAutomaticMessagesResult);
 });
 
-backendAgentHttpRequestServer.get('/selectAllAgents', async (httpRequest, httpResponse) => {
-  const selectAllAgentsResult = await agentManagementFunctions.selectAllAgents();
+backendAgentHttpRequestServer.post('/agent/update', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const agentID = httpRequestQuery.agentID;
+  const agentUsername = httpRequestQuery.agentUsername;
+  const agentPassword = httpRequestQuery.agentPassword;
+  const agentName = httpRequestQuery.agentName;
+  const updateAgentFromAdminPortalResult = await agentManagementFunctions.updateAgentFromAdminPortal(agentID, agentUsername, agentPassword, agentName);
+  httpResponse.end(updateAgentFromAdminPortalResult);
+});
+
+
+/*
+  SELECT ROUTES
+*/
+backendAgentHttpRequestServer.get('/agent/select', async (httpRequest, httpResponse) => {
+  const selectAllAgentsResult = await agentManagementFunctions.selectAgents();
   httpResponse.end(selectAllAgentsResult);
 });
 
@@ -131,16 +152,6 @@ backendAgentHttpRequestServer.post('/deleteAgent', async (httpRequest, httpRespo
   const agentID = httpRequestQuery.agentID;
   const deleteAgentResult = await agentManagementFunctions.deleteAgent(agentID);
   httpResponse.end(deleteAgentResult);
-});
-
-backendAgentHttpRequestServer.post('/updateAgentFromAdminPortal', async (httpRequest, httpResponse) => {
-  const httpRequestQuery = httpRequest.body;
-  const agentID = httpRequestQuery.agentID;
-  const agentUsername = httpRequestQuery.agentUsername;
-  const agentPassword = httpRequestQuery.agentPassword;
-  const agentName = httpRequestQuery.agentName;
-  const updateAgentFromAdminPortalResult = await agentManagementFunctions.updateAgentFromAdminPortal(agentID, agentUsername, agentPassword, agentName);
-  httpResponse.end(updateAgentFromAdminPortalResult);
 });
 
 backendAgentHttpRequestServer.post('/selectApplicationStatus', async (httpRequest, httpResponse) => {
