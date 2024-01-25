@@ -1333,11 +1333,10 @@ module.exports = {
         if (sendAgentEndMessage){
           const sendWhatsappMessageData =
           {
-            'messaging_product': 'whatsapp',
+            'messaging_product': 'whatsapp', 
             'to': whatsappConversationRecipientPhoneNumber, 
-            'type': 'template', 'template': {'name': 'fin', 'language': {'code': 'es'},
-            'components': [{'type': 'body', 'parameters': [{'type': 'text', 'text': whatsappTextMessageBody}, {'type': 'text', 'text': 'https://kingvapecr.com/pages/feedback'}]}]     
-            }
+            'type': 'text',
+            'text': {'body': whatsappTextMessageBody}
           };
           const sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
         }
