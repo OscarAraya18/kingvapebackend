@@ -705,7 +705,7 @@ module.exports = {
           evaluatedNumbers[whatsappConversationRecipientPhoneNumber] = 'true';
           if (agentName in agentsAndConversations){
             if (whatsappConversationAmount == 0){
-              if (whatsappConversationCloseComment == 'Consulta sobre producto sin venta'){
+              if (whatsappConversationCloseComment == 'No contestó' || whatsappConversationCloseComment == 'Consulta sobre producto'){
                 agentsAndConversations[agentName]['whatsappNotSelledConversations'] = agentsAndConversations[agentName]['whatsappNotSelledConversations'] + 1;
               }
             } else {
@@ -713,7 +713,7 @@ module.exports = {
             }
           } else {
             if (whatsappConversationAmount == 0){
-              if (whatsappConversationCloseComment == 'Consulta sobre producto sin venta'){
+              if (whatsappConversationCloseComment == 'No contestó' || whatsappConversationCloseComment == 'Consulta sobre producto'){
                 agentsAndConversations[agentName] = {'agentID': sortedDatabaseResultObject.agentID, 'whatsappSelledConversations': 0, 'whatsappNotSelledConversations': 1}
               }
             } else {
@@ -800,7 +800,7 @@ module.exports = {
           evaluatedNumbers[whatsappConversationRecipientPhoneNumber] = 'true';
           if (agentName in agentsAndConversations){
             if (whatsappConversationAmount == 0){
-              if (whatsappConversationCloseComment == 'Consulta sobre producto sin venta'){
+              if (whatsappConversationCloseComment == 'No contestó' || whatsappConversationCloseComment == 'Consulta sobre producto'){
                 agentsAndConversations[agentName]['whatsappNotSelledConversations'] = agentsAndConversations[agentName]['whatsappNotSelledConversations'] + 1;
               }
             } else {
@@ -808,7 +808,7 @@ module.exports = {
             }
           } else {
             if (whatsappConversationAmount == 0){
-              if (whatsappConversationCloseComment == 'Consulta sobre producto sin venta'){
+              if (whatsappConversationCloseComment == 'No contestó' || whatsappConversationCloseComment == 'Consulta sobre producto'){
                 agentsAndConversations[agentName] = {'agentID': sortedDatabaseResultObject.agentID, 'whatsappSelledConversations': 0, 'whatsappNotSelledConversations': 1}
               }
             } else {
