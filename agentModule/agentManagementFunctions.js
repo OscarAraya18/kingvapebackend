@@ -482,6 +482,12 @@ module.exports = {
           whatsappConversations[whatsappConversationID]['whatsappConversationMessages'][whatsappGeneralMessage.whatsappGeneralMessageIndex]['whatsappFavoriteImageMessageCaption'] = whatsappGeneralMessage.whatsappFavoriteImageMessageCaption;
         }
       }
+
+      for (var whatsappConversationID in whatsappConversations){
+        if (whatsappConversations[whatsappConversationID]['whatsappConversationMessages'].length == 0){
+          delete whatsappConversations[whatsappConversationID];
+        }
+      }
       composeWhatsappConversationsPromiseResolve(whatsappConversations);
     });
   },
