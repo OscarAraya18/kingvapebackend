@@ -884,6 +884,7 @@ module.exports = {
       var evaluatedNumbers = {};
       var whatsappSelledConversations = 0;
       var whatsappNotSelledConversations = 0;
+      if (databaseResult.success){
       const sortedDatabaseResult = databaseResult.result.sort((a, b) => b.whatsappConversationAmount - a.whatsappConversationAmount);
       for (var sortedDatabaseResultIndex in sortedDatabaseResult){
         const sortedDatabaseResultObject = sortedDatabaseResult[sortedDatabaseResultIndex];
@@ -909,6 +910,9 @@ module.exports = {
           whatsappSelledConversations: whatsappSelledConversations,
           whatsappNotSelledConversations: whatsappNotSelledConversations
         }]
+      }
+      } else {
+selectTodayInformationPromiseResolve(JSON.stringify({success: false}))
       }
       selectTodayInformationPromiseResolve(JSON.stringify(result));
     });
