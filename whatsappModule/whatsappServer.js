@@ -10,52 +10,46 @@ const express = require('express');
 const backendWhatsappHttpRequestServer = express.Router();
 module.exports = backendWhatsappHttpRequestServer;
 
-const messageQueue = [];
-let isProcessing = false;
+const messageQueueMap = new Map();
 
-const addToQueue = async (websocketConnection, httpRequest) => {
-  return new Promise((resolve, reject) => {
-    messageQueue.push({websocketConnection, httpRequest, resolve, reject});
-    processQueue();
-  });
-};
-
-const processQueue = async () => {
-  if (isProcessing || messageQueue.length === 0) {
-    return;
-  }
-  const { websocketConnection, httpRequest, resolve, reject } = messageQueue.shift();
-  try {
-    isProcessing = true;
-    const receiveWhatsappMessageResponse = await whatsappManagementFunctions.receiveWhatsappMessage(websocketConnection, httpRequest);
-    resolve(receiveWhatsappMessageResponse);
-  } catch (error) {
-    reject(error);
-  } finally {
-    isProcessing = false;
-    processQueue();
+const addToQueueOrExecute = async (websocketConnection, httpRequest) => {
+  const whatsappConversationRecipientPhoneNumber = httpRequest['body']['entry'][0]['changes'][0]['value']['messages'][0]['from'];
+  if (messageQueueMap.has(whatsappConversationRecipientPhoneNumber)) {
+    return new Promise((resolve, reject) => {
+      messageQueueMap.get(whatsappConversationRecipientPhoneNumber).push({websocketConnection, httpRequest, resolve, reject});
+    });
+  } else {
+    return whatsappManagementFunctions.receiveWhatsappMessage(websocketConnection, httpRequest);
   }
 };
 
+const processQueueByNumber = async (whatsappConversationRecipientPhoneNumber) => {
+  const queue = messageQueueMap.get(whatsappConversationRecipientPhoneNumber);
+  while (queue.length > 0) {
+    const {websocketConnection, httpRequest, resolve, reject} = queue.shift();
+    try {
+      const receiveWhatsappMessageResponse = await whatsappManagementFunctions.receiveWhatsappMessage(websocketConnection, httpRequest);
+      resolve(receiveWhatsappMessageResponse);
+    } catch (error) {
+      reject(error);
+    }
+  }
+  messageQueueMap.delete(whatsappConversationRecipientPhoneNumber);
+};
 
 backendWhatsappHttpRequestServer.post('/webhookConnection', async (httpRequest, httpResponse) => {
   try {
+    const whatsappConversationRecipientPhoneNumber = httpRequest['body']['entry'][0]['changes'][0]['value']['messages'][0]['from'];
     if (httpRequest.body['entry'][0]['changes'][0]['value']['messages']){
-
-      /*
-      const receiveWhatsappMessageResponse = await whatsappManagementFunctions.receiveWhatsappMessage(websocketConnection, httpRequest);
+      const receiveWhatsappMessageResponse = await addToQueueOrExecute(websocketConnection, httpRequest);
       httpResponse.end(receiveWhatsappMessageResponse);
-      */
-
-      const receiveWhatsappMessageResponse = await addToQueue(websocketConnection, httpRequest);
-      httpResponse.end(receiveWhatsappMessageResponse);
-
     } else if (httpRequest.body['entry'][0]['changes'][0]['value']['statuses']){
       const whatsappGeneralMessageID = httpRequest.body['entry'][0]['changes'][0]['value']['statuses'][0]['id'];
       const whatsappGeneralMessageStatus = httpRequest.body['entry'][0]['changes'][0]['value']['statuses'][0]['status'];
       const updateWhatsappMessageStatusResponse = await whatsappManagementFunctions.updateWhatsappMessageStatus(websocketConnection, whatsappGeneralMessageID, whatsappGeneralMessageStatus);
       httpResponse.end(updateWhatsappMessageStatusResponse);
     }
+    processQueueByNumber(whatsappConversationRecipientPhoneNumber);
   } catch (error) {
     console.log(error);
   }
