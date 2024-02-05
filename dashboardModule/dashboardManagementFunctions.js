@@ -11,6 +11,7 @@ module.exports = {
         WhatsappConversations.whatsappConversationRecipientPhoneNumber,
         WhatsappConversations.whatsappConversationRecipientProfileName,
         Agents.agentName,
+        Agents.agentID,
         WhatsappConversations.whatsappConversationStartDateTime,
         WhatsappGeneralMessages.whatsappGeneralMessageCreationDateTime,
         WhatsappGeneralMessages.whatsappGeneralMessageOwnerPhoneNumber
@@ -144,6 +145,15 @@ module.exports = {
       const selectAgentNamesSQL = `SELECT agentName, agentID FROM Agents ORDER BY CASE WHEN agentType = 'admin' THEN 1 ELSE 0 END, agentName;`;
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAgentNamesSQL);
       selectAgentNamesPromiseResolve(JSON.stringify(databaseResult));
+    });
+  },
+
+  selectTransferableAgentNames: async function(){
+    return new Promise(async (selectTransferableAgentNamesPromiseResolve) => {
+      const selectTransferableAgentNamesSQL = `SELECT agentName, agentID FROM Agents  WHERE agentIsActive=(?) ORDER BY CASE WHEN agentType = 'admin' THEN 1 ELSE 0 END, agentName;`;
+      const selectTransferableAgentNamesValues = [true];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectTransferableAgentNamesSQL, selectTransferableAgentNamesValues);
+      selectTransferableAgentNamesPromiseResolve(JSON.stringify(databaseResult));
     });
   },
 

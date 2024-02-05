@@ -24,6 +24,11 @@ backendDashboardHttpRequestServer.get('/selectAgentNames', async (httpRequest, h
   httpResponse.end(selectAgentNamesResult);
 });
 
+backendDashboardHttpRequestServer.get('/selectTransferableAgents', async (httpRequest, httpResponse) => {
+  const selectTransferableAgentNamesResult = await dashboardManagementFunctions.selectTransferableAgentNames();
+  httpResponse.end(selectTransferableAgentNamesResult);
+});
+
 backendDashboardHttpRequestServer.post('/selectFilteredConversations', async (httpRequest, httpResponse) => {
   const httpRequestQuery = httpRequest.body;
   const initialDate = httpRequestQuery.initialDateFiltered;

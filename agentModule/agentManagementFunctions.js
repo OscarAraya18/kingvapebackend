@@ -884,7 +884,6 @@ module.exports = {
       var evaluatedNumbers = {};
       var whatsappSelledConversations = 0;
       var whatsappNotSelledConversations = 0;
-      console.log(databaseResult);
       if (databaseResult.success){
         const sortedDatabaseResult = databaseResult.result.sort((a, b) => b.whatsappConversationAmount - a.whatsappConversationAmount);
         for (var sortedDatabaseResultIndex in sortedDatabaseResult){
