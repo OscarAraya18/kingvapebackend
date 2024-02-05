@@ -10,16 +10,46 @@ const express = require('express');
 const backendWhatsappHttpRequestServer = express.Router();
 module.exports = backendWhatsappHttpRequestServer;
 
+const messageQueue = [];
+let isProcessing = false;
 
-backendWhatsappHttpRequestServer.get('/webhookConnection', async (httpRequest, httpResponse) => {
-  httpResponse.end(url.parse(httpRequest.url,true).query['hub.challenge']);
-});
+const addToQueue = async (websocketConnection, httpRequest) => {
+  return new Promise((resolve, reject) => {
+    messageQueue.push({websocketConnection, httpRequest, resolve, reject});
+    processQueue();
+  });
+};
+
+const processQueue = async () => {
+  if (isProcessing || messageQueue.length === 0) {
+    return;
+  }
+  const { websocketConnection, httpRequest, resolve, reject } = messageQueue.shift();
+  try {
+    isProcessing = true;
+    const receiveWhatsappMessageResponse = await whatsappManagementFunctions.receiveWhatsappMessage(websocketConnection, httpRequest);
+    resolve(receiveWhatsappMessageResponse);
+  } catch (error) {
+    reject(error);
+  } finally {
+    isProcessing = false;
+    processQueue();
+  }
+};
+
 
 backendWhatsappHttpRequestServer.post('/webhookConnection', async (httpRequest, httpResponse) => {
   try {
     if (httpRequest.body['entry'][0]['changes'][0]['value']['messages']){
+
+      /*
       const receiveWhatsappMessageResponse = await whatsappManagementFunctions.receiveWhatsappMessage(websocketConnection, httpRequest);
       httpResponse.end(receiveWhatsappMessageResponse);
+      */
+
+      const receiveWhatsappMessageResponse = await addToQueue(websocketConnection, httpRequest);
+      httpResponse.end(receiveWhatsappMessageResponse);
+
     } else if (httpRequest.body['entry'][0]['changes'][0]['value']['statuses']){
       const whatsappGeneralMessageID = httpRequest.body['entry'][0]['changes'][0]['value']['statuses'][0]['id'];
       const whatsappGeneralMessageStatus = httpRequest.body['entry'][0]['changes'][0]['value']['statuses'][0]['status'];
@@ -29,6 +59,11 @@ backendWhatsappHttpRequestServer.post('/webhookConnection', async (httpRequest, 
   } catch (error) {
     console.log(error);
   }
+});
+
+
+backendWhatsappHttpRequestServer.get('/webhookConnection', async (httpRequest, httpResponse) => {
+  httpResponse.end(url.parse(httpRequest.url,true).query['hub.challenge']);
 });
 
 backendWhatsappHttpRequestServer.post('/sendWhatsappTextMessage', async (httpRequest, httpResponse) => {

@@ -884,36 +884,37 @@ module.exports = {
       var evaluatedNumbers = {};
       var whatsappSelledConversations = 0;
       var whatsappNotSelledConversations = 0;
+      console.log(databaseResult);
       if (databaseResult.success){
-      const sortedDatabaseResult = databaseResult.result.sort((a, b) => b.whatsappConversationAmount - a.whatsappConversationAmount);
-      for (var sortedDatabaseResultIndex in sortedDatabaseResult){
-        const sortedDatabaseResultObject = sortedDatabaseResult[sortedDatabaseResultIndex];
-        const whatsappConversationAmount = sortedDatabaseResultObject.whatsappConversationAmount;
-        const whatsappConversationCloseComment = sortedDatabaseResultObject.whatsappConversationCloseComment;
-        const whatsappConversationRecipientPhoneNumber = sortedDatabaseResultObject.whatsappConversationRecipientPhoneNumber;
-        if ((whatsappConversationAmount != 0) && (!(whatsappConversationRecipientPhoneNumber in evaluatedNumbers))){
-          whatsappSelledConversations = whatsappSelledConversations + 1;
-        }
-        if ((whatsappConversationAmount == 0) && (!(whatsappConversationRecipientPhoneNumber in evaluatedNumbers))){
-          if (whatsappConversationCloseComment == 'Consulta sobre producto sin venta'){
-            whatsappNotSelledConversations = whatsappNotSelledConversations + 1;
+        const sortedDatabaseResult = databaseResult.result.sort((a, b) => b.whatsappConversationAmount - a.whatsappConversationAmount);
+        for (var sortedDatabaseResultIndex in sortedDatabaseResult){
+          const sortedDatabaseResultObject = sortedDatabaseResult[sortedDatabaseResultIndex];
+          const whatsappConversationAmount = sortedDatabaseResultObject.whatsappConversationAmount;
+          const whatsappConversationCloseComment = sortedDatabaseResultObject.whatsappConversationCloseComment;
+          const whatsappConversationRecipientPhoneNumber = sortedDatabaseResultObject.whatsappConversationRecipientPhoneNumber;
+          if ((whatsappConversationAmount != 0) && (!(whatsappConversationRecipientPhoneNumber in evaluatedNumbers))){
+            whatsappSelledConversations = whatsappSelledConversations + 1;
           }
+          if ((whatsappConversationAmount == 0) && (!(whatsappConversationRecipientPhoneNumber in evaluatedNumbers))){
+            if (whatsappConversationCloseComment == 'Consulta sobre producto sin venta'){
+              whatsappNotSelledConversations = whatsappNotSelledConversations + 1;
+            }
+          }
+          evaluatedNumbers[whatsappConversationRecipientPhoneNumber] = 'true';
         }
-        evaluatedNumbers[whatsappConversationRecipientPhoneNumber] = 'true';
-      }
-      const result = 
-      {
-        success: true, 
-        result: 
-        [{
-          whatsappTotalConversations: whatsappSelledConversations + whatsappNotSelledConversations,
-          whatsappSelledConversations: whatsappSelledConversations,
-          whatsappNotSelledConversations: whatsappNotSelledConversations
-        }]
-      }
+        const result = 
+        {
+          success: true, 
+          result: 
+          [{
+            whatsappTotalConversations: whatsappSelledConversations + whatsappNotSelledConversations,
+            whatsappSelledConversations: whatsappSelledConversations,
+            whatsappNotSelledConversations: whatsappNotSelledConversations
+          }]
+        }
         selectTodayInformationPromiseResolve(JSON.stringify(result))
       } else {
-selectTodayInformationPromiseResolve(JSON.stringify({success: false}))
+        selectTodayInformationPromiseResolve(JSON.stringify({success: false}))
       }
       ;
     });
