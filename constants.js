@@ -1,6 +1,6 @@
 module.exports = {
-    backendHttpRequestServerConnectionPort: 8080,
-    backendWebsocketServerConnectionPort: 8080,
+    backendHttpRequestServerConnectionPort: 8081,
+    backendWebsocketServerConnectionPort: 8081,
 
     credentials: 
     {

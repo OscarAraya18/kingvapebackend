@@ -20,6 +20,14 @@ backendPaymentHttpRequestServer.post('/selectNotUsedTransactions', async (httpRe
   httpResponse.end(selectNotUsedTransactionsResult);
 });
 
+backendPaymentHttpRequestServer.post('/selectUsedTransactions', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const initialDate = httpRequestQuery.initialDate;
+  const endDate = httpRequestQuery.endDate;
+  const selectUsedTransactionsResult = await paymentManagementFunctions.selectUsedTransactions(initialDate, endDate);
+  httpResponse.end(selectUsedTransactionsResult);
+});
+
 backendPaymentHttpRequestServer.post('/selectLocalityAgents', async (httpRequest, httpResponse) => {
   const httpRequestQuery = httpRequest.body;
   const localityAgentLocalityID = httpRequestQuery.localityAgentLocalityID;
@@ -35,6 +43,13 @@ backendPaymentHttpRequestServer.post('/syncTransaction', async (httpRequest, htt
   const transactionRelatedMessageID = httpRequestQuery.transactionRelatedMessageID;
   const syncTransactionResult = await paymentManagementFunctions.syncTransaction(websocketConnection, transactionID, transactionStore, transactionApprover, transactionRelatedMessageID);
   httpResponse.end(syncTransactionResult);
+});
+
+backendPaymentHttpRequestServer.post('/reverseTransaction', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const transactionID = httpRequestQuery.transactionID;
+  const reverseTransactionResult = await paymentManagementFunctions.reverseTransaction(websocketConnection, transactionID);
+  httpResponse.end(reverseTransactionResult);
 });
 
 backendPaymentHttpRequestServer.post('/selectLocalities', async (httpRequest, httpResponse) => {

@@ -576,7 +576,7 @@ module.exports = {
           const composeWhatsappGeneralMessageResult = await this.composeWhatsappGeneralMessage(databaseResult.result[0]);
           selectWhatsappGeneralMessagePromiseResolve({success: true, result: composeWhatsappGeneralMessageResult});
         } else {
-          selectWhatsappGeneralMessagePromiseResolve({success: false, result: ''});
+          selectWhatsappGeneralMessagePromiseResolve({success: false, result: 'no message'});
         }
       } else {
         selectWhatsappGeneralMessagePromiseResolve(databaseResult);
