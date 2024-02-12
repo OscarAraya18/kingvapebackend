@@ -301,3 +301,15 @@ backendAgentHttpRequestServer.post('/traduceText', async (httpRequest, httpRespo
   const traduceTextResult = await agentManagementFunctions.traduceText(textToTraduce, languageToTraduce);
   httpResponse.end(traduceTextResult);
 });
+
+
+backendAgentHttpRequestServer.post('/updateWhatsappFavoriteImage', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const whatsappFavoriteImageID = httpRequestQuery.whatsappFavoriteImageID;
+  const whatsappFavoriteImageName = httpRequestQuery.whatsappFavoriteImageName;
+  const whatsappFavoriteImageFileID = httpRequestQuery.whatsappFavoriteImageFileID;
+  const whatsappFavoriteImageDriveURL = httpRequestQuery.whatsappFavoriteImageDriveURL;
+  const whatsappFavoriteImageCatalog = httpRequestQuery.whatsappFavoriteImageCatalog;
+  const updateWhatsappFavoriteImageResult = await agentManagementFunctions.updateWhatsappFavoriteImage(whatsappFavoriteImageID, whatsappFavoriteImageName, whatsappFavoriteImageFileID, whatsappFavoriteImageDriveURL, whatsappFavoriteImageCatalog);
+  httpResponse.end(updateWhatsappFavoriteImageResult); 
+});

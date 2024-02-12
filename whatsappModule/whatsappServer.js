@@ -211,8 +211,9 @@ backendWhatsappHttpRequestServer.post('/selectWhatsappClosedConversationFromWhat
   httpResponse.end(selectWhatsappClosedConversationFromWhatsappConversationRecipientPhoneNumberResult); 
 });
 
-
-backendWhatsappHttpRequestServer.get('/testing', async (httpRequest, httpResponse) => {
-  const testing = await whatsappManagementFunctions.testing();
-  httpResponse.end(testing); 
+backendWhatsappHttpRequestServer.post('/uploadWhatsappImage', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const whatsappImageFile = httpRequestQuery.whatsappImageFile.split('base64,')[1];
+  const uploadWhatsappImageResult = await whatsappManagementFunctions.uploadWhatsappImageFile(whatsappImageFile);
+  httpResponse.end(JSON.stringify(uploadWhatsappImageResult)); 
 });

@@ -1125,6 +1125,17 @@ module.exports = {
   },
 
 
+  updateWhatsappFavoriteImage: async function(whatsappFavoriteImageID, whatsappFavoriteImageName, whatsappFavoriteImageFileID, whatsappFavoriteImageDriveURL, whatsappFavoriteImageCatalog){
+    return new Promise(async (updateWhatsappFavoriteImagePromiseResolve) => {
+      const updateWhatsappFavoriteImageSQL = `UPDATE WhatsappFavoriteImages SET whatsappFavoriteImageName=(?), whatsappFavoriteImageFileID=(?), whatsappFavoriteImageDriveURL=(?), whatsappFavoriteImageCatalog=(?), whatsappFavoriteImageUploadDate=(?) WHERE whatsappFavoriteImageID=(?);`;
+      const whatsappFavoriteImageUploadDate = new Date().toString();
+      const updateWhatsappFavoriteImageValues = [whatsappFavoriteImageName, whatsappFavoriteImageFileID, whatsappFavoriteImageDriveURL, whatsappFavoriteImageCatalog, whatsappFavoriteImageUploadDate, whatsappFavoriteImageID];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateWhatsappFavoriteImageSQL, updateWhatsappFavoriteImageValues);
+      updateWhatsappFavoriteImagePromiseResolve(JSON.stringify(databaseResult));
+    });
+  },
+
+
   insertSticker: async function(stickerAgentID, stickerName, stickerFile){
     return new Promise(async (insertStickerPromiseResolve) => {
       const insertStickerSQL = `INSERT INTO Stickers (stickerAgentID, stickerName, stickerFile) VALUES (?, ?, ?);`;

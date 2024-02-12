@@ -541,4 +541,16 @@ module.exports = {
     return result;
   },
 
+
+
+  selectAllWhatsappFavoriteImages: function(){
+    return new Promise(async (selectAllWhatsappFavoriteImagesPromiseResolve) => {
+      const selectAllWhatsappFavoriteImagesSQL = `SELECT * FROM WhatsappFavoriteImages ORDER BY whatsappFavoriteImageName;`;
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAllWhatsappFavoriteImagesSQL);
+      selectAllWhatsappFavoriteImagesPromiseResolve(JSON.stringify(databaseResult));
+    });
+  },
+
+
+
 }

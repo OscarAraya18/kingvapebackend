@@ -65,3 +65,8 @@ backendDashboardHttpRequestServer.post('/selectPlotInformation', async (httpRequ
     httpResponse.end(selectPlotInformationResult);
   }
 });
+
+backendDashboardHttpRequestServer.post('/selectAllWhatsappFavoriteImages', async (httpRequest, httpResponse) => {
+  const selectAllWhatsappFavoriteImagesResult = await dashboardManagementFunctions.selectAllWhatsappFavoriteImages();
+  httpResponse.end(selectAllWhatsappFavoriteImagesResult);
+});
