@@ -35,6 +35,11 @@ backendPaymentHttpRequestServer.post('/selectLocalityAgents', async (httpRequest
   httpResponse.end(selectLocalityAgentsResult);
 });
 
+backendPaymentHttpRequestServer.post('/selectAllLocalityAgents', async (httpRequest, httpResponse) => {
+  const selectAllLocalityAgentsResult = await paymentManagementFunctions.selectAllLocalityAgents();
+  httpResponse.end(selectAllLocalityAgentsResult);
+});
+
 backendPaymentHttpRequestServer.post('/syncTransaction', async (httpRequest, httpResponse) => {
   const httpRequestQuery = httpRequest.body;
   const transactionID = httpRequestQuery.transactionID;
@@ -57,3 +62,19 @@ backendPaymentHttpRequestServer.post('/selectLocalities', async (httpRequest, ht
   httpResponse.end(selectLocalitiesResult);
 });
 
+backendPaymentHttpRequestServer.post('/generateTodayInvoice', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const localityID = httpRequestQuery.localityID;
+  const generateTodayInvoiceResult = await paymentManagementFunctions.generateTodayInvoice(localityID);
+  httpResponse.end(generateTodayInvoiceResult);
+});
+
+backendPaymentHttpRequestServer.post('/generateInvoice', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const initialDate = httpRequestQuery.initialDate;
+  const endDate = httpRequestQuery.endDate;
+  const localities = httpRequestQuery.localities;
+  const agents = httpRequestQuery.agents;
+  const generateInvoiceResult = await paymentManagementFunctions.generateInvoice(initialDate, endDate, localities, agents);
+  httpResponse.end(generateInvoiceResult);
+});
