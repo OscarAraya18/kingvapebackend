@@ -266,6 +266,7 @@ module.exports = {
       const transactionUsed = true;
       const selectInvoiceInformationValues = [transactionUsed, transactionStore]
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectInvoiceInformationSQL, selectInvoiceInformationValues);
+      console.log(databaseResult);
       if (databaseResult.success){
         var rows = [];
         for (var transactionIndex in databaseResult.result){
@@ -281,6 +282,38 @@ module.exports = {
           ]);
         }
 
+        const generatePDFPromise = new Promise((resolve, reject) => {
+          const invoicePDF = new PDFDocument({margin: 30, size: 'A4'});
+          invoicePDF.pipe(fs.createWriteStream('Invoice.pdf'));
+      
+          invoicePDF.on('finish', () => {
+              resolve();
+          });
+      
+          invoicePDF.on('error', (error) => {
+              reject(error);
+          });
+      
+          const transactionsTable = {
+              title: '',
+              headers: ['Número de referencia', 'Descripción', 'Cantidad', 'Fecha del banco', 'Fecha del sistema', 'Localidad', 'Aprovador por', 'Fecha de aprobación'],
+              rows: rows
+          };
+      
+          invoicePDF.table(transactionsTable, {width: 530, x: null, y: 100});
+          invoicePDF.image('assets/logo.png', 15, 0, {width: 100});
+          invoicePDF.fontSize(20).font('Helvetica-Bold').text('Reporte de transacciones', 130, 40);
+          invoicePDF.end();
+        });
+
+        generatePDFPromise.then(() => {
+          const invoiceFile = fs.readFileSync('Invoice.pdf', {encoding: 'base64'});
+          generateTodayInvoicePromiseResolve(JSON.stringify({success: true, result: invoiceFile}));
+        }).catch((error) => {
+            console.error('Error generating PDF:', error);
+        });
+
+        /*
         const invoicePDF = new PDFDocument({margin: 30, size: 'A4'});
         invoicePDF.pipe(fs.createWriteStream('Invoice.pdf'));
         
@@ -295,13 +328,15 @@ module.exports = {
           await invoicePDF.fontSize(20).font('Helvetica-Bold').text('Reporte de transacciones', 130, 40);
           
           await invoicePDF.end();
-          
-          const invoiceStream = fs.createReadStream('Invoice.pdf');
+
+          const invoiceFile = fs.readFileSync('Invoice.pdf', {encoding: 'base64'});
+          generateTodayInvoicePromiseResolve(JSON.stringify({success: true, result: invoiceFile}));
         })();
+        */
 
 
       } else {
-        generateInvoicePromiseResolve(JSON.stringify(databaseResult))
+        generateTodayInvoicePromiseResolve(JSON.stringify(databaseResult))
       }
     
     });
@@ -392,7 +427,9 @@ module.exports = {
           
           await invoicePDF.end();
 
-          const invoiceStream = fs.createReadStream('Invoice.pdf');
+          const invoiceFile = fs.readFileSync('Invoice.pdf', {encoding: 'base64'});
+          generateInvoicePromiseResolve(JSON.stringify({success: true, result: invoiceFile}));
+
         })();
 
 
