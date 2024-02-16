@@ -1030,7 +1030,7 @@ module.exports = {
       const whatsappConversationIsActive = false;
       const selectTodayTopSellValues = [whatsappConversationIsActive];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectTodayTopSellSQL, selectTodayTopSellValues);
-      if (databaseResult.result){
+      if (databaseResult.success){
         const sortedDatabaseResult = databaseResult.result.sort((a, b) => b.whatsappConversationAmount - a.whatsappConversationAmount);
         var temp = 'Sin datos';
         if (sortedDatabaseResult[0]){
