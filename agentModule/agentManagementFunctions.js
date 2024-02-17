@@ -697,53 +697,61 @@ module.exports = {
       const whatsappConversationIsActive = false;
       const selectAgentRankingInformationValues = [whatsappConversationIsActive];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAgentRankingInformationSQL, selectAgentRankingInformationValues);
-      const sortedDatabaseResult = databaseResult.result.sort((a, b) => b.whatsappConversationAmount - a.whatsappConversationAmount);
-      var evaluatedNumbers = {};
-      var agentsAndConversations = {};
+      if (databaseResult.success){
+
       
-      for (var sortedDatabaseResultIndex in sortedDatabaseResult){
-        const sortedDatabaseResultObject = sortedDatabaseResult[sortedDatabaseResultIndex];
-        const whatsappConversationRecipientPhoneNumber = sortedDatabaseResultObject.whatsappConversationRecipientPhoneNumber;
-        const whatsappConversationAmount = sortedDatabaseResultObject.whatsappConversationAmount;
-        const whatsappConversationCloseComment = sortedDatabaseResultObject.whatsappConversationCloseComment;
-        const agentName = sortedDatabaseResultObject.agentName;
-        if (!(whatsappConversationRecipientPhoneNumber in evaluatedNumbers)){
-          evaluatedNumbers[whatsappConversationRecipientPhoneNumber] = 'true';
-          if (agentName in agentsAndConversations){
-            if (whatsappConversationAmount == 0){
-              if (whatsappConversationCloseComment == 'No contestó' || whatsappConversationCloseComment == 'Consulta sobre producto'){
-                agentsAndConversations[agentName]['whatsappNotSelledConversations'] = agentsAndConversations[agentName]['whatsappNotSelledConversations'] + 1;
+        const sortedDatabaseResult = databaseResult.result.sort((a, b) => b.whatsappConversationAmount - a.whatsappConversationAmount);
+        var evaluatedNumbers = {};
+        var agentsAndConversations = {};
+        
+        for (var sortedDatabaseResultIndex in sortedDatabaseResult){
+          const sortedDatabaseResultObject = sortedDatabaseResult[sortedDatabaseResultIndex];
+          const whatsappConversationRecipientPhoneNumber = sortedDatabaseResultObject.whatsappConversationRecipientPhoneNumber;
+          const whatsappConversationAmount = sortedDatabaseResultObject.whatsappConversationAmount;
+          const whatsappConversationCloseComment = sortedDatabaseResultObject.whatsappConversationCloseComment;
+          const agentName = sortedDatabaseResultObject.agentName;
+          if (!(whatsappConversationRecipientPhoneNumber in evaluatedNumbers)){
+            evaluatedNumbers[whatsappConversationRecipientPhoneNumber] = 'true';
+            if (agentName in agentsAndConversations){
+              if (whatsappConversationAmount == 0){
+                if (whatsappConversationCloseComment == 'No contestó' || whatsappConversationCloseComment == 'Consulta sobre producto'){
+                  agentsAndConversations[agentName]['whatsappNotSelledConversations'] = agentsAndConversations[agentName]['whatsappNotSelledConversations'] + 1;
+                }
+              } else {
+                agentsAndConversations[agentName]['whatsappSelledConversations'] = agentsAndConversations[agentName]['whatsappSelledConversations'] + 1;
               }
             } else {
-              agentsAndConversations[agentName]['whatsappSelledConversations'] = agentsAndConversations[agentName]['whatsappSelledConversations'] + 1;
-            }
-          } else {
-            if (whatsappConversationAmount == 0){
-              if (whatsappConversationCloseComment == 'No contestó' || whatsappConversationCloseComment == 'Consulta sobre producto'){
-                agentsAndConversations[agentName] = {'agentID': sortedDatabaseResultObject.agentID, 'whatsappSelledConversations': 0, 'whatsappNotSelledConversations': 1}
+              if (whatsappConversationAmount == 0){
+                if (whatsappConversationCloseComment == 'No contestó' || whatsappConversationCloseComment == 'Consulta sobre producto'){
+                  agentsAndConversations[agentName] = {'agentID': sortedDatabaseResultObject.agentID, 'whatsappSelledConversations': 0, 'whatsappNotSelledConversations': 1}
+                }
+              } else {
+                agentsAndConversations[agentName] = {'agentID': sortedDatabaseResultObject.agentID, 'whatsappSelledConversations': 1, 'whatsappNotSelledConversations': 0}
               }
-            } else {
-              agentsAndConversations[agentName] = {'agentID': sortedDatabaseResultObject.agentID, 'whatsappSelledConversations': 1, 'whatsappNotSelledConversations': 0}
             }
           }
         }
+        var agentsAndConversationsArray = [];
+        for (var agentName in agentsAndConversations){
+          agentsAndConversationsArray.push
+          ({
+            'agentName': agentName,
+            'agentID': agentsAndConversations[agentName].agentID,
+            'whatsappSelledConversations': agentsAndConversations[agentName].whatsappSelledConversations,
+            'whatsappNotSelledConversations': agentsAndConversations[agentName].whatsappNotSelledConversations
+          });
+        }
+        const result = 
+        {
+          success: true, 
+          result: agentsAndConversationsArray
+        };
+        selectBarChartInformationPromiseResolve(JSON.stringify(result));
+        
+      } else {
+        selectBarChartInformationPromiseResolve(JSON.stringify(databaseResult));
+
       }
-      var agentsAndConversationsArray = [];
-      for (var agentName in agentsAndConversations){
-        agentsAndConversationsArray.push
-        ({
-          'agentName': agentName,
-          'agentID': agentsAndConversations[agentName].agentID,
-          'whatsappSelledConversations': agentsAndConversations[agentName].whatsappSelledConversations,
-          'whatsappNotSelledConversations': agentsAndConversations[agentName].whatsappNotSelledConversations
-        });
-      }
-      const result = 
-      {
-        success: true, 
-        result: agentsAndConversationsArray
-      };
-      selectBarChartInformationPromiseResolve(JSON.stringify(result));
     });
   },
 
