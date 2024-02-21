@@ -746,11 +746,7 @@ module.exports = {
         const whatsappConversationRecipientPhoneNumber = httpRequest['body']['entry'][0]['changes'][0]['value']['messages'][0]['from'];
         const whatsappGeneralMessageID = httpRequest['body']['entry'][0]['changes'][0]['value']['messages'][0]['id'];
         const whatsappMessageInformation = httpRequest['body']['entry'][0]['changes'][0]['value']['messages'][0];
-        
-        
         const receiveWhatsappStoreMessageResult = await this.receiveWhatsappStoreMessage(websocketConnection, whatsappConversationRecipientPhoneNumber, whatsappGeneralMessageID, whatsappMessageInformation);
-        
-        
         if (receiveWhatsappStoreMessageResult.success == false){
           const httpRequestQuery = httpRequest['body']['entry'][0]['changes'][0]['value']['messages'][0];
           const whatsappGeneralMessageOwnerPhoneNumber = httpRequestQuery.from;
@@ -1173,65 +1169,13 @@ module.exports = {
         const storeMessageStoreName = storePhoneNumbers[whatsappConversationRecipientPhoneNumber];
         const storeMessageRecipientPhoneNumber = whatsappMessageInformationToFormat[0].split('NUMERO: ')[1];
         const storeMessageRecipientProfileName = whatsappMessageInformationToFormat[1].split('NOMBRE: ')[1];
-
-        const selectWhatsappConversationAssignedAgentIDResult = await whatsappDatabaseFunctions.selectWhatsappConversationAssignedAgentID();
-        if (selectWhatsappConversationAssignedAgentIDResult.success){
-          const storeMessageAssignedAgentID = selectWhatsappConversationAssignedAgentIDResult.result;
-          const startWhatsappStoreConversationResult = await this.startWhatsappStoreConversation(storeMessageAssignedAgentID, storeMessageRecipientPhoneNumber, storeMessageRecipientProfileName, 'Hola! Gracias por escribir a King Vape, para poder seguir con tu orden por favor conteste este mensaje 🥰');
-          if (startWhatsappStoreConversationResult.success){
-            const sendWhatsappStoreMessageResult = await this.sendWhatsappStoreMessage(storeMessageStoreName, storeMessageStoreMessageID);
-            if (sendWhatsappStoreMessageResult.success){
-              const websocketMessageContent = startWhatsappStoreConversationResult.result;
-              websocketMessageContent['whatsappConversationMessages'] = 
-              [
-                {
-                  whatsappConversationID: startWhatsappStoreConversationResult.result.whatsappConversationID,
-                  whatsappGeneralMessageID: startWhatsappStoreConversationResult.whatsappGeneralMessageID,
-                  whatsappGeneralMessageIndex: startWhatsappStoreConversationResult.whatsappGeneralMessageIndex,
-                  whatsappGeneralMessageType: 'text',
-                  whatsappGeneralMessageRepliedMessageID: null,
-                  whatsappGeneralMessageCreationDateTime: startWhatsappStoreConversationResult.whatsappGeneralMessageCreationDateTime,
-                  whatsappGeneralMessageOwnerPhoneNumber: null,
-                  whatsappTextMessageID: startWhatsappStoreConversationResult.whatsappGeneralMessageID,
-                  whatsappTextMessageBody: 'Hola! Gracias por escribir a King Vape, para poder seguir con tu orden por favor conteste este mensaje 🥰'
-                }
-              ]
-              websocketConnection.sendWebsocketMessage('/receiveWhatsappConversation', websocketMessageContent);
-              return {success: true};
-            } else {
-              const sendWhatsappMessageData = 
-              {
-                'messaging_product': 'whatsapp',
-                'to': whatsappConversationRecipientPhoneNumber,
-                'type': 'text',
-                'text': {'body': 'ERROR EN LA CONEXION 3. REPORTE AL ADMINISTRADOR'},
-                'context': {'message_id': whatsappGeneralMessageID}
-              };
-              await this.sendWhatsappMessage(sendWhatsappMessageData);
-              return {success: true};
-            }
-          } else {
-            const sendWhatsappMessageData = 
-            {
-              'messaging_product': 'whatsapp',
-              'to': whatsappConversationRecipientPhoneNumber,
-              'type': 'text',
-              'text': {'body': 'ERROR EN LA CONEXION 2. REPORTE AL ADMINISTRADOR'},
-              'context': {'message_id': whatsappGeneralMessageID}
-            };
-            await this.sendWhatsappMessage(sendWhatsappMessageData);
-            return {success: true};
-          }
+        const storeMessageRecipientOrder = whatsappMessageInformationToFormat[2].split('PEDIDO: ')[1];
+        const storeMessageRecipientID = whatsappMessageInformationToFormat[3].split('CEDULA: ')[1];
+        const insertStoreMessageResult = await whatsappDatabaseFunctions.insertStoreMessage(storeMessageStoreMessageID, storeMessageStoreName, storeMessageRecipientPhoneNumber, storeMessageRecipientProfileName, storeMessageRecipientOrder, storeMessageRecipientID);
+        if (insertStoreMessageResult.success){
+          websocketConnection.sendWebsocketMessage('/receiveWhatsappStoreMessage', insertStoreMessageResult);
+          return insertStoreMessageResult;
         } else {
-          const sendWhatsappMessageData = 
-          {
-            'messaging_product': 'whatsapp',
-            'to': whatsappConversationRecipientPhoneNumber,
-            'type': 'text',
-            'text': {'body': 'ERROR EN LA CONEXION 1. REPORTE AL ADMINISTRADOR'},
-            'context': {'message_id': whatsappGeneralMessageID}
-          };
-          await this.sendWhatsappMessage(sendWhatsappMessageData);
           return {success: true};
         }
       } catch (error) {
@@ -1278,13 +1222,13 @@ module.exports = {
       if (sendWhatsappMessageResult.success){
         const createWhatsappConversationWithWhatsappConversationAssignedAgentIDResult = await whatsappDatabaseFunctions.createWhatsappConversationWithWhatsappConversationAssignedAgentID(storeMessageAssignedAgentID, storeMessageRecipientPhoneNumber, storeMessageRecipientProfileName);
         if (createWhatsappConversationWithWhatsappConversationAssignedAgentIDResult.success){
-          const whatsappConversationID = createWhatsappConversationWithWhatsappConversationAssignedAgentIDResult.result.whatsappConversationID;
+          const whatsappConversationID = createWhatsappConversationWithWhatsappConversationAssignedAgentIDResult.result;
           const whatsappGeneralMessageID = sendWhatsappMessageResult.result;
           const createWhatsappGeneralMessageResult = await whatsappDatabaseFunctions.createWhatsappGeneralMessage(whatsappConversationID, whatsappGeneralMessageID, null, null);
           if (createWhatsappGeneralMessageResult.success){
             const createWhatsappTextMessageResult = await whatsappDatabaseFunctions.createWhatsappTextMessage(whatsappGeneralMessageID, messageToClientContent);
             if (createWhatsappTextMessageResult.success){
-              startWhatsappStoreConversationPromiseResolve(JSON.stringify({success: true, whatsappGeneralMessageCreationDateTime: createWhatsappGeneralMessageResult.result.whatsappGeneralMessageCreationDateTime, whatsappGeneralMessageID: whatsappGeneralMessageID, whatsappGeneralMessageIndex: createWhatsappGeneralMessageResult.result.whatsappGeneralMessageIndex, result: createWhatsappConversationWithWhatsappConversationAssignedAgentIDResult.result}));
+              startWhatsappStoreConversationPromiseResolve(JSON.stringify({success: true, result: whatsappConversationID}));
             } else {
               startWhatsappStoreConversationPromiseResolve(JSON.stringify(createWhatsappTextMessageResult));
             }

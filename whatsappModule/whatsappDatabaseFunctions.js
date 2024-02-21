@@ -335,23 +335,7 @@ module.exports = {
         const createWhatsappConversationDatabaseResult = await databaseManagementFunctions.executeDatabaseSQL(createWhatsappConversationSQL, createWhatsappConversationValues);
         if (createWhatsappConversationDatabaseResult.success){
           const whatsappConversationID = createWhatsappConversationDatabaseResult.result.insertId;
-          const createWhatsappConversationWithWhatsappConversationAssignedAgentIDPromiseResult = 
-          {
-            whatsappConversationID: whatsappConversationID, 
-            whatsappConversationAssignedAgentID: whatsappConversationAssignedAgentID, 
-            whatsappConversationRecipientPhoneNumber: whatsappConversationRecipientPhoneNumber,
-            whatsappConversationRecipientProfileName: whatsappConversationRecipientProfileName,
-            whatsappConversationRecipientProfileName: whatsappConversationRecipientProfileNameCorrected,
-            whatsappConversationRecipientID: whatsappConversationRecipientID,
-            whatsappConversationRecipientEmail: whatsappConversationRecipientEmail,
-            whatsappConversationRecipientLocations: whatsappConversationRecipientLocations,
-            whatsappConversationRecipientLocationDetails: whatsappConversationRecipientLocationDetails,
-            whatsappConversationRecipientNote: whatsappConversationRecipientNote,
-            whatsappConversationStartDateTime: whatsappConversationStartDateTime,
-            whatsappConversationEndDateTime: whatsappConversationEndDateTime,
-            whatsappConversationIsActive: whatsappConversationIsActive
-          }
-          createWhatsappConversationWithWhatsappConversationAssignedAgentIDPromiseResolve({success: true, result: createWhatsappConversationWithWhatsappConversationAssignedAgentIDPromiseResult});
+          createWhatsappConversationWithWhatsappConversationAssignedAgentIDPromiseResolve({success: true, result: whatsappConversationID});
         } else {
           createWhatsappConversationWithWhatsappConversationAssignedAgentIDPromiseResolve(createWhatsappConversationDatabaseResult);
         }
