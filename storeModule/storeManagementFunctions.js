@@ -28,7 +28,7 @@ module.exports = {
             const updateStoreMessageValues = [storeMessageAssignedAgentID, storeMessageID];
             const updateStoreMessageDatabaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateStoreMessageSQL, updateStoreMessageValues);
             if (updateStoreMessageDatabaseResult.success){
-              const sendWhatsappStoreMessageResult = await whatsappManagementFunctions.sendWhatsappStoreMessage(storeMessageStoreName, storeMessageStoreMessageID);
+              const sendWhatsappStoreMessageResult = await whatsappManagementFunctions.sendWhatsappStoreMessage(storeMessageStoreName, storeMessageStoreMessageID, 'LISTO');
               if (sendWhatsappStoreMessageResult.success){
                 const startWhatsappStoreConversationResult = await whatsappManagementFunctions.startWhatsappStoreConversation(storeMessageAssignedAgentID, storeMessageRecipientPhoneNumber, storeMessageRecipientProfileName, messageToClientContent);
                 const whatsappConversationID = startWhatsappStoreConversationResult.resultID;
@@ -52,13 +52,18 @@ module.exports = {
     });
   },
 
-  deleteStoreMessage: async function(websocketConnection, storeMessageID, storeMessageStoreName, storeMessageAssignedAgentID, storeMessageDeleteReason){
+  deleteStoreMessage: async function(websocketConnection, storeMessageID, storeMessageStoreMessageID, storeMessageStoreName, storeMessageAssignedAgentID, storeMessageDeleteReason){
     return new Promise(async (deleteStoreMessagePromiseResolve) => {
       websocketConnection.sendWebsocketMessage('/grabStoreConversation', {success: true, result: {storeMessageID: storeMessageID, storeMessageStoreName: storeMessageStoreName}});
-      const updateStoreMessageSQL = `UPDATE StoreMessages SET storeMessageAssignedAgentID=(?), storeMessageDeleteReason=(?) WHERE storeMessageID=(?);`;
-      const updateStoreMessageValues = [storeMessageAssignedAgentID, storeMessageDeleteReason, storeMessageID];
-      const updateStoreMessageDatabaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateStoreMessageSQL, updateStoreMessageValues);
-      deleteStoreMessagePromiseResolve(JSON.stringify(updateStoreMessageDatabaseResult));
+      const sendWhatsappStoreMessageResult = await whatsappManagementFunctions.sendWhatsappStoreMessage(storeMessageStoreName, storeMessageStoreMessageID, 'LISTO. ELIMINADO EN EL CALL CENTER');
+      if (sendWhatsappStoreMessageResult.success){
+        const updateStoreMessageSQL = `UPDATE StoreMessages SET storeMessageAssignedAgentID=(?), storeMessageDeleteReason=(?) WHERE storeMessageID=(?);`;
+        const updateStoreMessageValues = [storeMessageAssignedAgentID, storeMessageDeleteReason, storeMessageID];
+        const updateStoreMessageDatabaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateStoreMessageSQL, updateStoreMessageValues);
+        deleteStoreMessagePromiseResolve(JSON.stringify(updateStoreMessageDatabaseResult));
+      } else {
+        deleteStoreMessagePromiseResolve(JSON.stringify(sendWhatsappStoreMessageResult));
+      }
     });
   },
 

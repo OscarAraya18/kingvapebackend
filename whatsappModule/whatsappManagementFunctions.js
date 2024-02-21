@@ -719,7 +719,6 @@ module.exports = {
         sendWhatsappProductImageMessagePromiseResolve(JSON.stringify(downloadWhatsappImageFileResult));
       }
     });
-    
   },
 
   updateWhatsappMessageStatus: async function(websocketConnection, whatsappGeneralMessageID, whatsappGeneralMessageStatus){
@@ -1196,14 +1195,14 @@ module.exports = {
     
   },
 
-  sendWhatsappStoreMessage: async function(storeMessageStoreName, storeMessageStoreMessageID){
+  sendWhatsappStoreMessage: async function(storeMessageStoreName, storeMessageStoreMessageID, storeMessageContent){
     const storePhoneNumbers = {'Escazu': 50670782096, 'Zapote': 50672527633, 'Cartago': 50670130555};
     const sendWhatsappMessageData = 
     {
       'messaging_product': 'whatsapp',
       'to': storePhoneNumbers[storeMessageStoreName],
       'type': 'text',
-      'text': {'body': 'LISTO'},
+      'text': {'body': storeMessageContent},
       'context': {'message_id': storeMessageStoreMessageID}
     };
     const sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
