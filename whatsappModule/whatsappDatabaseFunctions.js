@@ -334,8 +334,24 @@ module.exports = {
         const createWhatsappConversationValues = [whatsappConversationAssignedAgentID, whatsappConversationRecipientPhoneNumber, whatsappConversationRecipientProfileNameCorrected, whatsappConversationRecipientID, whatsappConversationRecipientEmail, whatsappConversationRecipientLocations, whatsappConversationRecipientLocationDetails, whatsappConversationRecipientNote, whatsappConversationStartDateTime, whatsappConversationEndDateTime, whatsappConversationIsActive];
         const createWhatsappConversationDatabaseResult = await databaseManagementFunctions.executeDatabaseSQL(createWhatsappConversationSQL, createWhatsappConversationValues);
         if (createWhatsappConversationDatabaseResult.success){
-          const whatsappConversationID = createWhatsappConversationDatabaseResult.result.insertId;
-          createWhatsappConversationWithWhatsappConversationAssignedAgentIDPromiseResolve({success: true, result: whatsappConversationID});
+          const whatsappConversationID = databaseResult.result.insertId;
+          const createWhatsappConversationWithWhatsappConversationAssignedAgentIDPromiseResult = 
+          {
+            whatsappConversationID: whatsappConversationID, 
+            whatsappConversationAssignedAgentID: whatsappConversationAssignedAgentID, 
+            whatsappConversationRecipientPhoneNumber: whatsappConversationRecipientPhoneNumber,
+            whatsappConversationRecipientProfileName: whatsappConversationRecipientProfileName,
+            whatsappConversationRecipientProfileName: whatsappConversationRecipientProfileNameCorrected,
+            whatsappConversationRecipientID: whatsappConversationRecipientID,
+            whatsappConversationRecipientEmail: whatsappConversationRecipientEmail,
+            whatsappConversationRecipientLocations: whatsappConversationRecipientLocations,
+            whatsappConversationRecipientLocationDetails: whatsappConversationRecipientLocationDetails,
+            whatsappConversationRecipientNote: whatsappConversationRecipientNote,
+            whatsappConversationStartDateTime: whatsappConversationStartDateTime,
+            whatsappConversationEndDateTime: whatsappConversationEndDateTime,
+            whatsappConversationIsActive: whatsappConversationIsActive
+          }
+          createWhatsappConversationWithWhatsappConversationAssignedAgentIDPromiseResolve({success: true, result: createWhatsappConversationWithWhatsappConversationAssignedAgentIDPromiseResult});
         } else {
           createWhatsappConversationWithWhatsappConversationAssignedAgentIDPromiseResolve(createWhatsappConversationDatabaseResult);
         }

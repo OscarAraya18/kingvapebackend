@@ -41,15 +41,8 @@ const processQueue = async () => {
 backendWhatsappHttpRequestServer.post('/webhookConnection', async (httpRequest, httpResponse) => {
   try {
     if (httpRequest.body['entry'][0]['changes'][0]['value']['messages']){
-
-      /*
-      const receiveWhatsappMessageResponse = await whatsappManagementFunctions.receiveWhatsappMessage(websocketConnection, httpRequest);
-      httpResponse.end(receiveWhatsappMessageResponse);
-      */
-
       const receiveWhatsappMessageResponse = await addToQueue(websocketConnection, httpRequest);
       httpResponse.end(receiveWhatsappMessageResponse);
-
     } else if (httpRequest.body['entry'][0]['changes'][0]['value']['statuses']){
       const whatsappGeneralMessageID = httpRequest.body['entry'][0]['changes'][0]['value']['statuses'][0]['id'];
       const whatsappGeneralMessageStatus = httpRequest.body['entry'][0]['changes'][0]['value']['statuses'][0]['status'];
