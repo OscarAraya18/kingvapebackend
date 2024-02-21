@@ -334,7 +334,7 @@ module.exports = {
         const createWhatsappConversationValues = [whatsappConversationAssignedAgentID, whatsappConversationRecipientPhoneNumber, whatsappConversationRecipientProfileNameCorrected, whatsappConversationRecipientID, whatsappConversationRecipientEmail, whatsappConversationRecipientLocations, whatsappConversationRecipientLocationDetails, whatsappConversationRecipientNote, whatsappConversationStartDateTime, whatsappConversationEndDateTime, whatsappConversationIsActive];
         const createWhatsappConversationDatabaseResult = await databaseManagementFunctions.executeDatabaseSQL(createWhatsappConversationSQL, createWhatsappConversationValues);
         if (createWhatsappConversationDatabaseResult.success){
-          const whatsappConversationID = databaseResult.result.insertId;
+          const whatsappConversationID = createWhatsappConversationDatabaseResult.result.insertId;
           const createWhatsappConversationWithWhatsappConversationAssignedAgentIDPromiseResult = 
           {
             whatsappConversationID: whatsappConversationID, 
