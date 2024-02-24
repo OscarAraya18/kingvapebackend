@@ -21,15 +21,15 @@ module.exports = {
       if (storeMessageStoreName == ''){
         selectStoreMessageByStoreMessageStoreNameSQL = 
         `
-          SELECT StoreMessages.storeMessageID, Agents.agentName, StoreMessages.storeMessageRecipientPhoneNumber, StoreMessages.storeMessageRecipientProfileName, StoreMessages.storeMessageRecipientOrder, StoreMessages.storeMessageRecipientID
+          SELECT StoreMessages.storeMessageID, StoreMessages.storeMessageStartDateTime, Agents.agentName, StoreMessages.storeMessageRecipientPhoneNumber, StoreMessages.storeMessageRecipientProfileName, StoreMessages.storeMessageRecipientOrder, StoreMessages.storeMessageRecipientID
           FROM StoreMessages 
           LEFT JOIN Agents ON Agents.agentID = StoreMessages.storeMessageAssignedAgentID
-          ORDER BY storeMessageID DESC LIMIT 10;
+          ORDER BY storeMessageID DESC LIMIT 30;
         `;
       } else {
         selectStoreMessageByStoreMessageStoreNameSQL = 
         `
-          SELECT StoreMessages.storeMessageID, Agents.agentName, StoreMessages.storeMessageRecipientPhoneNumber, StoreMessages.storeMessageRecipientProfileName, StoreMessages.storeMessageRecipientOrder, StoreMessages.storeMessageRecipientID
+          SELECT StoreMessages.storeMessageID, StoreMessages.storeMessageStartDateTime, Agents.agentName, StoreMessages.storeMessageRecipientPhoneNumber, StoreMessages.storeMessageRecipientProfileName, StoreMessages.storeMessageRecipientOrder, StoreMessages.storeMessageRecipientID
           FROM StoreMessages 
           LEFT JOIN Agents ON Agents.agentID = StoreMessages.storeMessageAssignedAgentID
           WHERE storeMessageStoreName=(?)
