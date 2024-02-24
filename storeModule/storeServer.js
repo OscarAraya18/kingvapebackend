@@ -13,6 +13,25 @@ backendStoreHttpRequestServer.get('/selectAllStoreMessage', async (httpRequest, 
   httpResponse.end(selectAllStoreMessageResult);
 });
 
+backendStoreHttpRequestServer.post('/selectStoreMessageByStoreMessageStoreName', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const storeMessageStoreName = httpRequestQuery.storeMessageStoreName;
+  const selectStoreMessageByStoreMessageStoreNameResult = await storeManagementFunctions.selectStoreMessageByStoreMessageStoreName(storeMessageStoreName);
+  httpResponse.end(selectStoreMessageByStoreMessageStoreNameResult);
+});
+
+backendStoreHttpRequestServer.post('/insertStoreMessage', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const storeMessageStoreName = httpRequestQuery.storeMessageStoreName;
+  const storeMessageRecipientPhoneNumber = httpRequestQuery.storeMessageRecipientPhoneNumber;
+  const storeMessageRecipientProfileName = httpRequestQuery.storeMessageRecipientProfileName;
+  const storeMessageRecipientOrder = httpRequestQuery.storeMessageRecipientOrder;
+  const storeMessageRecipientID = httpRequestQuery.storeMessageRecipientID;
+  const insertStoreMessageResult = await storeManagementFunctions.insertStoreMessage(websocketConnection, storeMessageStoreName, storeMessageRecipientPhoneNumber, storeMessageRecipientProfileName, storeMessageRecipientOrder, storeMessageRecipientID);
+  httpResponse.end(insertStoreMessageResult);
+});
+
+
 backendStoreHttpRequestServer.post('/grabStoreConversation', async (httpRequest, httpResponse) => {
   const httpRequestQuery = httpRequest.body;
   const storeMessageID = httpRequestQuery.storeMessageID;

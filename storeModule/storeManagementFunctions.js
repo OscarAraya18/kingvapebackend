@@ -1,5 +1,6 @@
 const constants = require('../constants.js');
 const databaseManagementFunctions = require('../databaseModule/databaseManagementFunctions.js');
+const whatsappDatabaseFunctions = require('../whatsappModule/whatsappDatabaseFunctions.js');
 const whatsappManagementFunctions = require('../whatsappModule/whatsappManagementFunctions.js');
 
 
@@ -11,6 +12,27 @@ module.exports = {
       const selectAllStoreMessageSQL = `SELECT * FROM StoreMessages WHERE storeMessageAssignedAgentID IS NULL;`;
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAllStoreMessageSQL);
       selectAllStoreMessagePromiseResolve(JSON.stringify(databaseResult));      
+    });
+  },
+
+  selectStoreMessageByStoreMessageStoreName: async function(storeMessageStoreName){
+    return new Promise(async (selectStoreMessageByStoreMessageStoreNamePromiseResolve) => {
+      const selectStoreMessageByStoreMessageStoreNameSQL = `SELECT * FROM StoreMessages WHERE storeMessageStoreName=(?) ORDER BY storeMessageID DESC LIMIT 25;`;
+      const selectStoreMessageByStoreMessageStoreNameValues = [storeMessageStoreName];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectStoreMessageByStoreMessageStoreNameSQL, selectStoreMessageByStoreMessageStoreNameValues);
+      selectStoreMessageByStoreMessageStoreNamePromiseResolve(JSON.stringify(databaseResult));      
+    });
+  },
+
+  insertStoreMessage: async function(websocketConnection, storeMessageStoreName, storeMessageRecipientPhoneNumber, storeMessageRecipientProfileName, storeMessageRecipientOrder, storeMessageRecipientID){
+    return new Promise(async (insertStoreMessagePromiseResolve) => {
+      const insertStoreMessageResult = await whatsappDatabaseFunctions.insertStoreMessage('', storeMessageStoreName, storeMessageRecipientPhoneNumber, storeMessageRecipientProfileName, storeMessageRecipientOrder, storeMessageRecipientID);
+      if (insertStoreMessageResult.success){
+        websocketConnection.sendWebsocketMessage('/receiveWhatsappStoreMessage', insertStoreMessageResult);
+        insertStoreMessagePromiseResolve(JSON.stringify(insertStoreMessageResult));
+      } else {
+        insertStoreMessagePromiseResolve(JSON.stringify(insertStoreMessageResult));
+      }
     });
   },
 
@@ -28,14 +50,8 @@ module.exports = {
             const updateStoreMessageValues = [storeMessageAssignedAgentID, storeMessageID];
             const updateStoreMessageDatabaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateStoreMessageSQL, updateStoreMessageValues);
             if (updateStoreMessageDatabaseResult.success){
-              const sendWhatsappStoreMessageResult = await whatsappManagementFunctions.sendWhatsappStoreMessage(storeMessageStoreName, storeMessageStoreMessageID, 'LISTO');
-              if (sendWhatsappStoreMessageResult.success){
-                const startWhatsappStoreConversationResult = await whatsappManagementFunctions.startWhatsappStoreConversation(storeMessageAssignedAgentID, storeMessageRecipientPhoneNumber, storeMessageRecipientProfileName, messageToClientContent);
-                const whatsappConversationID = startWhatsappStoreConversationResult.resultID;
-                grabStoreConversationPromiseResolve(startWhatsappStoreConversationResult);
-              } else {
-                grabStoreConversationPromiseResolve(JSON.stringify(sendWhatsappStoreMessageResult));
-              }
+              const startWhatsappStoreConversationResult = await whatsappManagementFunctions.startWhatsappStoreConversation(storeMessageAssignedAgentID, storeMessageRecipientPhoneNumber, storeMessageRecipientProfileName, messageToClientContent);
+              grabStoreConversationPromiseResolve(startWhatsappStoreConversationResult);
             } else {
               grabStoreConversationPromiseResolve(JSON.stringify(updateStoreMessageDatabaseResult));
             }
@@ -55,15 +71,10 @@ module.exports = {
   deleteStoreMessage: async function(websocketConnection, storeMessageID, storeMessageStoreMessageID, storeMessageStoreName, storeMessageAssignedAgentID, storeMessageDeleteReason){
     return new Promise(async (deleteStoreMessagePromiseResolve) => {
       websocketConnection.sendWebsocketMessage('/grabStoreConversation', {success: true, result: {storeMessageID: storeMessageID, storeMessageStoreName: storeMessageStoreName}});
-      const sendWhatsappStoreMessageResult = await whatsappManagementFunctions.sendWhatsappStoreMessage(storeMessageStoreName, storeMessageStoreMessageID, 'LISTO. ELIMINADO EN EL CALL CENTER');
-      if (sendWhatsappStoreMessageResult.success){
-        const updateStoreMessageSQL = `UPDATE StoreMessages SET storeMessageAssignedAgentID=(?), storeMessageDeleteReason=(?) WHERE storeMessageID=(?);`;
-        const updateStoreMessageValues = [storeMessageAssignedAgentID, storeMessageDeleteReason, storeMessageID];
-        const updateStoreMessageDatabaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateStoreMessageSQL, updateStoreMessageValues);
-        deleteStoreMessagePromiseResolve(JSON.stringify(updateStoreMessageDatabaseResult));
-      } else {
-        deleteStoreMessagePromiseResolve(JSON.stringify(sendWhatsappStoreMessageResult));
-      }
+      const updateStoreMessageSQL = `UPDATE StoreMessages SET storeMessageAssignedAgentID=(?), storeMessageDeleteReason=(?) WHERE storeMessageID=(?);`;
+      const updateStoreMessageValues = [storeMessageAssignedAgentID, storeMessageDeleteReason, storeMessageID];
+      const updateStoreMessageDatabaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateStoreMessageSQL, updateStoreMessageValues);
+      deleteStoreMessagePromiseResolve(JSON.stringify(updateStoreMessageDatabaseResult));
     });
   },
 
