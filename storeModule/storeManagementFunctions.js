@@ -17,7 +17,25 @@ module.exports = {
 
   selectStoreMessageByStoreMessageStoreName: async function(storeMessageStoreName){
     return new Promise(async (selectStoreMessageByStoreMessageStoreNamePromiseResolve) => {
-      const selectStoreMessageByStoreMessageStoreNameSQL = `SELECT * FROM StoreMessages WHERE storeMessageStoreName=(?) ORDER BY storeMessageID DESC LIMIT 25;`;
+      var selectStoreMessageByStoreMessageStoreNameSQL = '';
+      if (storeMessageStoreName == ''){
+        selectStoreMessageByStoreMessageStoreNameSQL = 
+        `
+          SELECT StoreMessages.storeMessageID, Agents.agentName, StoreMessages.storeMessageRecipientPhoneNumber, StoreMessages.storeMessageRecipientProfileName, StoreMessages.storeMessageRecipientOrder, StoreMessages.storeMessageRecipientID
+          FROM StoreMessages 
+          LEFT JOIN Agents ON Agents.agentID = StoreMessages.storeMessageAssignedAgentID
+          ORDER BY storeMessageID DESC LIMIT 10;
+        `;
+      } else {
+        selectStoreMessageByStoreMessageStoreNameSQL = 
+        `
+          SELECT StoreMessages.storeMessageID, Agents.agentName, StoreMessages.storeMessageRecipientPhoneNumber, StoreMessages.storeMessageRecipientProfileName, StoreMessages.storeMessageRecipientOrder, StoreMessages.storeMessageRecipientID
+          FROM StoreMessages 
+          LEFT JOIN Agents ON Agents.agentID = StoreMessages.storeMessageAssignedAgentID
+          WHERE storeMessageStoreName=(?)
+          ORDER BY storeMessageID DESC LIMIT 10;
+        `;
+      }
       const selectStoreMessageByStoreMessageStoreNameValues = [storeMessageStoreName];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectStoreMessageByStoreMessageStoreNameSQL, selectStoreMessageByStoreMessageStoreNameValues);
       selectStoreMessageByStoreMessageStoreNamePromiseResolve(JSON.stringify(databaseResult));      

@@ -31,7 +31,6 @@ backendStoreHttpRequestServer.post('/insertStoreMessage', async (httpRequest, ht
   httpResponse.end(insertStoreMessageResult);
 });
 
-
 backendStoreHttpRequestServer.post('/grabStoreConversation', async (httpRequest, httpResponse) => {
   const httpRequestQuery = httpRequest.body;
   const storeMessageID = httpRequestQuery.storeMessageID;
