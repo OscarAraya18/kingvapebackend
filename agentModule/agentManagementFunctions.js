@@ -157,8 +157,10 @@ module.exports = {
   */
   selectAgents: async function (){
     return new Promise(async (selectAgentsPromiseResolve) => {
-      const selectAllAgentsSQL = `SELECT * FROM Agents;`;
-      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAllAgentsSQL);
+      const selectAllAgentsSQL = `SELECT * FROM Agents WHERE agentIsActive=(?);`;
+      const agentIsActive = true;
+      const selectAllAgentsValues = [agentIsActive];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAllAgentsSQL, selectAllAgentsValues);
       if (databaseResult.success){
         for (var agent in databaseResult.result){
           databaseResult.result[agent].agentProfileImage = Buffer.from(databaseResult.result[agent].agentProfileImage).toString('base64');
@@ -172,8 +174,10 @@ module.exports = {
 
   selectAllAgentStatus: async function (){
     return new Promise(async (selectAllAgentStatusPromiseResolve) => {
-      const selectAllAgentStatusSQL = `SELECT agentID, agentName, agentStatus FROM Agents;`;
-      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAllAgentStatusSQL);
+      const selectAllAgentStatusSQL = `SELECT agentID, agentName, agentStatus FROM Agents WHERE agentIsActive=(?);`;
+      const agentIsActive = true;
+      const selectAllAgentStatusValues = [agentIsActive];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAllAgentStatusSQL, selectAllAgentStatusValues);
       selectAllAgentStatusPromiseResolve(JSON.stringify(databaseResult));
     });
   },
@@ -854,7 +858,6 @@ module.exports = {
     return new Promise(async (selectTodayInformationPromiseResolve) => {
       let currentDate = new Date();
       currentDate.setHours(currentDate.getHours() - 6);
-
       let hourPart = currentDate.toISOString().substring(11, 13);
       let hour = parseInt(hourPart, 10);
 

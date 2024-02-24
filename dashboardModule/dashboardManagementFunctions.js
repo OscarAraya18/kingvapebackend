@@ -142,15 +142,16 @@ module.exports = {
 
   selectAgentNames: async function(){
     return new Promise(async (selectAgentNamesPromiseResolve) => {
-      const selectAgentNamesSQL = `SELECT agentName, agentID FROM Agents ORDER BY CASE WHEN agentType = 'admin' THEN 1 ELSE 0 END, agentName;`;
-      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAgentNamesSQL);
+      const selectAgentNamesSQL = `SELECT agentName, agentID FROM Agents WHERE agentIsActive=(?) ORDER BY CASE WHEN agentType = 'admin' THEN 1 ELSE 0 END, agentName;`;
+      const selectAgentNamesValues = [true];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAgentNamesSQL, selectAgentNamesValues);
       selectAgentNamesPromiseResolve(JSON.stringify(databaseResult));
     });
   },
 
   selectTransferableAgentNames: async function(){
     return new Promise(async (selectTransferableAgentNamesPromiseResolve) => {
-      const selectTransferableAgentNamesSQL = `SELECT agentName, agentID FROM Agents  WHERE agentIsActive=(?) ORDER BY CASE WHEN agentType = 'admin' THEN 1 ELSE 0 END, agentName;`;
+      const selectTransferableAgentNamesSQL = `SELECT agentName, agentID FROM Agents WHERE agentIsActive=(?) ORDER BY CASE WHEN agentType = 'admin' THEN 1 ELSE 0 END, agentName;`;
       const selectTransferableAgentNamesValues = [true];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectTransferableAgentNamesSQL, selectTransferableAgentNamesValues);
       selectTransferableAgentNamesPromiseResolve(JSON.stringify(databaseResult));
@@ -215,39 +216,91 @@ module.exports = {
 
   selectRankingFilteredConversations: async function(agentID, initialDate, endDate){
     return new Promise(async (selectRankingFilteredConversationsPromiseResolve) => {
-      const conditions = [];
       
-      if (initialDate != ''){
-        initialDate = new Date(initialDate);
-        initialDate.setHours(initialDate.getHours() + 6);
-        initialDate = initialDate.toString();
-        initialDate = initialDate.replace('GMT-0600', 'GMT+0000');
-        conditions.push(`STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %H:%i:%s GMT+0000') >= STR_TO_DATE('${initialDate}', '%a %b %d %Y %H:%i:%s GMT+0000')`);
+      var selectRankingFilteredConversationsSQL = '';
+
+      if (initialDate == '' && endDate == ''){
+        let currentDate = new Date();
+        currentDate.setHours(currentDate.getHours() - 6);
+        let hourPart = currentDate.toISOString().substring(11, 13);
+        let hour = parseInt(hourPart, 10);
+        var selectTodayDashboardInformationSQL = '';
+        if (hour >= 18){
+          selectRankingFilteredConversationsSQL = 
+          `
+          SELECT 
+            whatsappConversationID,
+            whatsappConversationRecipientPhoneNumber,
+            whatsappConversationRecipientProfileName,
+            whatsappConversationAmount,
+            whatsappConversationStartDateTime,
+            whatsappConversationCloseComment
+          FROM WhatsappConversations
+          WHERE 
+            whatsappConversationAssignedAgentID = (?) 
+              AND 
+            whatsappConversationIsActive = (?)
+              AND
+            STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW() - INTERVAL 1 DAY, '%Y-%m-%d 6:00:00')
+              AND
+            STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
+          `;
+        } else {
+          selectRankingFilteredConversationsSQL = 
+          `
+          SELECT 
+            whatsappConversationID,
+            whatsappConversationRecipientPhoneNumber,
+            whatsappConversationRecipientProfileName,
+            whatsappConversationAmount,
+            whatsappConversationStartDateTime,
+            whatsappConversationCloseComment
+          FROM WhatsappConversations
+          WHERE 
+            whatsappConversationAssignedAgentID = (?) 
+              AND 
+            whatsappConversationIsActive = (?)
+              AND
+              STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
+                AND
+              STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
+          `; 
+        }
+      } else {
+        const conditions = [];
+      
+        if (initialDate != ''){
+          initialDate = new Date(initialDate);
+          initialDate.setHours(initialDate.getHours() + 6);
+          initialDate = initialDate.toString();
+          initialDate = initialDate.replace('GMT-0600', 'GMT+0000');
+          conditions.push(`STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %H:%i:%s GMT+0000') >= STR_TO_DATE('${initialDate}', '%a %b %d %Y %H:%i:%s GMT+0000')`);
+        }
+
+        if (endDate != ''){
+          endDate = new Date(endDate);
+          endDate.setHours(endDate.getHours() + 6);
+          endDate = endDate.toString();
+          endDate = endDate.replace('GMT-0600', 'GMT+0000');
+          conditions.push(`STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %H:%i:%s GMT+0000') <= STR_TO_DATE('${endDate}', '%a %b %d %Y %H:%i:%s GMT+0000')`);
+        }
+
+        const whereClause = conditions.length > 0 ? `AND ${conditions.join(' AND ')}` : '';
+
+        var selectRankingFilteredConversationsSQL = 
+        `
+        SELECT 
+          whatsappConversationID,
+          whatsappConversationRecipientPhoneNumber,
+          whatsappConversationRecipientProfileName,
+          whatsappConversationAmount,
+          whatsappConversationStartDateTime,
+          whatsappConversationCloseComment
+        FROM WhatsappConversations
+        WHERE whatsappConversationAssignedAgentID = (?) AND whatsappConversationIsActive = (?)
+        `;
+        selectRankingFilteredConversationsSQL = selectRankingFilteredConversationsSQL + whereClause;
       }
-
-      if (endDate != ''){
-        endDate = new Date(endDate);
-        endDate.setHours(endDate.getHours() + 6);
-        endDate = endDate.toString();
-        endDate = endDate.replace('GMT-0600', 'GMT+0000');
-        conditions.push(`STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %H:%i:%s GMT+0000') <= STR_TO_DATE('${endDate}', '%a %b %d %Y %H:%i:%s GMT+0000')`);
-      }
-
-      const whereClause = conditions.length > 0 ? `AND ${conditions.join(' AND ')}` : '';
-
-      var selectRankingFilteredConversationsSQL = 
-      `
-      SELECT 
-        whatsappConversationID,
-        whatsappConversationRecipientPhoneNumber,
-        whatsappConversationRecipientProfileName,
-        whatsappConversationAmount,
-        whatsappConversationStartDateTime,
-        whatsappConversationCloseComment
-      FROM WhatsappConversations
-      WHERE whatsappConversationAssignedAgentID = (?) AND whatsappConversationIsActive = (?)
-      `;
-      selectRankingFilteredConversationsSQL = selectRankingFilteredConversationsSQL + whereClause;
 
       const selectRankingFilteredConversationsValues = [agentID, 0];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectRankingFilteredConversationsSQL, selectRankingFilteredConversationsValues);

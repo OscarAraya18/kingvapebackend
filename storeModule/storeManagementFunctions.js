@@ -26,7 +26,7 @@ module.exports = {
           LEFT JOIN Agents ON Agents.agentID = StoreMessages.storeMessageAssignedAgentID
           ORDER BY storeMessageID DESC LIMIT 30;
         `;
-      } else {
+      } else { 
         selectStoreMessageByStoreMessageStoreNameSQL = 
         `
           SELECT StoreMessages.storeMessageID, StoreMessages.storeMessageStartDateTime, Agents.agentName, StoreMessages.storeMessageRecipientPhoneNumber, StoreMessages.storeMessageRecipientProfileName, StoreMessages.storeMessageRecipientOrder, StoreMessages.storeMessageRecipientID

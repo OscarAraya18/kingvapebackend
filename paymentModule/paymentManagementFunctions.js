@@ -48,28 +48,89 @@ module.exports = {
 
   selectUsedTransactions: async function(initialDate, endDate){
     return new Promise(async (selectUsedTransactionsPromiseResolve) => {
-      const conditions = [];
-            
-      if (initialDate != ''){
-        initialDate = new Date(initialDate);
-        initialDate.setHours(initialDate.getHours() + 6);
-        initialDate = initialDate.toString();
-        initialDate = initialDate.replace('GMT-0600', 'GMT+0000');
-        conditions.push(`STR_TO_DATE(transactionApprovedDate, '%a %b %d %Y %H:%i:%s GMT+0000') >= STR_TO_DATE('${initialDate}', '%a %b %d %Y %H:%i:%s GMT+0000')`);
-      }
-
-      if (endDate != ''){
-        endDate = new Date(endDate);
-        endDate.setHours(endDate.getHours() + 6);
-        endDate = endDate.toString();
-        endDate = endDate.replace('GMT-0600', 'GMT+0000');
-        conditions.push(`STR_TO_DATE(transactionApprovedDate, '%a %b %d %Y %H:%i:%s GMT+0000') <= STR_TO_DATE('${endDate}', '%a %b %d %Y %H:%i:%s GMT+0000')`);
-      }
-
-      const whereClause = conditions.length > 0 ? ` AND ${conditions.join(' AND ')}` : '';
       
-      var selectUsedTransactionsSQL = 
-      `
+      var selectUsedTransactionsSQL = '';
+
+      if (initialDate == '' && endDate == ''){
+        let currentDate = new Date();
+        currentDate.setHours(currentDate.getHours() - 6);
+        let hourPart = currentDate.toISOString().substring(11, 13);
+        let hour = parseInt(hourPart, 10);
+
+        if (hour >= 18){
+          selectUsedTransactionsSQL = 
+          `
+          SELECT 
+            Transactions.transactionID,
+            Transactions.transactionNote,
+            Transactions.transactionAmount,
+            Transactions.transactionDate,
+            Transactions.transactionRelatedMessageID,
+            Transactions.transactionApprovedDate,
+            Transactions.transactionSystemDate,
+            LocalityAgents.localityAgentName,
+            Agents.agentName,
+            Localities.localityName
+          FROM Transactions
+          LEFT JOIN LocalityAgents ON Transactions.transactionApprover = LocalityAgents.localityAgentID
+          LEFT JOIN Agents ON Transactions.transactionApprover = Agents.agentID
+          LEFT JOIN Localities ON Transactions.transactionStore = Localities.localityID
+          WHERE 
+            transactionUsed = (?)
+              AND
+            STR_TO_DATE(Transactions.transactionSystemDate, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW() - INTERVAL 1 DAY, '%Y-%m-%d 6:00:00')
+              AND
+            STR_TO_DATE(Transactions.transactionSystemDate, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
+          ;`;
+        } else {
+          selectUsedTransactionsSQL = 
+          `
+          SELECT 
+            Transactions.transactionID,
+            Transactions.transactionNote,
+            Transactions.transactionAmount,
+            Transactions.transactionDate,
+            Transactions.transactionRelatedMessageID,
+            Transactions.transactionApprovedDate,
+            Transactions.transactionSystemDate,
+            LocalityAgents.localityAgentName,
+            Agents.agentName,
+            Localities.localityName
+          FROM Transactions
+          LEFT JOIN LocalityAgents ON Transactions.transactionApprover = LocalityAgents.localityAgentID
+          LEFT JOIN Agents ON Transactions.transactionApprover = Agents.agentID
+          LEFT JOIN Localities ON Transactions.transactionStore = Localities.localityID
+          WHERE 
+            transactionUsed = (?)
+              AND
+            STR_TO_DATE(Transactions.transactionSystemDate, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
+              AND
+            STR_TO_DATE(Transactions.transactionSystemDate, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
+          ;`;
+        }
+      } else {
+        const conditions = [];
+        
+        if (initialDate != ''){
+          initialDate = new Date(initialDate);
+          initialDate.setHours(initialDate.getHours() + 6);
+          initialDate = initialDate.toString();
+          initialDate = initialDate.replace('GMT-0600', 'GMT+0000');
+          conditions.push(`STR_TO_DATE(transactionApprovedDate, '%a %b %d %Y %H:%i:%s GMT+0000') >= STR_TO_DATE('${initialDate}', '%a %b %d %Y %H:%i:%s GMT+0000')`);
+        }
+
+        if (endDate != ''){
+          endDate = new Date(endDate);
+          endDate.setHours(endDate.getHours() + 6);
+          endDate = endDate.toString();
+          endDate = endDate.replace('GMT-0600', 'GMT+0000');
+          conditions.push(`STR_TO_DATE(transactionApprovedDate, '%a %b %d %Y %H:%i:%s GMT+0000') <= STR_TO_DATE('${endDate}', '%a %b %d %Y %H:%i:%s GMT+0000')`);
+        }
+
+        const whereClause = conditions.length > 0 ? ` AND ${conditions.join(' AND ')}` : '';
+        
+        var selectUsedTransactionsSQL = 
+        `
         SELECT 
           Transactions.transactionID,
           Transactions.transactionNote,
@@ -86,9 +147,10 @@ module.exports = {
         LEFT JOIN Agents ON Transactions.transactionApprover = Agents.agentID
         LEFT JOIN Localities ON Transactions.transactionStore = Localities.localityID
         WHERE transactionUsed = (?)
-      `;
+        `;
+        selectUsedTransactionsSQL = selectUsedTransactionsSQL + whereClause;
+      }
 
-      selectUsedTransactionsSQL = selectUsedTransactionsSQL + whereClause;
       const selectUsedTransactionsValues = [true];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectUsedTransactionsSQL, selectUsedTransactionsValues);
       selectUsedTransactionsPromiseResolve(JSON.stringify(databaseResult));
