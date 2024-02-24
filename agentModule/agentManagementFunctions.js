@@ -75,7 +75,7 @@ module.exports = {
             agentID: agentID, 
             agentUsername: agentUsername,
             agentPassword: agentPassword,
-            agentProfileImage: agentProfileImage
+            agentProfileImage: agentProfileImageAsBase64
           }
         };
         updateAgentLoginCredentialsPromiseResolve(JSON.stringify(updateAgentLoginCredentialsResult));
