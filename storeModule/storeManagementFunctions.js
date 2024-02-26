@@ -30,11 +30,11 @@ module.exports = {
           `
           SELECT StoreMessages.storeMessageID, StoreMessages.storeMessageStoreName, StoreMessages.storeMessageStartDateTime, Agents.agentName, StoreMessages.storeMessageRecipientPhoneNumber, StoreMessages.storeMessageRecipientProfileName, StoreMessages.storeMessageRecipientOrder, StoreMessages.storeMessageRecipientID
           FROM StoreMessages 
+          LEFT JOIN Agents ON Agents.agentID = StoreMessages.storeMessageAssignedAgentID
           WHERE 
             STR_TO_DATE(StoreMessages.storeMessageStartDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW() - INTERVAL 1 DAY, '%Y-%m-%d 6:00:00')
               AND
             STR_TO_DATE(StoreMessages.storeMessageStartDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
-          LEFT JOIN Agents ON Agents.agentID = StoreMessages.storeMessageAssignedAgentID
           ORDER BY storeMessageID DESC;
           `;
         } else {
@@ -42,11 +42,11 @@ module.exports = {
           `
           SELECT StoreMessages.storeMessageID, StoreMessages.storeMessageStoreName, StoreMessages.storeMessageStartDateTime, Agents.agentName, StoreMessages.storeMessageRecipientPhoneNumber, StoreMessages.storeMessageRecipientProfileName, StoreMessages.storeMessageRecipientOrder, StoreMessages.storeMessageRecipientID
           FROM StoreMessages 
+          LEFT JOIN Agents ON Agents.agentID = StoreMessages.storeMessageAssignedAgentID
           WHERE 
             STR_TO_DATE(StoreMessages.storeMessageStartDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
               AND
             STR_TO_DATE(StoreMessages.storeMessageStartDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
-          LEFT JOIN Agents ON Agents.agentID = StoreMessages.storeMessageAssignedAgentID
           ORDER BY storeMessageID DESC;
           `;
         }        
@@ -87,6 +87,7 @@ module.exports = {
       }
       const selectStoreMessageByStoreMessageStoreNameValues = [storeMessageStoreName];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectStoreMessageByStoreMessageStoreNameSQL, selectStoreMessageByStoreMessageStoreNameValues);
+      console.log(databaseResult);
       selectStoreMessageByStoreMessageStoreNamePromiseResolve(JSON.stringify(databaseResult));      
     });
   },
