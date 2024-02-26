@@ -20,31 +20,69 @@ module.exports = {
       
       var selectStoreMessageByStoreMessageStoreNameSQL = '';
       if (storeMessageStoreName == ''){
-        selectStoreMessageByStoreMessageStoreNameSQL = 
-        `
-        SELECT StoreMessages.storeMessageID, StoreMessages.storeMessageStoreName, StoreMessages.storeMessageStartDateTime, Agents.agentName, StoreMessages.storeMessageRecipientPhoneNumber, StoreMessages.storeMessageRecipientProfileName, StoreMessages.storeMessageRecipientOrder, StoreMessages.storeMessageRecipientID
-        FROM StoreMessages 
-        LEFT JOIN Agents ON Agents.agentID = StoreMessages.storeMessageAssignedAgentID
-        WHERE 
-          STR_TO_DATE(StoreMessages.storeMessageStartDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 00:00:00')
-            AND
-          STR_TO_DATE(StoreMessages.storeMessageStartDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 1 DAY, '%Y-%m-%d 00:00:00')
-        ORDER BY storeMessageID DESC;
-        `;  
-      } else { 
-        selectStoreMessageByStoreMessageStoreNameSQL = 
-        `
+        let currentDate = new Date();
+        currentDate.setHours(currentDate.getHours() - 6);
+        let hourPart = currentDate.toISOString().substring(11, 13);
+        let hour = parseInt(hourPart, 10);
+        if (hour >= 18){
+          selectStoreMessageByStoreMessageStoreNameSQL = 
+          `
           SELECT StoreMessages.storeMessageID, StoreMessages.storeMessageStoreName, StoreMessages.storeMessageStartDateTime, Agents.agentName, StoreMessages.storeMessageRecipientPhoneNumber, StoreMessages.storeMessageRecipientProfileName, StoreMessages.storeMessageRecipientOrder, StoreMessages.storeMessageRecipientID
           FROM StoreMessages 
           LEFT JOIN Agents ON Agents.agentID = StoreMessages.storeMessageAssignedAgentID
           WHERE 
-            storeMessageStoreName=(?)
+            STR_TO_DATE(StoreMessages.storeMessageStartDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW() - INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
               AND
-            STR_TO_DATE(StoreMessages.storeMessageStartDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 00:00:00')
-              AND
-            STR_TO_DATE(StoreMessages.storeMessageStartDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 1 DAY, '%Y-%m-%d 00:00:00')
+            STR_TO_DATE(StoreMessages.storeMessageStartDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
           ORDER BY storeMessageID DESC;
-        `;
+          `;
+        } else {
+          selectStoreMessageByStoreMessageStoreNameSQL = 
+          `
+          SELECT StoreMessages.storeMessageID, StoreMessages.storeMessageStoreName, StoreMessages.storeMessageStartDateTime, Agents.agentName, StoreMessages.storeMessageRecipientPhoneNumber, StoreMessages.storeMessageRecipientProfileName, StoreMessages.storeMessageRecipientOrder, StoreMessages.storeMessageRecipientID
+          FROM StoreMessages 
+          LEFT JOIN Agents ON Agents.agentID = StoreMessages.storeMessageAssignedAgentID
+          WHERE 
+            STR_TO_DATE(StoreMessages.storeMessageStartDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
+              AND
+            STR_TO_DATE(StoreMessages.storeMessageStartDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
+          ORDER BY storeMessageID DESC;
+          `;
+        }        
+      } else { 
+        let currentDate = new Date();
+        currentDate.setHours(currentDate.getHours() - 6);
+        let hourPart = currentDate.toISOString().substring(11, 13);
+        let hour = parseInt(hourPart, 10);
+        if (hour >= 18){
+          selectStoreMessageByStoreMessageStoreNameSQL = 
+          `
+            SELECT StoreMessages.storeMessageID, StoreMessages.storeMessageStoreName, StoreMessages.storeMessageStartDateTime, Agents.agentName, StoreMessages.storeMessageRecipientPhoneNumber, StoreMessages.storeMessageRecipientProfileName, StoreMessages.storeMessageRecipientOrder, StoreMessages.storeMessageRecipientID
+            FROM StoreMessages 
+            LEFT JOIN Agents ON Agents.agentID = StoreMessages.storeMessageAssignedAgentID
+            WHERE 
+              storeMessageStoreName=(?)
+                AND
+              STR_TO_DATE(StoreMessages.storeMessageStartDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW() - INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
+                AND
+              STR_TO_DATE(StoreMessages.storeMessageStartDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
+            ORDER BY storeMessageID DESC;
+          `;
+        } else {
+          selectStoreMessageByStoreMessageStoreNameSQL = 
+          `
+            SELECT StoreMessages.storeMessageID, StoreMessages.storeMessageStoreName, StoreMessages.storeMessageStartDateTime, Agents.agentName, StoreMessages.storeMessageRecipientPhoneNumber, StoreMessages.storeMessageRecipientProfileName, StoreMessages.storeMessageRecipientOrder, StoreMessages.storeMessageRecipientID
+            FROM StoreMessages 
+            LEFT JOIN Agents ON Agents.agentID = StoreMessages.storeMessageAssignedAgentID
+            WHERE 
+              storeMessageStoreName=(?)
+                AND
+              STR_TO_DATE(StoreMessages.storeMessageStartDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
+                AND
+              STR_TO_DATE(StoreMessages.storeMessageStartDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
+            ORDER BY storeMessageID DESC;
+          `;
+        }
       }
       const selectStoreMessageByStoreMessageStoreNameValues = [storeMessageStoreName];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectStoreMessageByStoreMessageStoreNameSQL, selectStoreMessageByStoreMessageStoreNameValues);
