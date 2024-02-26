@@ -17,24 +17,73 @@ module.exports = {
 
   selectStoreMessageByStoreMessageStoreName: async function(storeMessageStoreName){
     return new Promise(async (selectStoreMessageByStoreMessageStoreNamePromiseResolve) => {
+      
       var selectStoreMessageByStoreMessageStoreNameSQL = '';
+
       if (storeMessageStoreName == ''){
-        selectStoreMessageByStoreMessageStoreNameSQL = 
-        `
-          SELECT StoreMessages.storeMessageID, StoreMessages.storeMessageStartDateTime, Agents.agentName, StoreMessages.storeMessageRecipientPhoneNumber, StoreMessages.storeMessageRecipientProfileName, StoreMessages.storeMessageRecipientOrder, StoreMessages.storeMessageRecipientID
+        let currentDate = new Date();
+        currentDate.setHours(currentDate.getHours() - 6);
+        let hourPart = currentDate.toISOString().substring(11, 13);
+        let hour = parseInt(hourPart, 10);
+        if (hour >= 18){
+          selectStoreMessageByStoreMessageStoreNameSQL = 
+          `
+          SELECT StoreMessages.storeMessageID, StoreMessages.storeMessageStoreName, StoreMessages.storeMessageStartDateTime, Agents.agentName, StoreMessages.storeMessageRecipientPhoneNumber, StoreMessages.storeMessageRecipientProfileName, StoreMessages.storeMessageRecipientOrder, StoreMessages.storeMessageRecipientID
           FROM StoreMessages 
+          WHERE 
+            STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW() - INTERVAL 1 DAY, '%Y-%m-%d 6:00:00')
+              AND
+            STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
           LEFT JOIN Agents ON Agents.agentID = StoreMessages.storeMessageAssignedAgentID
-          ORDER BY storeMessageID DESC LIMIT 30;
-        `;
+          ORDER BY storeMessageID DESC;
+          `;
+        } else {
+          selectStoreMessageByStoreMessageStoreNameSQL = 
+          `
+          SELECT StoreMessages.storeMessageID, StoreMessages.storeMessageStoreName, StoreMessages.storeMessageStartDateTime, Agents.agentName, StoreMessages.storeMessageRecipientPhoneNumber, StoreMessages.storeMessageRecipientProfileName, StoreMessages.storeMessageRecipientOrder, StoreMessages.storeMessageRecipientID
+          FROM StoreMessages 
+          WHERE 
+            STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
+              AND
+            STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
+          LEFT JOIN Agents ON Agents.agentID = StoreMessages.storeMessageAssignedAgentID
+          ORDER BY storeMessageID DESC;
+          `;
+        }        
       } else { 
-        selectStoreMessageByStoreMessageStoreNameSQL = 
-        `
-          SELECT StoreMessages.storeMessageID, StoreMessages.storeMessageStartDateTime, Agents.agentName, StoreMessages.storeMessageRecipientPhoneNumber, StoreMessages.storeMessageRecipientProfileName, StoreMessages.storeMessageRecipientOrder, StoreMessages.storeMessageRecipientID
-          FROM StoreMessages 
-          LEFT JOIN Agents ON Agents.agentID = StoreMessages.storeMessageAssignedAgentID
-          WHERE storeMessageStoreName=(?)
-          ORDER BY storeMessageID DESC LIMIT 10;
-        `;
+        let currentDate = new Date();
+        currentDate.setHours(currentDate.getHours() - 6);
+        let hourPart = currentDate.toISOString().substring(11, 13);
+        let hour = parseInt(hourPart, 10);
+        if (hour >= 18){
+          selectStoreMessageByStoreMessageStoreNameSQL = 
+          `
+            SELECT StoreMessages.storeMessageID, StoreMessages.storeMessageStoreName, StoreMessages.storeMessageStartDateTime, Agents.agentName, StoreMessages.storeMessageRecipientPhoneNumber, StoreMessages.storeMessageRecipientProfileName, StoreMessages.storeMessageRecipientOrder, StoreMessages.storeMessageRecipientID
+            FROM StoreMessages 
+            LEFT JOIN Agents ON Agents.agentID = StoreMessages.storeMessageAssignedAgentID
+            WHERE 
+              storeMessageStoreName=(?)
+                AND
+              STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW() - INTERVAL 1 DAY, '%Y-%m-%d 6:00:00')
+                AND
+              STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
+            ORDER BY storeMessageID DESC;
+          `;
+        } else {
+          selectStoreMessageByStoreMessageStoreNameSQL = 
+          `
+            SELECT StoreMessages.storeMessageID, StoreMessages.storeMessageStoreName, StoreMessages.storeMessageStartDateTime, Agents.agentName, StoreMessages.storeMessageRecipientPhoneNumber, StoreMessages.storeMessageRecipientProfileName, StoreMessages.storeMessageRecipientOrder, StoreMessages.storeMessageRecipientID
+            FROM StoreMessages 
+            LEFT JOIN Agents ON Agents.agentID = StoreMessages.storeMessageAssignedAgentID
+            WHERE 
+              storeMessageStoreName=(?)
+                AND
+              STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
+                AND
+              STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
+            ORDER BY storeMessageID DESC;
+          `;
+        }
       }
       const selectStoreMessageByStoreMessageStoreNameValues = [storeMessageStoreName];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectStoreMessageByStoreMessageStoreNameSQL, selectStoreMessageByStoreMessageStoreNameValues);

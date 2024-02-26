@@ -224,7 +224,6 @@ module.exports = {
         currentDate.setHours(currentDate.getHours() - 6);
         let hourPart = currentDate.toISOString().substring(11, 13);
         let hour = parseInt(hourPart, 10);
-        var selectTodayDashboardInformationSQL = '';
         if (hour >= 18){
           selectRankingFilteredConversationsSQL = 
           `
