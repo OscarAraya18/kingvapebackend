@@ -31,9 +31,9 @@ module.exports = {
           SELECT StoreMessages.storeMessageID, StoreMessages.storeMessageStoreName, StoreMessages.storeMessageStartDateTime, Agents.agentName, StoreMessages.storeMessageRecipientPhoneNumber, StoreMessages.storeMessageRecipientProfileName, StoreMessages.storeMessageRecipientOrder, StoreMessages.storeMessageRecipientID
           FROM StoreMessages 
           WHERE 
-            STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW() - INTERVAL 1 DAY, '%Y-%m-%d 6:00:00')
+            STR_TO_DATE(StoreMessages.storeMessageStartDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW() - INTERVAL 1 DAY, '%Y-%m-%d 6:00:00')
               AND
-            STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
+            STR_TO_DATE(StoreMessages.storeMessageStartDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
           LEFT JOIN Agents ON Agents.agentID = StoreMessages.storeMessageAssignedAgentID
           ORDER BY storeMessageID DESC;
           `;
@@ -43,9 +43,9 @@ module.exports = {
           SELECT StoreMessages.storeMessageID, StoreMessages.storeMessageStoreName, StoreMessages.storeMessageStartDateTime, Agents.agentName, StoreMessages.storeMessageRecipientPhoneNumber, StoreMessages.storeMessageRecipientProfileName, StoreMessages.storeMessageRecipientOrder, StoreMessages.storeMessageRecipientID
           FROM StoreMessages 
           WHERE 
-            STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
+            STR_TO_DATE(StoreMessages.storeMessageStartDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
               AND
-            STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
+            STR_TO_DATE(StoreMessages.storeMessageStartDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
           LEFT JOIN Agents ON Agents.agentID = StoreMessages.storeMessageAssignedAgentID
           ORDER BY storeMessageID DESC;
           `;
@@ -64,9 +64,9 @@ module.exports = {
             WHERE 
               storeMessageStoreName=(?)
                 AND
-              STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW() - INTERVAL 1 DAY, '%Y-%m-%d 6:00:00')
+              STR_TO_DATE(StoreMessages.storeMessageStartDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW() - INTERVAL 1 DAY, '%Y-%m-%d 6:00:00')
                 AND
-              STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
+              STR_TO_DATE(StoreMessages.storeMessageStartDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
             ORDER BY storeMessageID DESC;
           `;
         } else {
@@ -78,9 +78,9 @@ module.exports = {
             WHERE 
               storeMessageStoreName=(?)
                 AND
-              STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
+              STR_TO_DATE(StoreMessages.storeMessageStartDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
                 AND
-              STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
+              STR_TO_DATE(StoreMessages.storeMessageStartDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
             ORDER BY storeMessageID DESC;
           `;
         }
