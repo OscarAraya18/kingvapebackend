@@ -86,7 +86,6 @@ module.exports = {
       }
       const selectStoreMessageByStoreMessageStoreNameValues = [storeMessageStoreName];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectStoreMessageByStoreMessageStoreNameSQL, selectStoreMessageByStoreMessageStoreNameValues);
-      console.log(databaseResult);
       selectStoreMessageByStoreMessageStoreNamePromiseResolve(JSON.stringify(databaseResult));      
     });
   },
