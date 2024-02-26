@@ -24,6 +24,7 @@ module.exports = {
         currentDate.setHours(currentDate.getHours() - 6);
         let hourPart = currentDate.toISOString().substring(11, 13);
         let hour = parseInt(hourPart, 10);
+        console.log(hour);
         if (hour >= 18){
           selectStoreMessageByStoreMessageStoreNameSQL = 
           `
