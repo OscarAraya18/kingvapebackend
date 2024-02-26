@@ -27,7 +27,7 @@ module.exports = {
         if (hour >= 18){
           selectStoreMessageByStoreMessageStoreNameSQL = 
           `
-          SELECT StoreMessages.storeMessageID, StoreMessages.storeMessageStoreName, StoreMessages.storeMessageStartDateTime, Agents.agentName, StoreMessages.storeMessageRecipientPhoneNumber, StoreMessages.storeMessageRecipientProfileName, StoreMessages.storeMessageRecipientOrder, StoreMessages.storeMessageRecipientID
+          SELECT StoreMessages.storeMessageID, StoreMessages.storeMessageStoreName, StoreMessages.storeMessageDeleteReason, StoreMessages.storeMessageStartDateTime, Agents.agentName, StoreMessages.storeMessageRecipientPhoneNumber, StoreMessages.storeMessageRecipientProfileName, StoreMessages.storeMessageRecipientOrder, StoreMessages.storeMessageRecipientID
           FROM StoreMessages 
           LEFT JOIN Agents ON Agents.agentID = StoreMessages.storeMessageAssignedAgentID
           WHERE 
@@ -39,7 +39,7 @@ module.exports = {
         } else {
           selectStoreMessageByStoreMessageStoreNameSQL = 
           `
-          SELECT StoreMessages.storeMessageID, StoreMessages.storeMessageStoreName, StoreMessages.storeMessageStartDateTime, Agents.agentName, StoreMessages.storeMessageRecipientPhoneNumber, StoreMessages.storeMessageRecipientProfileName, StoreMessages.storeMessageRecipientOrder, StoreMessages.storeMessageRecipientID
+          SELECT StoreMessages.storeMessageID, StoreMessages.storeMessageStoreName, StoreMessages.storeMessageDeleteReason, StoreMessages.storeMessageStartDateTime, Agents.agentName, StoreMessages.storeMessageRecipientPhoneNumber, StoreMessages.storeMessageRecipientProfileName, StoreMessages.storeMessageRecipientOrder, StoreMessages.storeMessageRecipientID
           FROM StoreMessages 
           LEFT JOIN Agents ON Agents.agentID = StoreMessages.storeMessageAssignedAgentID
           WHERE 
@@ -57,7 +57,7 @@ module.exports = {
         if (hour >= 18){
           selectStoreMessageByStoreMessageStoreNameSQL = 
           `
-            SELECT StoreMessages.storeMessageID, StoreMessages.storeMessageStoreName, StoreMessages.storeMessageStartDateTime, Agents.agentName, StoreMessages.storeMessageRecipientPhoneNumber, StoreMessages.storeMessageRecipientProfileName, StoreMessages.storeMessageRecipientOrder, StoreMessages.storeMessageRecipientID
+            SELECT StoreMessages.storeMessageID, StoreMessages.storeMessageStoreName, StoreMessages.storeMessageDeleteReason, StoreMessages.storeMessageStartDateTime, Agents.agentName, StoreMessages.storeMessageRecipientPhoneNumber, StoreMessages.storeMessageRecipientProfileName, StoreMessages.storeMessageRecipientOrder, StoreMessages.storeMessageRecipientID
             FROM StoreMessages 
             LEFT JOIN Agents ON Agents.agentID = StoreMessages.storeMessageAssignedAgentID
             WHERE 
@@ -71,7 +71,7 @@ module.exports = {
         } else {
           selectStoreMessageByStoreMessageStoreNameSQL = 
           `
-            SELECT StoreMessages.storeMessageID, StoreMessages.storeMessageStoreName, StoreMessages.storeMessageStartDateTime, Agents.agentName, StoreMessages.storeMessageRecipientPhoneNumber, StoreMessages.storeMessageRecipientProfileName, StoreMessages.storeMessageRecipientOrder, StoreMessages.storeMessageRecipientID
+            SELECT StoreMessages.storeMessageID, StoreMessages.storeMessageStoreName, StoreMessages.storeMessageDeleteReason, StoreMessages.storeMessageStartDateTime, Agents.agentName, StoreMessages.storeMessageRecipientPhoneNumber, StoreMessages.storeMessageRecipientProfileName, StoreMessages.storeMessageRecipientOrder, StoreMessages.storeMessageRecipientID
             FROM StoreMessages 
             LEFT JOIN Agents ON Agents.agentID = StoreMessages.storeMessageAssignedAgentID
             WHERE 
