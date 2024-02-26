@@ -19,7 +19,6 @@ module.exports = {
     return new Promise(async (selectStoreMessageByStoreMessageStoreNamePromiseResolve) => {
       
       var selectStoreMessageByStoreMessageStoreNameSQL = '';
-
       if (storeMessageStoreName == ''){
         let currentDate = new Date();
         currentDate.setHours(currentDate.getHours() - 6);
