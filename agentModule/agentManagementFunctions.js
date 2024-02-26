@@ -718,7 +718,7 @@ module.exports = {
             evaluatedNumbers[whatsappConversationRecipientPhoneNumber] = 'true';
             if (agentName in agentsAndConversations){
               if (whatsappConversationAmount == 0){
-                if (whatsappConversationCloseComment == 'No contestó' || whatsappConversationCloseComment == 'Consulta sobre producto'){
+                if (whatsappConversationCloseComment == 'No contestó' || whatsappConversationCloseComment == 'Consulta sobre productos'){
                   agentsAndConversations[agentName]['whatsappNotSelledConversations'] = agentsAndConversations[agentName]['whatsappNotSelledConversations'] + 1;
                 }
               } else {
@@ -726,7 +726,7 @@ module.exports = {
               }
             } else {
               if (whatsappConversationAmount == 0){
-                if (whatsappConversationCloseComment == 'No contestó' || whatsappConversationCloseComment == 'Consulta sobre producto'){
+                if (whatsappConversationCloseComment == 'No contestó' || whatsappConversationCloseComment == 'Consulta sobre productos'){
                   agentsAndConversations[agentName] = {'agentID': sortedDatabaseResultObject.agentID, 'whatsappSelledConversations': 0, 'whatsappNotSelledConversations': 1}
                 }
               } else {
@@ -818,7 +818,7 @@ module.exports = {
           evaluatedNumbers[whatsappConversationRecipientPhoneNumber] = 'true';
           if (agentName in agentsAndConversations){
             if (whatsappConversationAmount == 0){
-              if (whatsappConversationCloseComment == 'No contestó' || whatsappConversationCloseComment == 'Consulta sobre producto'){
+              if (whatsappConversationCloseComment == 'No contestó' || whatsappConversationCloseComment == 'Consulta sobre productos'){
                 agentsAndConversations[agentName]['whatsappNotSelledConversations'] = agentsAndConversations[agentName]['whatsappNotSelledConversations'] + 1;
               }
             } else {
@@ -826,7 +826,7 @@ module.exports = {
             }
           } else {
             if (whatsappConversationAmount == 0){
-              if (whatsappConversationCloseComment == 'No contestó' || whatsappConversationCloseComment == 'Consulta sobre producto'){
+              if (whatsappConversationCloseComment == 'No contestó' || whatsappConversationCloseComment == 'Consulta sobre productos'){
                 agentsAndConversations[agentName] = {'agentID': sortedDatabaseResultObject.agentID, 'whatsappSelledConversations': 0, 'whatsappNotSelledConversations': 1}
               }
             } else {
@@ -906,7 +906,7 @@ module.exports = {
             whatsappSelledConversations = whatsappSelledConversations + 1;
           }
           if ((whatsappConversationAmount == 0) && (!(whatsappConversationRecipientPhoneNumber in evaluatedNumbers))){
-            if (whatsappConversationCloseComment == 'Consulta sobre producto sin venta'){
+            if (whatsappConversationCloseComment == 'Consulta sobre productos' || whatsappConversationCloseComment == 'No contestó'){
               whatsappNotSelledConversations = whatsappNotSelledConversations + 1;
             }
           }
@@ -978,7 +978,7 @@ module.exports = {
           whatsappSelledConversations = whatsappSelledConversations + 1;
         }
         if ((whatsappConversationAmount == 0) && (!(whatsappConversationRecipientPhoneNumber in evaluatedNumbers))){
-          if (whatsappConversationCloseComment == 'Consulta sobre producto sin venta'){
+          if (whatsappConversationCloseComment == 'Consulta sobre productos' || whatsappConversationCloseComment == 'No contestó'){
             whatsappNotSelledConversations = whatsappNotSelledConversations + 1;
           }
         }
