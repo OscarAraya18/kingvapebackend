@@ -78,11 +78,12 @@ module.exports = {
           WHERE 
             transactionUsed = (?)
               AND
-            STR_TO_DATE(Transactions.transactionSystemDate, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW() - INTERVAL 1 DAY, '%Y-%m-%d 6:00:00')
+            STR_TO_DATE(Transactions.transactionApprovedDate, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW() - INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
               AND
-            STR_TO_DATE(Transactions.transactionSystemDate, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
+            STR_TO_DATE(Transactions.transactionApprovedDate, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
           ;`;
         } else {
+          
           selectUsedTransactionsSQL = 
           `
           SELECT 
@@ -103,9 +104,9 @@ module.exports = {
           WHERE 
             transactionUsed = (?)
               AND
-            STR_TO_DATE(Transactions.transactionSystemDate, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
+            STR_TO_DATE(Transactions.transactionApprovedDate, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
               AND
-            STR_TO_DATE(Transactions.transactionSystemDate, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
+            STR_TO_DATE(Transactions.transactionApprovedDate, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
           ;`;
         }
       } else {
