@@ -1011,7 +1011,9 @@ module.exports = {
         `
         SELECT 
           Agents.agentName,
-          WhatsappConversations.whatsappConversationAmount
+          WhatsappConversations.whatsappConversationAmount,
+          WhatsappConversations.whatsappConversationRecipientPhoneNumber,
+          WhatsappConversations.whatsappConversationRecipientProfileName
         FROM WhatsappConversations
         JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
         WHERE 
@@ -1026,7 +1028,9 @@ module.exports = {
         `
         SELECT 
           Agents.agentName,
-          WhatsappConversations.whatsappConversationAmount
+          WhatsappConversations.whatsappConversationAmount,
+          WhatsappConversations.whatsappConversationRecipientPhoneNumber,
+          WhatsappConversations.whatsappConversationRecipientProfileName
         FROM WhatsappConversations
         JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
         WHERE 
@@ -1037,15 +1041,17 @@ module.exports = {
           WhatsappConversations.whatsappConversationIsActive = (?)
         `;
       }
+
       
       const whatsappConversationIsActive = false;
       const selectTodayTopSellValues = [whatsappConversationIsActive];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectTodayTopSellSQL, selectTodayTopSellValues);
       if (databaseResult.success){
         const sortedDatabaseResult = databaseResult.result.sort((a, b) => b.whatsappConversationAmount - a.whatsappConversationAmount);
-        var temp = 'Sin datos';
+        var temp = [];
         if (sortedDatabaseResult[0]){
-          temp = sortedDatabaseResult[0].agentName;
+          const maxIndex = Math.min(sortedDatabaseResult.length, 10);
+          temp = sortedDatabaseResult.slice(0, maxIndex);
         }
         const result = 
         {
