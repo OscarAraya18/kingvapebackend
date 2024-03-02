@@ -906,7 +906,7 @@ module.exports = {
             whatsappSelledConversations = whatsappSelledConversations + 1;
           }
           if ((whatsappConversationAmount == 0) && (!(whatsappConversationRecipientPhoneNumber in evaluatedNumbers))){
-            if (whatsappConversationCloseComment == 'Consulta sobre productos' || whatsappConversationCloseComment == 'No contestó'){
+            if (whatsappConversationCloseComment == 'Venta perdida' || whatsappConversationCloseComment == 'Venta para otro día' || whatsappConversationCloseComment == 'Consulta sobre productos' || whatsappConversationCloseComment == 'No contestó'){
               whatsappNotSelledConversations = whatsappNotSelledConversations + 1;
             }
           }
@@ -978,7 +978,7 @@ module.exports = {
           whatsappSelledConversations = whatsappSelledConversations + 1;
         }
         if ((whatsappConversationAmount == 0) && (!(whatsappConversationRecipientPhoneNumber in evaluatedNumbers))){
-          if (whatsappConversationCloseComment == 'Consulta sobre productos' || whatsappConversationCloseComment == 'No contestó'){
+          if (whatsappConversationCloseComment == 'Venta perdida' || whatsappConversationCloseComment == 'Venta para otro día' || whatsappConversationCloseComment == 'Consulta sobre productos' || whatsappConversationCloseComment == 'No contestó'){
             whatsappNotSelledConversations = whatsappNotSelledConversations + 1;
           }
         }
