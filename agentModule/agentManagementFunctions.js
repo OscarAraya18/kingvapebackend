@@ -1185,7 +1185,7 @@ module.exports = {
             }
           } else {
             feedbackInformation[agentName]['whatsappConversationsAmount'] = feedbackInformation[agentName]['whatsappConversationsAmount'] + 1;
-            feedbackInformation[agentName]['agentScore'] = feedbackInformation[agentName]['agentScore'] + (whatsappFeedbackOne + whatsappFeedbackTwo + whatsappFeedbackThree + whatsappFeedbackFour + whatsappFeedbackFive)/5;
+            feedbackInformation[agentName]['agentScore'] = feedbackInformation[agentName]['agentScore'] + (whatsappFeedbackOne + whatsappFeedbackTwo + whatsappFeedbackThree + whatsappFeedbackFour)/4;
           }
         }
 
@@ -1261,7 +1261,7 @@ module.exports = {
             }
           } else {
             feedbackInformation[agentName]['whatsappConversationsAmount'] = feedbackInformation[agentName]['whatsappConversationsAmount'] + 1;
-            feedbackInformation[agentName]['agentScore'] = feedbackInformation[agentName]['agentScore'] + (whatsappFeedbackOne + whatsappFeedbackTwo + whatsappFeedbackThree + whatsappFeedbackFour + whatsappFeedbackFive)/5;
+            feedbackInformation[agentName]['agentScore'] = feedbackInformation[agentName]['agentScore'] + (whatsappFeedbackOne + whatsappFeedbackTwo + whatsappFeedbackThree + whatsappFeedbackFour)/4;
           }
         }
 
