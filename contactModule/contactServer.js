@@ -77,3 +77,20 @@ backendContactHttpRequestServer.get('/loadContact', async (httpRequest, httpResp
   const loadContactResult = await contactsManagementFunctions.loadContact();
   httpResponse.end(loadContactResult);
 });
+
+
+
+/*FEEDBACK*/
+
+backendContactHttpRequestServer.post('/insertFeedback', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const whatsappConversationID = httpRequestQuery.whatsappConversationID;
+  const answerOne = httpRequestQuery.answerOne;
+  const answerTwo = httpRequestQuery.answerTwo;
+  const answerThree = httpRequestQuery.answerThree;
+  const answerFour = httpRequestQuery.answerFour;
+  const answerFive = httpRequestQuery.answerFive;
+  const answerSix = httpRequestQuery.answerSix;
+  const insertFeedbackResult = await contactsManagementFunctions.insertFeedback(whatsappConversationID, answerOne, answerTwo, answerThree, answerFour, answerFive, answerSix);
+  httpResponse.end(insertFeedbackResult);
+});

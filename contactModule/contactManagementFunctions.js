@@ -8,7 +8,7 @@ const puppeteer = require('puppeteer');
 module.exports = {
   insertContact: async function(contactPhoneNumber, contactID, contactName, contactEmail, contactLocationDetails, contactNote){
     return new Promise(async (insertContactPromiseResolve) => {
-      const insertContactSQL = `INSERT INTO Contacts (contactPhoneNumber, contactID, contactName, contactEmail, contactLocations, contactLocationDetails, contactNote) VALUES (?, ?, ?, ?, ?, ?, ?);`;
+      const insertContactSQL = `INSERT IGNORE INTO Contacts (contactPhoneNumber, contactID, contactName, contactEmail, contactLocations, contactLocationDetails, contactNote) VALUES (?, ?, ?, ?, ?, ?, ?);`;
       const contactLocations = JSON.stringify
       ({
         CASA: {latitude: 0, longitude: 0},
@@ -32,8 +32,11 @@ module.exports = {
             contactNote: contactNote
           }
         };
+        console.log(contactPhoneNumber + ': ' + contactName + ' is ready');
         insertContactPromiseResolve(JSON.stringify(websocketMessageContent));
       } else {
+        console.log('ERROR en ' + contactPhoneNumber + ': ' + contactName);
+
         insertContactPromiseResolve(JSON.stringify(databaseResult));
       }
     });
@@ -145,8 +148,7 @@ module.exports = {
           await webBrowser.close();
           verifyClientPromiseResolve(JSON.stringify({success: false, result: '1'}));
         }
-      } catch (e) {
-        console.log(e);
+      } catch {
         verifyClientPromiseResolve(JSON.stringify({success: false, result: e}));
       }
     });
@@ -159,16 +161,49 @@ module.exports = {
         const contactID = contactDatabase[contactPhoneNumber].contactID;
         const contactName = contactDatabase[contactPhoneNumber].contactName;
         const insertContactResult = await this.insertContact(contactPhoneNumber, contactID, contactName, 'NA', 'NA', 'NA');
-        if (insertContactResult.success == false){
-          return JSON.stringify({success: false});
-        }
-        console.log(contactPhoneNumber);
-        console.log(contactPhoneNumber + ': ' + contactName + ' is ready');
       }
       return JSON.stringify({success: true});
     } catch (error) {
       console.log(error);
       return JSON.stringify({success: false});
     }
-  }
+  },
+
+
+  insertFeedback: async function (whatsappConversationID, answerOne, answerTwo, answerThree, answerFour, answerFive, answerSix){
+    return new Promise(async (insertFeedbackPromiseResult) => {
+      const selectWhatsappConversationIDSQL = `SELECT whatsappConversationID FROM WhatsappConversations WHERE whatsappConversationID=(?) AND whatsappConversationIsActive=(?);`
+      const whatsappConversationIsActive = false;
+      const selectWhatsappConversationIDValues = [whatsappConversationID, whatsappConversationIsActive];
+      const selectWhatsappConversationIDResult = await databaseManagementFunctions.executeDatabaseSQL(selectWhatsappConversationIDSQL, selectWhatsappConversationIDValues);
+      if (selectWhatsappConversationIDResult.success){
+        if (selectWhatsappConversationIDResult.result.length == 1){
+          const selectFeedbackWhatsappConversationIDSQL = `SELECT whatsappFeedbackWhatsappConversationID FROM WhatsappFeedbacks WHERE whatsappFeedbackWhatsappConversationID=(?);`
+          const selectFeedbackWhatsappConversationIDValues = [whatsappConversationID];
+          const selectFeedbackWhatsappConversationIDResult = await databaseManagementFunctions.executeDatabaseSQL(selectFeedbackWhatsappConversationIDSQL, selectFeedbackWhatsappConversationIDValues);
+          if (selectFeedbackWhatsappConversationIDResult.success){
+            if (selectFeedbackWhatsappConversationIDResult.result.length == 0){
+              const insertWhatsappFeedbackSQL = `INSERT INTO WhatsappFeedbacks (whatsappFeedbackWhatsappConversationID, whatsappFeedbackOne, whatsappFeedbackTwo, whatsappFeedbackThree, whatsappFeedbackFour, whatsappFeedbackFive, whatsappFeedbackSix, whatsappFeedbackDateTime) VALUES (?,?,?,?,?,?,?,?);`
+              const whatsappFeedbackDateTime = new Date().toString()
+              const insertWhatsappFeedbackValues = [whatsappConversationID, answerOne, answerTwo, answerThree, answerFour, answerFive, answerSix, whatsappFeedbackDateTime]
+              const insertWhatsappFeedbackResult = await databaseManagementFunctions.executeDatabaseSQL(insertWhatsappFeedbackSQL, insertWhatsappFeedbackValues);
+              if (insertWhatsappFeedbackResult.success){
+                insertFeedbackPromiseResult(JSON.stringify(insertWhatsappFeedbackResult));
+              } else {
+                insertFeedbackPromiseResult(JSON.stringify({success: false, result: 5}));
+              }
+            } else {
+              insertFeedbackPromiseResult(JSON.stringify({success: false, result: 4}));
+            }
+          } else {
+            insertFeedbackPromiseResult(JSON.stringify({success: false, result: 3}));
+          }
+        } else {
+          insertFeedbackPromiseResult(JSON.stringify({success: false, result: 2}));
+        }
+      } else {
+        insertFeedbackPromiseResult(JSON.stringify({success: false, result: 1}));
+      }
+    });
+  },
 }
