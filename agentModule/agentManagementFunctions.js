@@ -1171,7 +1171,7 @@ module.exports = {
         const feedbackInformation = {};
 
         for (var databaseResultIndex in databaseResult.result){
-          const databaseResultObject = databaseResultObject[databaseResultIndex];
+          const databaseResultObject = databaseResult.result[databaseResultIndex];
           const agentName = databaseResultObject.agentName;
           const whatsappFeedbackOne = databaseResultObject.whatsappFeedbackOne;
           const whatsappFeedbackTwo = databaseResultObject.whatsappFeedbackTwo;
