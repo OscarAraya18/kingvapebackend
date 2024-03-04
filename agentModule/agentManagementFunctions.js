@@ -1137,8 +1137,8 @@ module.exports = {
           WhatsappFeedbacks.whatsappFeedbackThree,
           WhatsappFeedbacks.whatsappFeedbackFour
         FROM WhatsappConversations
-        JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
-        JOIN WhatsappFeedbacks ON WhatsappConversations.whatsappConversationID = WhatsappFeedbacks.whatsappFeedbackWhatsappConversationID
+        LEFT JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
+        LEFT JOIN WhatsappFeedbacks ON WhatsappConversations.whatsappConversationID = WhatsappFeedbacks.whatsappFeedbackWhatsappConversationID
         WHERE 
           STR_TO_DATE(WhatsappFeedbacks.whatsappFeedbackDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW() - INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
             AND
@@ -1156,8 +1156,8 @@ module.exports = {
           WhatsappFeedbacks.whatsappFeedbackThree,
           WhatsappFeedbacks.whatsappFeedbackFour
         FROM WhatsappConversations
-        JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
-        JOIN WhatsappFeedbacks ON WhatsappConversations.whatsappConversationID = WhatsappFeedbacks.whatsappFeedbackWhatsappConversationID
+        LEFT JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
+        LEFT JOIN WhatsappFeedbacks ON WhatsappConversations.whatsappConversationID = WhatsappFeedbacks.whatsappFeedbackWhatsappConversationID
         WHERE 
           STR_TO_DATE(WhatsappFeedbacks.whatsappFeedbackDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
             AND
@@ -1230,8 +1230,8 @@ module.exports = {
           WhatsappFeedbacks.whatsappFeedbackThree,
           WhatsappFeedbacks.whatsappFeedbackFour
         FROM WhatsappConversations
-        JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
-        JOIN WhatsappFeedbacks ON WhatsappConversations.whatsappConversationID = WhatsappFeedbacks.whatsappFeedbackWhatsappConversationID
+        LEFT JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
+        LEFT JOIN WhatsappFeedbacks ON WhatsappConversations.whatsappConversationID = WhatsappFeedbacks.whatsappFeedbackWhatsappConversationID
         WHERE
           WhatsappConversations.whatsappConversationIsActive = (?)
       `;
