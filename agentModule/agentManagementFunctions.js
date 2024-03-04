@@ -1141,9 +1141,9 @@ module.exports = {
         JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
         JOIN WhatsappFeedbacks ON WhatsappConversations.whatsappConversationID = WhatsappFeedbacks.whatsappFeedbackWhatsappConversationID
         WHERE 
-          STR_TO_DATE(WhatsappConversations.whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW() - INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
+          STR_TO_DATE(WhatsappFeedbacks.whatsappFeedbackDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW() - INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
             AND
-          STR_TO_DATE(WhatsappConversations.whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
+          STR_TO_DATE(WhatsappFeedbacks.whatsappFeedbackDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
         `;
       } else {
         selectTodayFeedbackInformationSQL = 
@@ -1161,9 +1161,9 @@ module.exports = {
         JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
         JOIN WhatsappFeedbacks ON WhatsappConversations.whatsappConversationID = WhatsappFeedbacks.whatsappFeedbackWhatsappConversationID
         WHERE 
-          STR_TO_DATE(WhatsappConversations.whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
+          STR_TO_DATE(WhatsappFeedbacks.whatsappFeedbackDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
             AND
-          STR_TO_DATE(WhatsappConversations.whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
+          STR_TO_DATE(WhatsappFeedbacks.whatsappFeedbackDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
         `;
       }
 
@@ -1209,7 +1209,7 @@ module.exports = {
         initialDate.setHours(initialDate.getHours() + 6);
         initialDate = initialDate.toString();
         initialDate = initialDate.replace('GMT-0600', 'GMT+0000');
-        conditions.push(`STR_TO_DATE((WhatsappConversations.whatsappConversationEndDateTime, '%a %b %d %Y %H:%i:%s GMT+0000') >= STR_TO_DATE('${initialDate}', '%a %b %d %Y %H:%i:%s GMT+0000')`);
+        conditions.push(`STR_TO_DATE(WhatsappFeedbacks.whatsappFeedbackDateTime, '%a %b %d %Y %H:%i:%s GMT+0000') >= STR_TO_DATE('${initialDate}', '%a %b %d %Y %H:%i:%s GMT+0000')`);
       }
 
       if (endDate != ''){
@@ -1217,7 +1217,7 @@ module.exports = {
         endDate.setHours(endDate.getHours() + 6);
         endDate = endDate.toString();
         endDate = endDate.replace('GMT-0600', 'GMT+0000');
-        conditions.push(`STR_TO_DATE((WhatsappConversations.whatsappConversationEndDateTime, '%a %b %d %Y %H:%i:%s GMT+0000') <= STR_TO_DATE('${endDate}', '%a %b %d %Y %H:%i:%s GMT+0000')`);
+        conditions.push(`STR_TO_DATE(WhatsappFeedbacks.whatsappFeedbackDateTime, '%a %b %d %Y %H:%i:%s GMT+0000') <= STR_TO_DATE('${endDate}', '%a %b %d %Y %H:%i:%s GMT+0000')`);
       }
 
       const whereClause = conditions.length > 0 ? `AND ${conditions.join(' AND ')}` : '';
