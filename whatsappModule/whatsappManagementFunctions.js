@@ -1330,22 +1330,22 @@ module.exports = {
         const whatsappConversationID = selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationID;
         const closeWhatsappConversationResult = await whatsappDatabaseFunctions.closeWhatsappConversation(whatsappConversationID, whatsappConversationCloseComment, whatsappConversationAmount, whatsappConversationProducts);
         
-        if (sendAgentEndMessage){
-          var sendWhatsappMessageData =
-          {
-            'messaging_product': 'whatsapp', 
-            'to': whatsappConversationRecipientPhoneNumber, 
-            'type': 'text',
-            'text': {'body': whatsappTextMessageBody + '/n' + ''}
-          };
-          var sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
-
-          sendWhatsappMessageData =
+        var sendWhatsappMessageData =
           {
             'messaging_product': 'whatsapp', 
             'to': whatsappConversationRecipientPhoneNumber, 
             'type': 'text',
             'text': {'body': 'Para nosotros, tu opinión es *LO MÁS IMPORTANTE*. Te pedimos amablemente que respondas este pequeño formulario para ayudarnos a mejorar aún más nuestro servicio y atención: https://souqcr.com/feedback?whatsappConversationID=' + whatsappConversationID}
+          };
+        var sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
+
+        if (sendAgentEndMessage){
+          sendWhatsappMessageData =
+          {
+            'messaging_product': 'whatsapp', 
+            'to': whatsappConversationRecipientPhoneNumber, 
+            'type': 'text',
+            'text': {'body': whatsappTextMessageBody + '/n' + ''}
           };
           sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
         }
