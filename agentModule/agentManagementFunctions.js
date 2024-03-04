@@ -1179,6 +1179,7 @@ module.exports = {
           const whatsappFeedbackFour = databaseResultObject.whatsappFeedbackFour;
           if (!(agentName in feedbackInformation)){
             feedbackInformation[agentName] = {
+              'agentName': agentName,
               'whatsappConversationsAmount': 1,
               'agentScore': (whatsappFeedbackOne + whatsappFeedbackTwo + whatsappFeedbackThree + whatsappFeedbackFour)/4
             }
