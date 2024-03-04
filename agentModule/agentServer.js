@@ -176,6 +176,8 @@ backendAgentHttpRequestServer.post('/selectFavoriteImages', async (httpRequest, 
 });
 
 
+
+
 backendAgentHttpRequestServer.post('/rankingLogin', async (httpRequest, httpResponse) => {
   const httpRequestQuery = httpRequest.body;
   const username = httpRequestQuery.username;
@@ -239,6 +241,23 @@ backendAgentHttpRequestServer.post('/selectFilteredTodayTopSell', async (httpReq
   httpResponse.end(selectFilteredTodayTopSellResult);
 });
 
+backendAgentHttpRequestServer.get('/selectTodayFeedbackInformation', async (httpRequest, httpResponse) => {
+  const selectTodayFeedbackInformationResult = await agentManagementFunctions.selectTodayFeedbackInformation();
+  httpResponse.end(selectTodayFeedbackInformationResult);
+});
+
+backendAgentHttpRequestServer.post('/selectFilteredTodayFeedbackInformation', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const initialDate = httpRequestQuery.initialDate;
+  const endDate = httpRequestQuery.endDate;
+  const selectFilteredTodayFeedbackInformationResult = await agentManagementFunctions.selectFilteredTodayFeedbackInformation(initialDate, endDate);
+  httpResponse.end(selectFilteredTodayFeedbackInformationResult);
+});
+
+
+
+
+
 backendAgentHttpRequestServer.post('/insertSticker', async (httpRequest, httpResponse) => {
   const httpRequestQuery = httpRequest.body;
   const stickerAgentID = httpRequestQuery.stickerAgentID;
@@ -254,6 +273,7 @@ backendAgentHttpRequestServer.post('/selectMissingLocalStickers', async (httpReq
   const selectMissingLocalStickersResult = await agentManagementFunctions.selectMissingLocalStickers(stickerCurrentIDS);
   httpResponse.end(selectMissingLocalStickersResult);
 });
+
 
 
 

@@ -552,6 +552,10 @@ module.exports = {
     });
   },
 
+
+
+
+
   selectPieChartInformation: async function(){
     return new Promise(async (selectPieChartInformationPromiseResolve) => {
       let currentDate = new Date();
@@ -702,7 +706,6 @@ module.exports = {
       const selectAgentRankingInformationValues = [whatsappConversationIsActive];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAgentRankingInformationSQL, selectAgentRankingInformationValues);
       if (databaseResult.success){
-
       
         const sortedDatabaseResult = databaseResult.result.sort((a, b) => b.whatsappConversationAmount - a.whatsappConversationAmount);
         var evaluatedNumbers = {};
@@ -803,8 +806,6 @@ module.exports = {
       
       const sortedDatabaseResult = databaseResult.result.sort((a, b) => b.whatsappConversationAmount - a.whatsappConversationAmount);
       
-      
-
       var evaluatedNumbers = {};
       var agentsAndConversations = {};
       
@@ -1042,7 +1043,6 @@ module.exports = {
         `;
       }
 
-      
       const whatsappConversationIsActive = false;
       const selectTodayTopSellValues = [whatsappConversationIsActive];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectTodayTopSellSQL, selectTodayTopSellValues);
@@ -1101,7 +1101,6 @@ module.exports = {
       const selectTodayTopSellValues = [whatsappConversationIsActive];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectTodayTopSellSQL, selectTodayTopSellValues);
       
-
       const sortedDatabaseResult = databaseResult.result.sort((a, b) => b.whatsappConversationAmount - a.whatsappConversationAmount);
       
       var subresult = 'Sin datos';
@@ -1117,6 +1116,182 @@ module.exports = {
       selectFilteredTodayTopSellPromiseResolve(JSON.stringify(result));
     });
   },
+
+  selectTodayFeedbackInformation: async function(){
+    return new Promise(async (selectTodayFeedbackInformationPromiseResolve) => {
+      var currentDate = new Date();
+      currentDate.setHours(currentDate.getHours() - 6);
+      var hourPart = currentDate.toISOString().substring(11, 13);
+      var hour = parseInt(hourPart, 10);
+
+      var selectTodayFeedbackInformationSQL = '';
+      if (hour >= 18){
+        selectTodayFeedbackInformationSQL = 
+        `
+        SELECT 
+          WhatsappConversations.whatsappConversationRecipientPhoneNumber,
+          WhatsappConversations.whatsappConversationRecipientProfileName,
+          Agents.agentName,
+          WhatsappFeedbacks.whatsappFeedbackOne,
+          WhatsappFeedbacks.whatsappFeedbackTwo,
+          WhatsappFeedbacks.whatsappFeedbackThree,
+          WhatsappFeedbacks.whatsappFeedbackFour,
+          WhatsappFeedbacks.whatsappFeedbackFive
+        FROM WhatsappConversations
+        JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
+        JOIN WhatsappFeedbacks ON WhatsappConversations.whatsappConversationID = WhatsappFeedbacks.whatsappFeedbackWhatsappConversationID
+        WHERE 
+          STR_TO_DATE(WhatsappConversations.whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW() - INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
+            AND
+          STR_TO_DATE(WhatsappConversations.whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
+        `;
+      } else {
+        selectTodayFeedbackInformationSQL = 
+        `
+        SELECT 
+          WhatsappConversations.whatsappConversationRecipientPhoneNumber,
+          WhatsappConversations.whatsappConversationRecipientProfileName,
+          Agents.agentName,
+          WhatsappFeedbacks.whatsappFeedbackOne,
+          WhatsappFeedbacks.whatsappFeedbackTwo,
+          WhatsappFeedbacks.whatsappFeedbackThree,
+          WhatsappFeedbacks.whatsappFeedbackFour,
+          WhatsappFeedbacks.whatsappFeedbackFive
+        FROM WhatsappConversations
+        JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
+        JOIN WhatsappFeedbacks ON WhatsappConversations.whatsappConversationID = WhatsappFeedbacks.whatsappFeedbackWhatsappConversationID
+        WHERE 
+          STR_TO_DATE(WhatsappConversations.whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
+            AND
+          STR_TO_DATE(WhatsappConversations.whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
+        `;
+      }
+
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectTodayFeedbackInformationSQL);
+      if (databaseResult.success){
+        
+        const feedbackInformation = {};
+
+        for (var databaseResultIndex in databaseResult.result){
+          const databaseResultObject = databaseResultObject[databaseResultIndex];
+          const agentName = databaseResultObject.agentName;
+          const whatsappFeedbackOne = databaseResultObject.whatsappFeedbackOne;
+          const whatsappFeedbackTwo = databaseResultObject.whatsappFeedbackTwo;
+          const whatsappFeedbackThree = databaseResultObject.whatsappFeedbackThree;
+          const whatsappFeedbackFour = databaseResultObject.whatsappFeedbackFour;
+          const whatsappFeedbackFive = databaseResultObject.whatsappFeedbackFive;
+          if (!(agentName in feedbackInformation)){
+            feedbackInformation[agentName] = {
+              'whatsappConversationsAmount': 1,
+              'agentScore': (whatsappFeedbackOne + whatsappFeedbackTwo + whatsappFeedbackThree + whatsappFeedbackFour + whatsappFeedbackFive)/5
+            }
+          } else {
+            feedbackInformation[agentName]['whatsappConversationsAmount'] = feedbackInformation[agentName]['whatsappConversationsAmount'] + 1;
+            feedbackInformation[agentName]['agentScore'] = feedbackInformation[agentName]['agentScore'] + (whatsappFeedbackOne + whatsappFeedbackTwo + whatsappFeedbackThree + whatsappFeedbackFour + whatsappFeedbackFive)/5;
+          }
+        }
+
+        for (var agentName in feedbackInformation){
+          feedbackInformation[agentName]['agentScore'] = Math.round((feedbackInformation[agentName]['agentScore']/feedbackInformation[agentName]['whatsappConversationsAmount']) * 2) / 2;
+        }
+
+        selectTodayFeedbackInformationPromiseResolve(JSON.stringify(feedbackInformation));
+      }
+    });
+  },
+
+  selectFilteredTodayFeedbackInformation: async function(initialDate, endDate){
+    return new Promise(async (selectTodayFeedbackInformationPromiseResolve) => {
+      const conditions = [];
+          
+      if (initialDate != ''){
+        initialDate = new Date(initialDate);
+        initialDate.setHours(initialDate.getHours() + 6);
+        initialDate = initialDate.toString();
+        initialDate = initialDate.replace('GMT-0600', 'GMT+0000');
+        conditions.push(`STR_TO_DATE((WhatsappConversations.whatsappConversationEndDateTime, '%a %b %d %Y %H:%i:%s GMT+0000') >= STR_TO_DATE('${initialDate}', '%a %b %d %Y %H:%i:%s GMT+0000')`);
+      }
+
+      if (endDate != ''){
+        endDate = new Date(endDate);
+        endDate.setHours(endDate.getHours() + 6);
+        endDate = endDate.toString();
+        endDate = endDate.replace('GMT-0600', 'GMT+0000');
+        conditions.push(`STR_TO_DATE((WhatsappConversations.whatsappConversationEndDateTime, '%a %b %d %Y %H:%i:%s GMT+0000') <= STR_TO_DATE('${endDate}', '%a %b %d %Y %H:%i:%s GMT+0000')`);
+      }
+
+      const whereClause = conditions.length > 0 ? `AND ${conditions.join(' AND ')}` : '';
+
+      var selectTodayFeedbackInformationSQL = 
+      `
+      SELECT 
+          WhatsappConversations.whatsappConversationRecipientPhoneNumber,
+          WhatsappConversations.whatsappConversationRecipientProfileName,
+          Agents.agentName,
+          WhatsappFeedbacks.whatsappFeedbackOne,
+          WhatsappFeedbacks.whatsappFeedbackTwo,
+          WhatsappFeedbacks.whatsappFeedbackThree,
+          WhatsappFeedbacks.whatsappFeedbackFour,
+          WhatsappFeedbacks.whatsappFeedbackFive
+        FROM WhatsappConversations
+        JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
+        JOIN WhatsappFeedbacks ON WhatsappConversations.whatsappConversationID = WhatsappFeedbacks.whatsappFeedbackWhatsappConversationID
+        WHERE
+          WhatsappConversations.whatsappConversationIsActive = (?)
+      `;
+      selectTodayFeedbackInformationSQL = selectTodayFeedbackInformationSQL + whereClause;
+
+      const whatsappConversationIsActive = false;
+      const selectTodayFeedbackInformationValues = [whatsappConversationIsActive];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectTodayFeedbackInformationSQL, selectTodayFeedbackInformationValues);
+
+      if (databaseResult.success){
+        
+        const feedbackInformation = {};
+
+        for (var databaseResultIndex in databaseResult.result){
+          const databaseResultObject = databaseResultObject[databaseResultIndex];
+          const agentName = databaseResultObject.agentName;
+          const whatsappFeedbackOne = databaseResultObject.whatsappFeedbackOne;
+          const whatsappFeedbackTwo = databaseResultObject.whatsappFeedbackTwo;
+          const whatsappFeedbackThree = databaseResultObject.whatsappFeedbackThree;
+          const whatsappFeedbackFour = databaseResultObject.whatsappFeedbackFour;
+          const whatsappFeedbackFive = databaseResultObject.whatsappFeedbackFive;
+          if (!(agentName in feedbackInformation)){
+            feedbackInformation[agentName] = {
+              'whatsappConversationsAmount': 1,
+              'agentScore': (whatsappFeedbackOne + whatsappFeedbackTwo + whatsappFeedbackThree + whatsappFeedbackFour + whatsappFeedbackFive)/5
+            }
+          } else {
+            feedbackInformation[agentName]['whatsappConversationsAmount'] = feedbackInformation[agentName]['whatsappConversationsAmount'] + 1;
+            feedbackInformation[agentName]['agentScore'] = feedbackInformation[agentName]['agentScore'] + (whatsappFeedbackOne + whatsappFeedbackTwo + whatsappFeedbackThree + whatsappFeedbackFour + whatsappFeedbackFive)/5;
+          }
+        }
+
+        for (var agentName in feedbackInformation){
+          feedbackInformation[agentName]['agentScore'] = Math.round((feedbackInformation[agentName]['agentScore']/feedbackInformation[agentName]['whatsappConversationsAmount']) * 2) / 2;
+        }
+
+        selectTodayFeedbackInformationPromiseResolve(JSON.stringify(feedbackInformation));
+      }
+    });
+  },
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
   traduceText: async function(textToTraduce, languageToTraduce){
