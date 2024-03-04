@@ -1135,8 +1135,7 @@ module.exports = {
           WhatsappFeedbacks.whatsappFeedbackOne,
           WhatsappFeedbacks.whatsappFeedbackTwo,
           WhatsappFeedbacks.whatsappFeedbackThree,
-          WhatsappFeedbacks.whatsappFeedbackFour,
-          WhatsappFeedbacks.whatsappFeedbackFive
+          WhatsappFeedbacks.whatsappFeedbackFour
         FROM WhatsappConversations
         JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
         JOIN WhatsappFeedbacks ON WhatsappConversations.whatsappConversationID = WhatsappFeedbacks.whatsappFeedbackWhatsappConversationID
@@ -1155,8 +1154,7 @@ module.exports = {
           WhatsappFeedbacks.whatsappFeedbackOne,
           WhatsappFeedbacks.whatsappFeedbackTwo,
           WhatsappFeedbacks.whatsappFeedbackThree,
-          WhatsappFeedbacks.whatsappFeedbackFour,
-          WhatsappFeedbacks.whatsappFeedbackFive
+          WhatsappFeedbacks.whatsappFeedbackFour
         FROM WhatsappConversations
         JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
         JOIN WhatsappFeedbacks ON WhatsappConversations.whatsappConversationID = WhatsappFeedbacks.whatsappFeedbackWhatsappConversationID
@@ -1179,11 +1177,10 @@ module.exports = {
           const whatsappFeedbackTwo = databaseResultObject.whatsappFeedbackTwo;
           const whatsappFeedbackThree = databaseResultObject.whatsappFeedbackThree;
           const whatsappFeedbackFour = databaseResultObject.whatsappFeedbackFour;
-          const whatsappFeedbackFive = databaseResultObject.whatsappFeedbackFive;
           if (!(agentName in feedbackInformation)){
             feedbackInformation[agentName] = {
               'whatsappConversationsAmount': 1,
-              'agentScore': (whatsappFeedbackOne + whatsappFeedbackTwo + whatsappFeedbackThree + whatsappFeedbackFour + whatsappFeedbackFive)/5
+              'agentScore': (whatsappFeedbackOne + whatsappFeedbackTwo + whatsappFeedbackThree + whatsappFeedbackFour)/4
             }
           } else {
             feedbackInformation[agentName]['whatsappConversationsAmount'] = feedbackInformation[agentName]['whatsappConversationsAmount'] + 1;
@@ -1231,8 +1228,7 @@ module.exports = {
           WhatsappFeedbacks.whatsappFeedbackOne,
           WhatsappFeedbacks.whatsappFeedbackTwo,
           WhatsappFeedbacks.whatsappFeedbackThree,
-          WhatsappFeedbacks.whatsappFeedbackFour,
-          WhatsappFeedbacks.whatsappFeedbackFive
+          WhatsappFeedbacks.whatsappFeedbackFour
         FROM WhatsappConversations
         JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
         JOIN WhatsappFeedbacks ON WhatsappConversations.whatsappConversationID = WhatsappFeedbacks.whatsappFeedbackWhatsappConversationID
@@ -1256,11 +1252,10 @@ module.exports = {
           const whatsappFeedbackTwo = databaseResultObject.whatsappFeedbackTwo;
           const whatsappFeedbackThree = databaseResultObject.whatsappFeedbackThree;
           const whatsappFeedbackFour = databaseResultObject.whatsappFeedbackFour;
-          const whatsappFeedbackFive = databaseResultObject.whatsappFeedbackFive;
           if (!(agentName in feedbackInformation)){
             feedbackInformation[agentName] = {
               'whatsappConversationsAmount': 1,
-              'agentScore': (whatsappFeedbackOne + whatsappFeedbackTwo + whatsappFeedbackThree + whatsappFeedbackFour + whatsappFeedbackFive)/5
+              'agentScore': (whatsappFeedbackOne + whatsappFeedbackTwo + whatsappFeedbackThree + whatsappFeedbackFour)/4
             }
           } else {
             feedbackInformation[agentName]['whatsappConversationsAmount'] = feedbackInformation[agentName]['whatsappConversationsAmount'] + 1;
