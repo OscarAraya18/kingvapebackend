@@ -544,7 +544,9 @@ module.exports = {
           WhatsappContactMessages.whatsappContactMessageName,
           WhatsappContactMessages.whatsappContactMessagePhoneNumber,
           WhatsappImageMessages.whatsappImageMessageFile,
-          WhatsappImageMessages.whatsappImageMessageCaption,
+          WhatsappImageMessagesCurrent.whatsappImageMessageCaption,
+          WhatsappImageMessagesCurrent.whatsappImageMessageFile,
+          WhatsappImageMessagesCurrent.whatsappImageMessageCaption,
           WhatsappVideoMessages.whatsappVideoMessageFile,
           WhatsappVideoMessages.whatsappVideoMessageCaption,
           WhatsappAudioMessages.whatsappAudioMessageFile,
@@ -558,6 +560,7 @@ module.exports = {
           LEFT JOIN WhatsappLocationMessages ON WhatsappGeneralMessages.whatsappGeneralMessageID = WhatsappLocationMessages.whatsappLocationMessageID
           LEFT JOIN WhatsappContactMessages ON WhatsappGeneralMessages.whatsappGeneralMessageID = WhatsappContactMessages.whatsappContactMessageID
           LEFT JOIN WhatsappImageMessages ON WhatsappGeneralMessages.whatsappGeneralMessageID = WhatsappImageMessages.whatsappImageMessageID
+          LEFT JOIN WhatsappImageMessagesCurrent ON WhatsappGeneralMessages.whatsappGeneralMessageID = WhatsappImageMessagesCurrent.whatsappImageMessageID
           LEFT JOIN WhatsappVideoMessages ON WhatsappGeneralMessages.whatsappGeneralMessageID = WhatsappVideoMessages.whatsappVideoMessageID
           LEFT JOIN WhatsappAudioMessages ON WhatsappGeneralMessages.whatsappGeneralMessageID = WhatsappAudioMessages.whatsappAudioMessageID
           LEFT JOIN WhatsappDocumentMessages ON WhatsappGeneralMessages.whatsappGeneralMessageID = WhatsappDocumentMessages.whatsappDocumentMessageID
