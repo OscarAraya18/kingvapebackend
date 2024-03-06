@@ -94,3 +94,8 @@ backendContactHttpRequestServer.post('/insertFeedback', async (httpRequest, http
   const insertFeedbackResult = await contactsManagementFunctions.insertFeedback(whatsappConversationID, answerOne, answerTwo, answerThree, answerFour, answerFive, answerSix);
   httpResponse.end(insertFeedbackResult);
 });
+
+backendContactHttpRequestServer.get('/compress', async (httpRequest, httpResponse) => {
+  const compressResult = await contactsManagementFunctions.compress();
+  httpResponse.end(compressResult);
+});

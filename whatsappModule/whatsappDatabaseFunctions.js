@@ -435,7 +435,7 @@ module.exports = {
 
   createWhatsappImageMessage: async function(whatsappImageMessageID, whatsappImageMessageFile, whatsappImageMessageCaption, whatsappImageMessageType){
     return new Promise(async (createWhatsappImageMessagePromiseResolve) => {
-      const createWhatsappImageMessageSQL = `INSERT INTO WhatsappImageMessages (whatsappImageMessageID, whatsappImageMessageFile, whatsappImageMessageCaption, whatsappImageMessageType) VALUES (?, ?, ?, ?);`;
+      const createWhatsappImageMessageSQL = `INSERT INTO WhatsappImageMessagesCurrent (whatsappImageMessageID, whatsappImageMessageFile, whatsappImageMessageCaption, whatsappImageMessageType) VALUES (?, ?, ?, ?);`;
       const createWhatsappImageMessageValues = [whatsappImageMessageID, Buffer.from(whatsappImageMessageFile), whatsappImageMessageCaption, whatsappImageMessageType];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(createWhatsappImageMessageSQL, createWhatsappImageMessageValues);
       createWhatsappImageMessagePromiseResolve(databaseResult);

@@ -923,6 +923,7 @@ module.exports = {
             whatsappNotSelledConversations: whatsappNotSelledConversations
           }]
         }
+
         selectTodayInformationPromiseResolve(JSON.stringify(result))
       } else {
         selectTodayInformationPromiseResolve(JSON.stringify({success: false}))

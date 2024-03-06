@@ -4,6 +4,11 @@ const databaseManagementFunctions = require('../databaseModule/databaseManagemen
 const databaseFileManager = require('fs');
 const puppeteer = require('puppeteer');
 
+const sharp = require('sharp');
+sharp.cache({files : 0});
+
+const fs = require('fs');
+
 
 module.exports = {
   insertContact: async function(contactPhoneNumber, contactID, contactName, contactEmail, contactLocationDetails, contactNote){
@@ -203,6 +208,62 @@ module.exports = {
         }
       } else {
         insertFeedbackPromiseResult(JSON.stringify({success: false, result: 1}));
+      }
+    });
+  },
+
+
+
+  compress: async function (){
+    return new Promise(async (compressPromiseResult) => {
+      const selectWhatsappImageMessageIDSSQL = 
+      `
+      SELECT whatsappImageMessageID 
+      FROM WhatsappImageMessages
+      LEFT JOIN WhatsappGeneralMessages ON WhatsappImageMessages.whatsappImageMessageID = WhatsappGeneralMessages.whatsappGeneralMessageID
+      LEFT JOIN WhatsappConversations ON WhatsappGeneralMessages.whatsappGeneralMessageWhatsappConversationID = WhatsappConversations.whatsappConversationID
+      WHERE WhatsappImageMessages.whatsappImageMessageCompressed = (?)
+      ;
+      `;
+      const selectWhatsappImageMessageIDValues = [false];
+      const selectWhatsappImageMessageIDSResult = await databaseManagementFunctions.executeDatabaseSQL(selectWhatsappImageMessageIDSSQL, selectWhatsappImageMessageIDValues);
+      if (selectWhatsappImageMessageIDSResult.success){
+        var whatsappImageMessageIDS = selectWhatsappImageMessageIDSResult.result.sort(() => Math.random() - 0.5);
+        for (var whatsappImageMessageIndex in whatsappImageMessageIDS){
+          const whatsappImageMessageID = whatsappImageMessageIDS[whatsappImageMessageIndex].whatsappImageMessageID;
+          
+          const selectWhatsappImageMessageFileSQL = `SELECT whatsappImageMessageFile FROM WhatsappImageMessages WHERE whatsappImageMessageID=(?);`
+          const selectWhatsappImageMessageFileValues = [whatsappImageMessageID];
+          const selectWhatsappImageMessageFileResult = await databaseManagementFunctions.executeDatabaseSQL(selectWhatsappImageMessageFileSQL, selectWhatsappImageMessageFileValues);
+          
+          if (selectWhatsappImageMessageFileResult.success){
+            const whatsappImageMessageFile = selectWhatsappImageMessageFileResult.result[0].whatsappImageMessageFile;
+          
+            sharp(whatsappImageMessageFile)
+            .resize({ width: 200 })
+            .webp({ quality: 80 })
+            .toColorspace('srgb')
+            .toBuffer()
+            .then(async whatsappImageMessageFileCompressed => {
+              if (Buffer.byteLength(whatsappImageMessageFileCompressed) < Buffer.byteLength(whatsappImageMessageFile)){
+                const updateWhatsappImageMessageSQL = `UPDATE WhatsappImageMessages SET whatsappImageMessageFile=(?), whatsappImageMessageCompressed=(?) WHERE whatsappImageMessageID=(?) AND whatsappImageMessageCompressed=(?);`;
+                const updateWhatsappImageMessageValues = [whatsappImageMessageFileCompressed, true, whatsappImageMessageID, false];
+                const updateWhatsappImageMessageResult = await databaseManagementFunctions.executeDatabaseSQL(updateWhatsappImageMessageSQL, updateWhatsappImageMessageValues);
+                if (updateWhatsappImageMessageResult.success){
+                  console.log('Imagen convertida');
+                }
+              } else {
+                console.log('Mayor')
+              }
+              
+
+            })
+
+          } else {
+            console.log('Error');
+          }
+        }
+        console.log('termino');
       }
     });
   },
