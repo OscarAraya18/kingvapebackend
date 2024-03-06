@@ -934,25 +934,27 @@ module.exports = {
             whatsappSelledConversations = whatsappSelledConversations + 1;
             if (whatsappConversationLocalityName in informationByLocality){
               informationByLocality[whatsappConversationLocalityName]['whatsappSelledConversations'] = informationByLocality[whatsappConversationLocalityName]['whatsappSelledConversations'] + 1;
+              informationByLocality[whatsappConversationLocalityName]['amount'] = informationByLocality[whatsappConversationLocalityName]['amount'] + whatsappConversationAmount;
             } else {
               informationByLocality[whatsappConversationLocalityName] = 
               {
                 'whatsappSelledConversations': 1,
-                'whatsappNotSelledConversations': 0
+                'whatsappNotSelledConversations': 0,
+                'amount': whatsappConversationAmount
               }
             }
           }
           if ((whatsappConversationAmount == 0) && (!(whatsappConversationRecipientPhoneNumber in evaluatedNumbers))){
             if (whatsappConversationCloseComment == 'Venta perdida' || whatsappConversationCloseComment == 'Venta para otro día' || whatsappConversationCloseComment == 'Consulta sobre productos' || whatsappConversationCloseComment == 'No contestó'){
               whatsappNotSelledConversations = whatsappNotSelledConversations + 1;
-
               if (whatsappConversationLocalityName in informationByLocality){
                 informationByLocality[whatsappConversationLocalityName]['whatsappNotSelledConversations'] = informationByLocality[whatsappConversationLocalityName]['whatsappNotSelledConversations'] + 1;
               } else {
                 informationByLocality[whatsappConversationLocalityName] = 
                 {
                   'whatsappSelledConversations': 0,
-                  'whatsappNotSelledConversations': 1
+                  'whatsappNotSelledConversations': 1,
+                  'amount': 0
                 }
               }
             }
