@@ -960,7 +960,6 @@ module.exports = {
           evaluatedNumbers[whatsappConversationRecipientPhoneNumber] = 'true';
         }
 
-        console.log(whatsappNotSelledConversations)
         const result = 
         {
           success: true, 
