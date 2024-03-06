@@ -212,8 +212,50 @@ module.exports = {
     });
   },
 
+  selectNotResolvedWhatsappFeedback: async function (){
+    return new Promise(async (selectNotResolvedWhatsappFeedbackPromiseResolve) => {
+      const selectNotResolvedWhatsappFeedbackSQL = 
+      `
+      SELECT 
+        WhatsappConversations.whatsappConversationRecipientPhoneNumber,
+        WhatsappConversations.whatsappConversationRecipientProfileName,
+        Agents.agentName,
+        (WhatsappConversations.whatsappConversationAmount) AS whatsappConversationResult,
+        WhatsappConversations.whatsappConversationLocalityName,
+        WhatsappConversations.whatsappConversationEndDateTime,
+        WhatsappFeedbacks.whatsappFeedbackOne,
+        WhatsappFeedbacks.whatsappFeedbackTwo,
+        WhatsappFeedbacks.whatsappFeedbackThree,
+        WhatsappFeedbacks.whatsappFeedbackFour,
+        WhatsappFeedbacks.whatsappFeedbackFive,
+        WhatsappFeedbacks.whatsappFeedbackSix,
+        WhatsappFeedbacks.whatsappFeedbackDateTime,
+        ((WhatsappFeedbacks.whatsappFeedbackOne + WhatsappFeedbacks.whatsappFeedbackTwo +  WhatsappFeedbacks.whatsappFeedbackThree + WhatsappFeedbacks.whatsappFeedbackFour)/4) AS whatsappFeedbackTotal,
+        (WhatsappFeedbacks.whatsappFeedbackID) AS whatsappFeedbackAction,
+        (1 = 0) AS whatsappFeedbackLoading 
+      FROM WhatsappConversations
+      LEFT JOIN WhatsappFeedbacks ON WhatsappFeedbacks.whatsappFeedbackWhatsappConversationID = WhatsappConversations.whatsappConversationID
+      LEFT JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
+      WHERE WhatsappFeedbacks.whatsappFeedbackResolved=(?)
+      ;`;
+      const selectNotResolvedWhatsappFeedbackValues = [false];
+      const selectNotResolvedWhatsappFeedbackResult = await databaseManagementFunctions.executeDatabaseSQL(selectNotResolvedWhatsappFeedbackSQL, selectNotResolvedWhatsappFeedbackValues);
+      selectNotResolvedWhatsappFeedbackPromiseResolve(JSON.stringify(selectNotResolvedWhatsappFeedbackResult));
+    });
+  },
+
+  updateWhatsappFeedback: async function (whatsappFeedbackID){
+    return new Promise(async (updateWhatsappFeedbackPromiseResolve) => {
+      const updateWhatsappFeedbackSQL = `UPDATE WhatsappFeedbacks SET whatsappFeedbackResolved=(?) WHERE whatsappFeedbackID=(?);`;
+      const whatsappFeedbackResolved = true;
+      const updateWhatsappFeedbackValues = [whatsappFeedbackResolved, whatsappFeedbackID];
+      const updateWhatsappFeedbackResult = await databaseManagementFunctions.executeDatabaseSQL(updateWhatsappFeedbackSQL, updateWhatsappFeedbackValues);
+      updateWhatsappFeedbackPromiseResolve(JSON.stringify(updateWhatsappFeedbackResult));
+    });
+  },
 
 
+  /*
   compress: async function (){
     return new Promise(async (compressPromiseResult) => {
       const selectWhatsappImageMessageIDSSQL = 
@@ -267,4 +309,5 @@ module.exports = {
       }
     });
   },
+  */
 }

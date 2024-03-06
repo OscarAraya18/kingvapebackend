@@ -95,7 +95,22 @@ backendContactHttpRequestServer.post('/insertFeedback', async (httpRequest, http
   httpResponse.end(insertFeedbackResult);
 });
 
+backendContactHttpRequestServer.post('/selectNotResolvedWhatsappFeedback', async (httpRequest, httpResponse) => {
+  const selectNotResolvedWhatsappFeedbackResult = await contactsManagementFunctions.selectNotResolvedWhatsappFeedback();
+  httpResponse.end(selectNotResolvedWhatsappFeedbackResult);
+});
+
+backendContactHttpRequestServer.post('/updateWhatsappFeedback', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const whatsappFeedbackID = httpRequestQuery.whatsappFeedbackID;
+  const selectNotResolvedWhatsappFeedbackResult = await contactsManagementFunctions.updateWhatsappFeedback(whatsappFeedbackID);
+  httpResponse.end(selectNotResolvedWhatsappFeedbackResult);
+});
+
+
+/*
 backendContactHttpRequestServer.get('/compress', async (httpRequest, httpResponse) => {
   const compressResult = await contactsManagementFunctions.compress();
   httpResponse.end(compressResult);
 });
+*/
