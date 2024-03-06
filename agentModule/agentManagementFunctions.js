@@ -917,19 +917,44 @@ module.exports = {
       var evaluatedNumbers = {};
       var whatsappSelledConversations = 0;
       var whatsappNotSelledConversations = 0;
+
+      var informationByLocality = {};
+
       if (databaseResult.success){
         const sortedDatabaseResult = databaseResult.result.sort((a, b) => b.whatsappConversationAmount - a.whatsappConversationAmount);
         for (var sortedDatabaseResultIndex in sortedDatabaseResult){
           const sortedDatabaseResultObject = sortedDatabaseResult[sortedDatabaseResultIndex];
           const whatsappConversationAmount = sortedDatabaseResultObject.whatsappConversationAmount;
           const whatsappConversationCloseComment = sortedDatabaseResultObject.whatsappConversationCloseComment;
+          
+          const whatsappConversationLocalityName = sortedDatabaseResultObject.whatsappConversationLocalityName;
+
           const whatsappConversationRecipientPhoneNumber = sortedDatabaseResultObject.whatsappConversationRecipientPhoneNumber;
           if ((whatsappConversationAmount != 0) && (!(whatsappConversationRecipientPhoneNumber in evaluatedNumbers))){
             whatsappSelledConversations = whatsappSelledConversations + 1;
+            if (whatsappConversationLocalityName in informationByLocality){
+              informationByLocality[whatsappConversationLocalityName]['whatsappSelledConversations'] = informationByLocality[whatsappConversationLocalityName]['whatsappSelledConversations'] + 1;
+            } else {
+              informationByLocality[whatsappConversationLocalityName] = 
+              {
+                'whatsappSelledConversations': 1,
+                'whatsappNotSelledConversations': 0
+              }
+            }
           }
           if ((whatsappConversationAmount == 0) && (!(whatsappConversationRecipientPhoneNumber in evaluatedNumbers))){
             if (whatsappConversationCloseComment == 'Venta perdida' || whatsappConversationCloseComment == 'Venta para otro día' || whatsappConversationCloseComment == 'Consulta sobre productos' || whatsappConversationCloseComment == 'No contestó'){
               whatsappNotSelledConversations = whatsappNotSelledConversations + 1;
+
+              if (whatsappConversationLocalityName in informationByLocality){
+                informationByLocality[whatsappConversationLocalityName]['whatsappNotSelledConversations'] = informationByLocality[whatsappConversationLocalityName]['whatsappNotSelledConversations'] + 1;
+              } else {
+                informationByLocality[whatsappConversationLocalityName] = 
+                {
+                  'whatsappSelledConversations': 0,
+                  'whatsappNotSelledConversations': 1
+                }
+              }
             }
           }
           evaluatedNumbers[whatsappConversationRecipientPhoneNumber] = 'true';
@@ -938,11 +963,15 @@ module.exports = {
         {
           success: true, 
           result: 
-          [{
-            whatsappTotalConversations: whatsappSelledConversations + whatsappNotSelledConversations,
-            whatsappSelledConversations: whatsappSelledConversations,
-            whatsappNotSelledConversations: whatsappNotSelledConversations
-          }]
+          {
+            'total': 
+            {
+            'whatsappTotalConversations': whatsappSelledConversations + whatsappNotSelledConversations,
+            'whatsappSelledConversations': whatsappSelledConversations,
+            'whatsappNotSelledConversations': whatsappNotSelledConversations
+            },
+            'localities': informationByLocality
+          }
         }
 
         selectTodayInformationPromiseResolve(JSON.stringify(result))

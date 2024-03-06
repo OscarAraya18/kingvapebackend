@@ -1323,12 +1323,12 @@ module.exports = {
     });
   },
 
-  closeWhatsappConversation: async function(websocketConnection, whatsappConversationRecipientPhoneNumber, whatsappConversationCloseComment, whatsappConversationAmount, whatsappConversationProducts, whatsappTextMessageBody, sendAgentEndMessage){
+  closeWhatsappConversation: async function(websocketConnection, whatsappConversationRecipientPhoneNumber, whatsappConversationCloseComment, whatsappConversationAmount, whatsappConversationProducts, whatsappTextMessageBody, whatsappConversationLocalityName, sendAgentEndMessage){
     return new Promise(async (closeWhatsappConversationPromiseResolve) => {
       const selectOrCreateActiveWhatsappConversationIDResult = await whatsappDatabaseFunctions.selectOrCreateActiveWhatsappConversationID(whatsappConversationRecipientPhoneNumber);
       if (selectOrCreateActiveWhatsappConversationIDResult.success){
         const whatsappConversationID = selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationID;
-        const closeWhatsappConversationResult = await whatsappDatabaseFunctions.closeWhatsappConversation(whatsappConversationID, whatsappConversationCloseComment, whatsappConversationAmount, whatsappConversationProducts);
+        const closeWhatsappConversationResult = await whatsappDatabaseFunctions.closeWhatsappConversation(whatsappConversationID, whatsappConversationCloseComment, whatsappConversationAmount, whatsappConversationProducts, whatsappConversationLocalityName);
         
         if (sendAgentEndMessage){
           sendWhatsappMessageData =

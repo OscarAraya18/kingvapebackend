@@ -246,12 +246,12 @@ module.exports = {
     });
   },
 
-  closeWhatsappConversation: async function(whatsappConversationID, whatsappConversationCloseComment, whatsappConversationAmount, whatsappConversationProducts){
+  closeWhatsappConversation: async function(whatsappConversationID, whatsappConversationCloseComment, whatsappConversationAmount, whatsappConversationProducts, whatsappConversationLocalityName){
     return new Promise (async (closeWhatsappConversationPromiseResolve) => {
       const whatsappConversationEndDateTime = Date().toString();
       const whatsappConversationIsActive = false;
-      const closeWhatsappConversationSQL = `UPDATE WhatsappConversations SET whatsappConversationEndDateTime=(?), whatsappConversationIsActive=(?), whatsappConversationCloseComment=(?), whatsappConversationAmount=(?), whatsappConversationProducts=(?) WHERE whatsappConversationID=(?);`;
-      const closeWhatsappConversationValues = [whatsappConversationEndDateTime, whatsappConversationIsActive, whatsappConversationCloseComment, parseFloat(whatsappConversationAmount), JSON.stringify(whatsappConversationProducts), whatsappConversationID];
+      const closeWhatsappConversationSQL = `UPDATE WhatsappConversations SET whatsappConversationEndDateTime=(?), whatsappConversationIsActive=(?), whatsappConversationCloseComment=(?), whatsappConversationAmount=(?), whatsappConversationProducts=(?), whatsappConversationLocalityName=(?) WHERE whatsappConversationID=(?);`;
+      const closeWhatsappConversationValues = [whatsappConversationEndDateTime, whatsappConversationIsActive, whatsappConversationCloseComment, parseFloat(whatsappConversationAmount), JSON.stringify(whatsappConversationProducts), whatsappConversationLocalityName, whatsappConversationID];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(closeWhatsappConversationSQL, closeWhatsappConversationValues);
       closeWhatsappConversationPromiseResolve(databaseResult);
     });
