@@ -543,10 +543,18 @@ module.exports = {
           WhatsappLocationMessages.whatsappLocationMessageLongitude,
           WhatsappContactMessages.whatsappContactMessageName,
           WhatsappContactMessages.whatsappContactMessagePhoneNumber,
-          WhatsappImageMessages.whatsappImageMessageFile,
-          WhatsappImageMessagesCurrent.whatsappImageMessageCaption,
-          WhatsappImageMessagesCurrent.whatsappImageMessageFile,
-          WhatsappImageMessagesCurrent.whatsappImageMessageCaption,
+          COALESCE(
+            WhatsappImageMessages.whatsappImageMessageFile, 
+            WhatsappImageMessagesCurrent.whatsappImageMessageFile
+          ) AS whatsappImageMessageFile,
+          COALESCE(
+              WhatsappImageMessages.whatsappImageMessageCaption, 
+              WhatsappImageMessagesCurrent.whatsappImageMessageCaption
+          ) AS whatsappImageMessageCaption,
+          COALESCE(
+              WhatsappImageMessages.whatsappImageMessageType, 
+              WhatsappImageMessagesCurrent.whatsappImageMessageType
+          ) AS whatsappImageMessageType,
           WhatsappVideoMessages.whatsappVideoMessageFile,
           WhatsappVideoMessages.whatsappVideoMessageCaption,
           WhatsappAudioMessages.whatsappAudioMessageFile,

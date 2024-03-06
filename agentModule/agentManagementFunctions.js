@@ -300,12 +300,18 @@ module.exports = {
           WhatsappLocationMessages.whatsappLocationMessageLongitude,
           WhatsappContactMessages.whatsappContactMessageName,
           WhatsappContactMessages.whatsappContactMessagePhoneNumber,
-          WhatsappImageMessages.whatsappImageMessageFile,
-          WhatsappImageMessages.whatsappImageMessageCaption,
-          WhatsappImageMessages.whatsappImageMessageType,
-          WhatsappImageMessagesCurrent.whatsappImageMessageFile,
-          WhatsappImageMessagesCurrent.whatsappImageMessageCaption,
-          WhatsappImageMessagesCurrent.whatsappImageMessageType,
+          COALESCE(
+            WhatsappImageMessages.whatsappImageMessageFile, 
+            WhatsappImageMessagesCurrent.whatsappImageMessageFile
+          ) AS whatsappImageMessageFile,
+          COALESCE(
+              WhatsappImageMessages.whatsappImageMessageCaption, 
+              WhatsappImageMessagesCurrent.whatsappImageMessageCaption
+          ) AS whatsappImageMessageCaption,
+          COALESCE(
+              WhatsappImageMessages.whatsappImageMessageType, 
+              WhatsappImageMessagesCurrent.whatsappImageMessageType
+          ) AS whatsappImageMessageType,
           WhatsappVideoMessages.whatsappVideoMessageFile,
           WhatsappVideoMessages.whatsappVideoMessageCaption,
           WhatsappAudioMessages.whatsappAudioMessageFile,
@@ -373,10 +379,18 @@ module.exports = {
           WhatsappLocationMessages.whatsappLocationMessageLongitude,
           WhatsappContactMessages.whatsappContactMessageName,
           WhatsappContactMessages.whatsappContactMessagePhoneNumber,
-          WhatsappImageMessages.whatsappImageMessageFile,
-          WhatsappImageMessages.whatsappImageMessageCaption,
-          WhatsappImageMessagesCurrent.whatsappImageMessageFile,
-          WhatsappImageMessagesCurrent.whatsappImageMessageCaption,
+          COALESCE(
+            WhatsappImageMessages.whatsappImageMessageFile, 
+            WhatsappImageMessagesCurrent.whatsappImageMessageFile
+          ) AS whatsappImageMessageFile,
+          COALESCE(
+              WhatsappImageMessages.whatsappImageMessageCaption, 
+              WhatsappImageMessagesCurrent.whatsappImageMessageCaption
+          ) AS whatsappImageMessageCaption,
+          COALESCE(
+              WhatsappImageMessages.whatsappImageMessageType, 
+              WhatsappImageMessagesCurrent.whatsappImageMessageType
+          ) AS whatsappImageMessageType,
           WhatsappVideoMessages.whatsappVideoMessageFile,
           WhatsappVideoMessages.whatsappVideoMessageCaption,
           WhatsappAudioMessages.whatsappAudioMessageFile,
