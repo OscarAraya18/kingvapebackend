@@ -743,415 +743,419 @@ module.exports = {
     try { 
       if (httpRequest['body']['entry'][0]['changes'][0]['value']['messages'][0].type != 'reaction'){
         const whatsappConversationRecipientPhoneNumber = httpRequest['body']['entry'][0]['changes'][0]['value']['messages'][0]['from'];
-        const whatsappGeneralMessageID = httpRequest['body']['entry'][0]['changes'][0]['value']['messages'][0]['id'];
-        const whatsappMessageInformation = httpRequest['body']['entry'][0]['changes'][0]['value']['messages'][0];
-        const receiveWhatsappStoreMessageResult = await this.receiveWhatsappStoreMessage(websocketConnection, whatsappConversationRecipientPhoneNumber, whatsappGeneralMessageID, whatsappMessageInformation);
-        if (receiveWhatsappStoreMessageResult.success == false){
-          const httpRequestQuery = httpRequest['body']['entry'][0]['changes'][0]['value']['messages'][0];
-          const whatsappGeneralMessageOwnerPhoneNumber = httpRequestQuery.from;
-          const whatsappGeneralMessageID = httpRequestQuery.id;
-          const whatsappMessageType = httpRequestQuery.type;
-          const whatsappMessageContent = httpRequestQuery[whatsappMessageType];
-          var whatsappGeneralMessageRepliedMessageID = null;
-          if (httpRequestQuery.context) {
-            whatsappGeneralMessageRepliedMessageID = httpRequestQuery.context.id;
-          }
-          const selectOrCreateActiveWhatsappConversationIDResult = await whatsappDatabaseFunctions.selectOrCreateActiveWhatsappConversationID(whatsappGeneralMessageOwnerPhoneNumber);
-          if (selectOrCreateActiveWhatsappConversationIDResult.success){
-            const whatsappConversationID = selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationID;
-            const createWhatsappGeneralMessageResult = await whatsappDatabaseFunctions.createWhatsappGeneralMessage(whatsappConversationID, whatsappGeneralMessageID, whatsappGeneralMessageRepliedMessageID, whatsappGeneralMessageOwnerPhoneNumber);
-            if (createWhatsappGeneralMessageResult.success){
-              const whatsappGeneralMessageIndex = createWhatsappGeneralMessageResult.result.whatsappGeneralMessageIndex;
-              const whatsappGeneralMessageCreationDateTime = createWhatsappGeneralMessageResult.result.whatsappGeneralMessageCreationDateTime;
-            
-              if (whatsappMessageType == 'text'){
-                const whatsappTextMessageID = whatsappGeneralMessageID;
-                const whatsappTextMessageBody = whatsappMessageContent.body;
-                const createWhatsappTextMessageResult = await whatsappDatabaseFunctions.createWhatsappTextMessage(whatsappTextMessageID, whatsappTextMessageBody);
-                if (createWhatsappTextMessageResult.success){
-                  const websocketMessageContent = selectOrCreateActiveWhatsappConversationIDResult.result;
-
-                  if (selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationIsActive){
-                    websocketMessageContent['whatsappConversationMessages'] = 
-                    [
-                      {
-                        whatsappConversationID: whatsappConversationID,
-                        whatsappGeneralMessageID: whatsappGeneralMessageID,
-                        whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
-                        whatsappGeneralMessageType: whatsappMessageType,
-                        whatsappGeneralMessageRepliedMessageID: whatsappGeneralMessageRepliedMessageID,
-                        whatsappGeneralMessageCreationDateTime: whatsappGeneralMessageCreationDateTime,
-                        whatsappGeneralMessageOwnerPhoneNumber: whatsappGeneralMessageOwnerPhoneNumber,
-                        whatsappTextMessageID: whatsappTextMessageID,
-                        whatsappTextMessageBody: whatsappTextMessageBody
-                      }
-                    ]
-                    if (websocketMessageContent.whatsappConversationAssignedAgentID == null){
-                      websocketConnection.sendWebsocketMessage('/receiveWhatsappPendingConversation', websocketMessageContent);
-                    } else {
-                      websocketConnection.sendWebsocketMessage('/receiveWhatsappConversation', websocketMessageContent);
-                    }
-                  } else {
-                    const websocketMessageContent = 
-                    {
-                      success: true,
-                      result: 
-                      {
-                        whatsappConversationID: whatsappConversationID,
-                        whatsappGeneralMessageID: whatsappGeneralMessageID,
-                        whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
-                        whatsappGeneralMessageType: whatsappMessageType,
-                        whatsappGeneralMessageRepliedMessageID: whatsappGeneralMessageRepliedMessageID,
-                        whatsappGeneralMessageCreationDateTime: whatsappGeneralMessageCreationDateTime,
-                        whatsappGeneralMessageOwnerPhoneNumber: whatsappGeneralMessageOwnerPhoneNumber,
-                        whatsappTextMessageID: whatsappTextMessageID,
-                        whatsappTextMessageBody: whatsappTextMessageBody
-                      }
-                    };
-                    websocketConnection.sendWebsocketMessage('/receiveWhatsappMessage', websocketMessageContent);
-                  }
-                }
-
-              } else if (whatsappMessageType == 'location') {
-                const whatsappLocationMessageID = whatsappGeneralMessageID;
-                const whatsappLocationMessageLatitude = whatsappMessageContent.latitude;
-                const whatsappLocationMessageLongitude = whatsappMessageContent.longitude;
-                const createWhatsappLocationMessageResult = await whatsappDatabaseFunctions.createWhatsappLocationMessage(whatsappLocationMessageID, whatsappLocationMessageLatitude, whatsappLocationMessageLongitude);
-                if (createWhatsappLocationMessageResult.success){
-                  const websocketMessageContent = selectOrCreateActiveWhatsappConversationIDResult.result;
-
-                  if (selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationIsActive){
-                    websocketMessageContent['whatsappConversationMessages'] = 
-                    [
-                      {
-                        whatsappConversationID: whatsappConversationID,
-                        whatsappGeneralMessageID: whatsappGeneralMessageID,
-                        whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
-                        whatsappGeneralMessageType: whatsappMessageType,
-                        whatsappGeneralMessageRepliedMessageID: whatsappGeneralMessageRepliedMessageID,
-                        whatsappGeneralMessageCreationDateTime: whatsappGeneralMessageCreationDateTime,
-                        whatsappGeneralMessageOwnerPhoneNumber: whatsappGeneralMessageOwnerPhoneNumber,
-                        whatsappLocationMessageID: whatsappLocationMessageID,
-                        whatsappLocationMessageLatitude: whatsappLocationMessageLatitude,
-                        whatsappLocationMessageLongitude: whatsappLocationMessageLongitude
-                      }
-                    ]
-                    if (websocketMessageContent.whatsappConversationAssignedAgentID == null){
-                      websocketConnection.sendWebsocketMessage('/receiveWhatsappPendingConversation', websocketMessageContent);
-                    } else {
-                      websocketConnection.sendWebsocketMessage('/receiveWhatsappConversation', websocketMessageContent);
-                    }
-                  } else {
-                    const websocketMessageContent = 
-                    {
-                      success: true,
-                      result: 
-                      {
-                        whatsappConversationID: whatsappConversationID,
-                        whatsappGeneralMessageID: whatsappGeneralMessageID,
-                        whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
-                        whatsappGeneralMessageType: whatsappMessageType,
-                        whatsappGeneralMessageRepliedMessageID: whatsappGeneralMessageRepliedMessageID,
-                        whatsappGeneralMessageCreationDateTime: whatsappGeneralMessageCreationDateTime,
-                        whatsappGeneralMessageOwnerPhoneNumber: whatsappGeneralMessageOwnerPhoneNumber,
-                        whatsappLocationMessageID: whatsappLocationMessageID,
-                        whatsappLocationMessageLatitude: whatsappLocationMessageLatitude,
-                        whatsappLocationMessageLongitude: whatsappLocationMessageLongitude
-                      }
-                    };
-                    websocketConnection.sendWebsocketMessage('/receiveWhatsappMessage', websocketMessageContent);
-                  }
-                  
-                }
-
-              } else if (whatsappMessageType == 'contacts'){
-                const whatsappContactMessageID = whatsappGeneralMessageID;
-                const whatsappContactMessageName = whatsappMessageContent[0].name.formatted_name;
-                const whatsappContactMessagePhoneNumber = whatsappMessageContent[0].phones[0].wa_id;
-                const createWhatsappContactMessageResult = await whatsappDatabaseFunctions.createWhatsappContactMessage(whatsappContactMessageID, whatsappContactMessageName, whatsappContactMessagePhoneNumber);
-                if (createWhatsappContactMessageResult.success){
-                  const websocketMessageContent = selectOrCreateActiveWhatsappConversationIDResult.result;
-
-                  if (selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationIsActive){
-                    websocketMessageContent['whatsappConversationMessages'] = 
-                    [
-                      {
-                        whatsappConversationID: whatsappConversationID,
-                        whatsappGeneralMessageID: whatsappGeneralMessageID,
-                        whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
-                        whatsappGeneralMessageType: 'contact',
-                        whatsappGeneralMessageRepliedMessageID: whatsappGeneralMessageRepliedMessageID,
-                        whatsappGeneralMessageCreationDateTime: whatsappGeneralMessageCreationDateTime,
-                        whatsappGeneralMessageOwnerPhoneNumber: whatsappGeneralMessageOwnerPhoneNumber,
-                        whatsappContactMessageID: whatsappContactMessageID,
-                        whatsappContactMessageName: whatsappContactMessageName,
-                        whatsappContactMessagePhoneNumber: whatsappContactMessagePhoneNumber
-                      }
-                    ]
-                    if (websocketMessageContent.whatsappConversationAssignedAgentID == null){
-                      websocketConnection.sendWebsocketMessage('/receiveWhatsappPendingConversation', websocketMessageContent);
-                    } else {
-                      websocketConnection.sendWebsocketMessage('/receiveWhatsappConversation', websocketMessageContent);
-                    }
-                  } else {
-                    const websocketMessageContent = 
-                    {
-                      success: true,
-                      result: 
-                      {
-                        whatsappConversationID: whatsappConversationID,
-                        whatsappGeneralMessageID: whatsappGeneralMessageID,
-                        whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
-                        whatsappGeneralMessageType: 'contact',
-                        whatsappGeneralMessageRepliedMessageID: whatsappGeneralMessageRepliedMessageID,
-                        whatsappGeneralMessageCreationDateTime: whatsappGeneralMessageCreationDateTime,
-                        whatsappGeneralMessageOwnerPhoneNumber: whatsappGeneralMessageOwnerPhoneNumber,
-                        whatsappContactMessageID: whatsappContactMessageID,
-                        whatsappContactMessageName: whatsappContactMessageName,
-                        whatsappContactMessagePhoneNumber: whatsappContactMessagePhoneNumber
-                      }
-                    };
-                    websocketConnection.sendWebsocketMessage('/receiveWhatsappMessage', websocketMessageContent);
-                  }
-                }
-
-              } else if ((whatsappMessageType == 'image') || (whatsappMessageType == 'sticker')){
-                const whatsappImageMessageID = whatsappGeneralMessageID;
-                const whatsappImageMessageFileID = whatsappMessageContent.id;
-                var whatsappImageMessageCaption = whatsappMessageContent.caption;
-                if (whatsappImageMessageCaption == undefined){
-                  whatsappImageMessageCaption = null;
-                }
-                const getWhatsappImageMessageFileFromWhatsappImageMessageFileIDResult = await this.getWhatsappImageMessageFileFromWhatsappImageMessageFileID(whatsappImageMessageFileID);
-                if (getWhatsappImageMessageFileFromWhatsappImageMessageFileIDResult.success){
-                  const whatsappImageMessageFile = getWhatsappImageMessageFileFromWhatsappImageMessageFileIDResult.result;
-                  const createWhatsappImageMessageResult = await whatsappDatabaseFunctions.createWhatsappImageMessage(whatsappImageMessageID, whatsappImageMessageFile, whatsappImageMessageCaption, whatsappMessageType);
-                  if (createWhatsappImageMessageResult.success){
-                    const websocketMessageContent = selectOrCreateActiveWhatsappConversationIDResult.result;
-
-                    if (selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationIsActive){
-                      websocketMessageContent['whatsappConversationMessages'] = 
-                      [
-                        {
-                          whatsappConversationID: whatsappConversationID,
-                          whatsappGeneralMessageID: whatsappGeneralMessageID,
-                          whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
-                          whatsappGeneralMessageType: 'image',
-                          whatsappGeneralMessageRepliedMessageID: whatsappGeneralMessageRepliedMessageID,
-                          whatsappGeneralMessageCreationDateTime: whatsappGeneralMessageCreationDateTime,
-                          whatsappGeneralMessageOwnerPhoneNumber: whatsappGeneralMessageOwnerPhoneNumber,
-                          whatsappImageMessageID: whatsappImageMessageID,
-                          whatsappImageMessageFileID: whatsappImageMessageFileID,
-                          whatsappImageMessageCaption: whatsappImageMessageCaption,
-                          whatsappImageMessageType: whatsappMessageType,
-                          whatsappImageMessageFile: Buffer.from(whatsappImageMessageFile).toString('base64')
-                        }
-                      ]
-                      if (websocketMessageContent.whatsappConversationAssignedAgentID == null){
-                        websocketConnection.sendWebsocketMessage('/receiveWhatsappPendingConversation', websocketMessageContent);
-                      } else {
-                        websocketConnection.sendWebsocketMessage('/receiveWhatsappConversation', websocketMessageContent);
-                      }
-                    } else {
-                      const websocketMessageContent = 
-                      {
-                        success: true,
-                        result: 
-                        {
-                          whatsappConversationID: whatsappConversationID,
-                          whatsappGeneralMessageID: whatsappGeneralMessageID,
-                          whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
-                          whatsappGeneralMessageType: 'image',
-                          whatsappGeneralMessageRepliedMessageID: whatsappGeneralMessageRepliedMessageID,
-                          whatsappGeneralMessageCreationDateTime: whatsappGeneralMessageCreationDateTime,
-                          whatsappGeneralMessageOwnerPhoneNumber: whatsappGeneralMessageOwnerPhoneNumber,
-                          whatsappImageMessageID: whatsappImageMessageID,
-                          whatsappImageMessageFileID: whatsappImageMessageFileID,
-                          whatsappImageMessageCaption: whatsappImageMessageCaption,
-                          whatsappImageMessageFile: Buffer.from(whatsappImageMessageFile).toString('base64')
-                        }
-                      };
-                      websocketConnection.sendWebsocketMessage('/receiveWhatsappMessage', websocketMessageContent);
-                    }
-                  }
-                }
-              } else if (whatsappMessageType == 'video'){
-                const whatsappVideoMessageID = whatsappGeneralMessageID;
-                const whatsappVideoMessageFileID = whatsappMessageContent.id;
-                var whatsappVideoMessageCaption = whatsappMessageContent.caption;
-                if (whatsappVideoMessageCaption == undefined){
-                  whatsappVideoMessageCaption = null;
-                }
-                const getWhatsappVideoMessageFileFromWhatsappVideoMessageFileIDResult = await this.getWhatsappVideoMessageFileFromWhatsappVideoMessageFileID(whatsappVideoMessageFileID);
-                if (getWhatsappVideoMessageFileFromWhatsappVideoMessageFileIDResult.success){
-                  const whatsappVideoMessageFile = getWhatsappVideoMessageFileFromWhatsappVideoMessageFileIDResult.result;
-                  const createWhatsappVideoMessageResult = await whatsappDatabaseFunctions.createWhatsappVideoMessage(whatsappVideoMessageID, whatsappVideoMessageFile, whatsappVideoMessageCaption);
-                  if (createWhatsappVideoMessageResult.success){
-                    const websocketMessageContent = selectOrCreateActiveWhatsappConversationIDResult.result;
-
-                    if (selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationIsActive){
-                      websocketMessageContent['whatsappConversationMessages'] = 
-                      [
-                        {
-                          whatsappConversationID: whatsappConversationID,
-                          whatsappGeneralMessageID: whatsappGeneralMessageID,
-                          whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
-                          whatsappGeneralMessageType: whatsappMessageType,
-                          whatsappGeneralMessageRepliedMessageID: whatsappGeneralMessageRepliedMessageID,
-                          whatsappGeneralMessageCreationDateTime: whatsappGeneralMessageCreationDateTime,
-                          whatsappGeneralMessageOwnerPhoneNumber: whatsappGeneralMessageOwnerPhoneNumber,
-                          whatsappVideoMessageID: whatsappVideoMessageID,
-                          whatsappVideoMessageFileID: whatsappVideoMessageFileID,
-                          whatsappVideoMessageCaption: whatsappVideoMessageCaption,
-                          whatsappVideoMessageFile: Buffer.from(whatsappVideoMessageFile).toString('base64')
-                        }
-                      ]
-                      if (websocketMessageContent.whatsappConversationAssignedAgentID == null){
-                        websocketConnection.sendWebsocketMessage('/receiveWhatsappPendingConversation', websocketMessageContent);
-                      } else {
-                        websocketConnection.sendWebsocketMessage('/receiveWhatsappConversation', websocketMessageContent);
-                      }
-                    } else {
-                      const websocketMessageContent = 
-                      {
-                        success: true,
-                        result: 
-                        {
-                          whatsappConversationID: whatsappConversationID,
-                          whatsappGeneralMessageID: whatsappGeneralMessageID,
-                          whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
-                          whatsappGeneralMessageType: whatsappMessageType,
-                          whatsappGeneralMessageRepliedMessageID: whatsappGeneralMessageRepliedMessageID,
-                          whatsappGeneralMessageCreationDateTime: whatsappGeneralMessageCreationDateTime,
-                          whatsappGeneralMessageOwnerPhoneNumber: whatsappGeneralMessageOwnerPhoneNumber,
-                          whatsappVideoMessageID: whatsappVideoMessageID,
-                          whatsappVideoMessageFileID: whatsappVideoMessageFileID,
-                          whatsappVideoMessageCaption: whatsappVideoMessageCaption,
-                          whatsappVideoMessageFile: Buffer.from(whatsappVideoMessageFile).toString('base64')
-                        }
-                      };
-                      websocketConnection.sendWebsocketMessage('/receiveWhatsappMessage', websocketMessageContent);
-                    }
-                  } 
-                }
-              } else if (whatsappMessageType == 'audio'){
-                const whatsappAudioMessageID = whatsappGeneralMessageID;
-                const whatsappAudioMessageFileID = whatsappMessageContent.id;
-                const getWhatsappAudioMessageFileFromWhatsappAudioMessageFileIDResult = await this.getWhatsappAudioMessageFileFromWhatsappAudioMessageFileID(whatsappAudioMessageFileID);
-                if (getWhatsappAudioMessageFileFromWhatsappAudioMessageFileIDResult.success){
-                  const whatsappAudioMessageFile = getWhatsappAudioMessageFileFromWhatsappAudioMessageFileIDResult.result;
-                  const createWhatsappAudioMessageResult = await whatsappDatabaseFunctions.createWhatsappAudioMessage(whatsappAudioMessageID, whatsappAudioMessageFile);
-                  if (createWhatsappAudioMessageResult.success){
-                    const websocketMessageContent = selectOrCreateActiveWhatsappConversationIDResult.result;
-
-                    if (selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationIsActive){
-                      websocketMessageContent['whatsappConversationMessages'] = 
-                      [
-                        {
-                          whatsappConversationID: whatsappConversationID,
-                          whatsappGeneralMessageID: whatsappGeneralMessageID,
-                          whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
-                          whatsappGeneralMessageType: whatsappMessageType,
-                          whatsappGeneralMessageRepliedMessageID: whatsappGeneralMessageRepliedMessageID,
-                          whatsappGeneralMessageCreationDateTime: whatsappGeneralMessageCreationDateTime,
-                          whatsappGeneralMessageOwnerPhoneNumber: whatsappGeneralMessageOwnerPhoneNumber,
-                          whatsappAudioMessageID: whatsappAudioMessageID,
-                          whatsappAudioMessageFileID: whatsappAudioMessageFileID,
-                          whatsappAudioMessageFile: Buffer.from(whatsappAudioMessageFile).toString('base64')
-                        }
-                      ]
-                      if (websocketMessageContent.whatsappConversationAssignedAgentID == null){
-                        websocketConnection.sendWebsocketMessage('/receiveWhatsappPendingConversation', websocketMessageContent);
-                      } else {
-                        websocketConnection.sendWebsocketMessage('/receiveWhatsappConversation', websocketMessageContent);
-                      }
-                    } else {
-                      const websocketMessageContent = 
-                      {
-                        success: true,
-                        result: 
-                        {
-                          whatsappConversationID: whatsappConversationID,
-                          whatsappGeneralMessageID: whatsappGeneralMessageID,
-                          whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
-                          whatsappGeneralMessageType: whatsappMessageType,
-                          whatsappGeneralMessageRepliedMessageID: whatsappGeneralMessageRepliedMessageID,
-                          whatsappGeneralMessageCreationDateTime: whatsappGeneralMessageCreationDateTime,
-                          whatsappGeneralMessageOwnerPhoneNumber: whatsappGeneralMessageOwnerPhoneNumber,
-                          whatsappAudioMessageID: whatsappAudioMessageID,
-                          whatsappAudioMessageFileID: whatsappAudioMessageFileID,
-                          whatsappAudioMessageFile: Buffer.from(whatsappAudioMessageFile).toString('base64')
-                        }
-                      };
-                      websocketConnection.sendWebsocketMessage('/receiveWhatsappMessage', websocketMessageContent);
-                    }
-                  } 
-                }  
-
-              } else if (whatsappMessageType == 'document'){
-                const whatsappDocumentMessageID = whatsappGeneralMessageID;
-                const whatsappDocumentMessageFileID = whatsappMessageContent.id;
-                const whatsappDocumentMessageFileName = whatsappMessageContent.filename;
-                const whatsappDocumentMessageMimeType = whatsappMessageContent.mime_type;
-                const getWhatsappDocumentessageFileFromWhatsappDocumentMessageFileIDResult = await this.getWhatsappDocumentessageFileFromWhatsappDocumentMessageFileID(whatsappDocumentMessageFileID);
-                if (getWhatsappDocumentessageFileFromWhatsappDocumentMessageFileIDResult.success){
-                  const whatsappDocumentMessageFile = getWhatsappDocumentessageFileFromWhatsappDocumentMessageFileIDResult.result;
-                  const createWhatsappDocumentMessageResult = await whatsappDatabaseFunctions.createWhatsappDocumentMessage(whatsappDocumentMessageID, whatsappDocumentMessageFile, whatsappDocumentMessageMimeType, whatsappDocumentMessageFileName);
-                  if (createWhatsappDocumentMessageResult.success){
-                    const websocketMessageContent = selectOrCreateActiveWhatsappConversationIDResult.result;
-
-                    if (selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationIsActive){
-                      websocketMessageContent['whatsappConversationMessages'] = 
-                      [
-                        {
-                          whatsappConversationID: whatsappConversationID,
-                          whatsappGeneralMessageID: whatsappGeneralMessageID,
-                          whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
-                          whatsappGeneralMessageType: whatsappMessageType,
-                          whatsappGeneralMessageRepliedMessageID: whatsappGeneralMessageRepliedMessageID,
-                          whatsappGeneralMessageCreationDateTime: whatsappGeneralMessageCreationDateTime,
-                          whatsappGeneralMessageOwnerPhoneNumber: whatsappGeneralMessageOwnerPhoneNumber,
-                          whatsappDocumentMessageID: whatsappDocumentMessageID,
-                          whatsappDocumentMessageFileID: whatsappDocumentMessageFileID,
-                          whatsappDocumentMessageMimeType: whatsappDocumentMessageMimeType,
-                          whatsappDocumentMessageFileName: whatsappDocumentMessageFileName,
-                          whatsappDocumentMessageFile: Buffer.from(whatsappDocumentMessageFile).toString('base64')
-                        }
-                      ]
-                      if (websocketMessageContent.whatsappConversationAssignedAgentID == null){
-                        websocketConnection.sendWebsocketMessage('/receiveWhatsappPendingConversation', websocketMessageContent);
-                      } else {
-                        websocketConnection.sendWebsocketMessage('/receiveWhatsappConversation', websocketMessageContent);
-                      }
-                    } else {
-                      const websocketMessageContent = 
-                      {
-                        success: true,
-                        result: 
-                        {
-                          whatsappConversationID: whatsappConversationID,
-                          whatsappGeneralMessageID: whatsappGeneralMessageID,
-                          whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
-                          whatsappGeneralMessageType: whatsappMessageType,
-                          whatsappGeneralMessageRepliedMessageID: whatsappGeneralMessageRepliedMessageID,
-                          whatsappGeneralMessageCreationDateTime: whatsappGeneralMessageCreationDateTime,
-                          whatsappGeneralMessageOwnerPhoneNumber: whatsappGeneralMessageOwnerPhoneNumber,
-                          whatsappDocumentMessageID: whatsappDocumentMessageID,
-                          whatsappDocumentMessageFileID: whatsappDocumentMessageFileID,
-                          whatsappDocumentMessageMimeType: whatsappDocumentMessageMimeType,
-                          whatsappDocumentMessageFileName: whatsappDocumentMessageFileName,
-                          whatsappDocumentMessageFile: Buffer.from(whatsappDocumentMessageFile).toString('base64')
-                        }
-                      };
-                      websocketConnection.sendWebsocketMessage('/receiveWhatsappMessage', websocketMessageContent);
-                    }
-                  } 
-                }          
-              }
-            
+        if (whatsappConversationRecipientPhoneNumber != '50683315852'){        
+          const whatsappGeneralMessageID = httpRequest['body']['entry'][0]['changes'][0]['value']['messages'][0]['id'];
+          const whatsappMessageInformation = httpRequest['body']['entry'][0]['changes'][0]['value']['messages'][0];
+          const receiveWhatsappStoreMessageResult = await this.receiveWhatsappStoreMessage(websocketConnection, whatsappConversationRecipientPhoneNumber, whatsappGeneralMessageID, whatsappMessageInformation);
+          if (receiveWhatsappStoreMessageResult.success == false){
+            const httpRequestQuery = httpRequest['body']['entry'][0]['changes'][0]['value']['messages'][0];
+            const whatsappGeneralMessageOwnerPhoneNumber = httpRequestQuery.from;
+            const whatsappGeneralMessageID = httpRequestQuery.id;
+            const whatsappMessageType = httpRequestQuery.type;
+            const whatsappMessageContent = httpRequestQuery[whatsappMessageType];
+            var whatsappGeneralMessageRepliedMessageID = null;
+            if (httpRequestQuery.context) {
+              whatsappGeneralMessageRepliedMessageID = httpRequestQuery.context.id;
+            }
+            const selectOrCreateActiveWhatsappConversationIDResult = await whatsappDatabaseFunctions.selectOrCreateActiveWhatsappConversationID(whatsappGeneralMessageOwnerPhoneNumber);
+            if (selectOrCreateActiveWhatsappConversationIDResult.success){
+              const whatsappConversationID = selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationID;
+              const createWhatsappGeneralMessageResult = await whatsappDatabaseFunctions.createWhatsappGeneralMessage(whatsappConversationID, whatsappGeneralMessageID, whatsappGeneralMessageRepliedMessageID, whatsappGeneralMessageOwnerPhoneNumber);
+              if (createWhatsappGeneralMessageResult.success){
+                const whatsappGeneralMessageIndex = createWhatsappGeneralMessageResult.result.whatsappGeneralMessageIndex;
+                const whatsappGeneralMessageCreationDateTime = createWhatsappGeneralMessageResult.result.whatsappGeneralMessageCreationDateTime;
               
+                if (whatsappMessageType == 'text'){
+                  const whatsappTextMessageID = whatsappGeneralMessageID;
+                  const whatsappTextMessageBody = whatsappMessageContent.body;
+                  const createWhatsappTextMessageResult = await whatsappDatabaseFunctions.createWhatsappTextMessage(whatsappTextMessageID, whatsappTextMessageBody);
+                  if (createWhatsappTextMessageResult.success){
+                    const websocketMessageContent = selectOrCreateActiveWhatsappConversationIDResult.result;
+
+                    if (selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationIsActive){
+                      websocketMessageContent['whatsappConversationMessages'] = 
+                      [
+                        {
+                          whatsappConversationID: whatsappConversationID,
+                          whatsappGeneralMessageID: whatsappGeneralMessageID,
+                          whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
+                          whatsappGeneralMessageType: whatsappMessageType,
+                          whatsappGeneralMessageRepliedMessageID: whatsappGeneralMessageRepliedMessageID,
+                          whatsappGeneralMessageCreationDateTime: whatsappGeneralMessageCreationDateTime,
+                          whatsappGeneralMessageOwnerPhoneNumber: whatsappGeneralMessageOwnerPhoneNumber,
+                          whatsappTextMessageID: whatsappTextMessageID,
+                          whatsappTextMessageBody: whatsappTextMessageBody
+                        }
+                      ]
+                      if (websocketMessageContent.whatsappConversationAssignedAgentID == null){
+                        websocketConnection.sendWebsocketMessage('/receiveWhatsappPendingConversation', websocketMessageContent);
+                      } else {
+                        websocketConnection.sendWebsocketMessage('/receiveWhatsappConversation', websocketMessageContent);
+                      }
+                    } else {
+                      const websocketMessageContent = 
+                      {
+                        success: true,
+                        result: 
+                        {
+                          whatsappConversationID: whatsappConversationID,
+                          whatsappGeneralMessageID: whatsappGeneralMessageID,
+                          whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
+                          whatsappGeneralMessageType: whatsappMessageType,
+                          whatsappGeneralMessageRepliedMessageID: whatsappGeneralMessageRepliedMessageID,
+                          whatsappGeneralMessageCreationDateTime: whatsappGeneralMessageCreationDateTime,
+                          whatsappGeneralMessageOwnerPhoneNumber: whatsappGeneralMessageOwnerPhoneNumber,
+                          whatsappTextMessageID: whatsappTextMessageID,
+                          whatsappTextMessageBody: whatsappTextMessageBody
+                        }
+                      };
+                      websocketConnection.sendWebsocketMessage('/receiveWhatsappMessage', websocketMessageContent);
+                    }
+                  }
+
+                } else if (whatsappMessageType == 'location') {
+                  const whatsappLocationMessageID = whatsappGeneralMessageID;
+                  const whatsappLocationMessageLatitude = whatsappMessageContent.latitude;
+                  const whatsappLocationMessageLongitude = whatsappMessageContent.longitude;
+                  const createWhatsappLocationMessageResult = await whatsappDatabaseFunctions.createWhatsappLocationMessage(whatsappLocationMessageID, whatsappLocationMessageLatitude, whatsappLocationMessageLongitude);
+                  if (createWhatsappLocationMessageResult.success){
+                    const websocketMessageContent = selectOrCreateActiveWhatsappConversationIDResult.result;
+
+                    if (selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationIsActive){
+                      websocketMessageContent['whatsappConversationMessages'] = 
+                      [
+                        {
+                          whatsappConversationID: whatsappConversationID,
+                          whatsappGeneralMessageID: whatsappGeneralMessageID,
+                          whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
+                          whatsappGeneralMessageType: whatsappMessageType,
+                          whatsappGeneralMessageRepliedMessageID: whatsappGeneralMessageRepliedMessageID,
+                          whatsappGeneralMessageCreationDateTime: whatsappGeneralMessageCreationDateTime,
+                          whatsappGeneralMessageOwnerPhoneNumber: whatsappGeneralMessageOwnerPhoneNumber,
+                          whatsappLocationMessageID: whatsappLocationMessageID,
+                          whatsappLocationMessageLatitude: whatsappLocationMessageLatitude,
+                          whatsappLocationMessageLongitude: whatsappLocationMessageLongitude
+                        }
+                      ]
+                      if (websocketMessageContent.whatsappConversationAssignedAgentID == null){
+                        websocketConnection.sendWebsocketMessage('/receiveWhatsappPendingConversation', websocketMessageContent);
+                      } else {
+                        websocketConnection.sendWebsocketMessage('/receiveWhatsappConversation', websocketMessageContent);
+                      }
+                    } else {
+                      const websocketMessageContent = 
+                      {
+                        success: true,
+                        result: 
+                        {
+                          whatsappConversationID: whatsappConversationID,
+                          whatsappGeneralMessageID: whatsappGeneralMessageID,
+                          whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
+                          whatsappGeneralMessageType: whatsappMessageType,
+                          whatsappGeneralMessageRepliedMessageID: whatsappGeneralMessageRepliedMessageID,
+                          whatsappGeneralMessageCreationDateTime: whatsappGeneralMessageCreationDateTime,
+                          whatsappGeneralMessageOwnerPhoneNumber: whatsappGeneralMessageOwnerPhoneNumber,
+                          whatsappLocationMessageID: whatsappLocationMessageID,
+                          whatsappLocationMessageLatitude: whatsappLocationMessageLatitude,
+                          whatsappLocationMessageLongitude: whatsappLocationMessageLongitude
+                        }
+                      };
+                      websocketConnection.sendWebsocketMessage('/receiveWhatsappMessage', websocketMessageContent);
+                    }
+                    
+                  }
+
+                } else if (whatsappMessageType == 'contacts'){
+                  const whatsappContactMessageID = whatsappGeneralMessageID;
+                  const whatsappContactMessageName = whatsappMessageContent[0].name.formatted_name;
+                  const whatsappContactMessagePhoneNumber = whatsappMessageContent[0].phones[0].wa_id;
+                  const createWhatsappContactMessageResult = await whatsappDatabaseFunctions.createWhatsappContactMessage(whatsappContactMessageID, whatsappContactMessageName, whatsappContactMessagePhoneNumber);
+                  if (createWhatsappContactMessageResult.success){
+                    const websocketMessageContent = selectOrCreateActiveWhatsappConversationIDResult.result;
+
+                    if (selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationIsActive){
+                      websocketMessageContent['whatsappConversationMessages'] = 
+                      [
+                        {
+                          whatsappConversationID: whatsappConversationID,
+                          whatsappGeneralMessageID: whatsappGeneralMessageID,
+                          whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
+                          whatsappGeneralMessageType: 'contact',
+                          whatsappGeneralMessageRepliedMessageID: whatsappGeneralMessageRepliedMessageID,
+                          whatsappGeneralMessageCreationDateTime: whatsappGeneralMessageCreationDateTime,
+                          whatsappGeneralMessageOwnerPhoneNumber: whatsappGeneralMessageOwnerPhoneNumber,
+                          whatsappContactMessageID: whatsappContactMessageID,
+                          whatsappContactMessageName: whatsappContactMessageName,
+                          whatsappContactMessagePhoneNumber: whatsappContactMessagePhoneNumber
+                        }
+                      ]
+                      if (websocketMessageContent.whatsappConversationAssignedAgentID == null){
+                        websocketConnection.sendWebsocketMessage('/receiveWhatsappPendingConversation', websocketMessageContent);
+                      } else {
+                        websocketConnection.sendWebsocketMessage('/receiveWhatsappConversation', websocketMessageContent);
+                      }
+                    } else {
+                      const websocketMessageContent = 
+                      {
+                        success: true,
+                        result: 
+                        {
+                          whatsappConversationID: whatsappConversationID,
+                          whatsappGeneralMessageID: whatsappGeneralMessageID,
+                          whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
+                          whatsappGeneralMessageType: 'contact',
+                          whatsappGeneralMessageRepliedMessageID: whatsappGeneralMessageRepliedMessageID,
+                          whatsappGeneralMessageCreationDateTime: whatsappGeneralMessageCreationDateTime,
+                          whatsappGeneralMessageOwnerPhoneNumber: whatsappGeneralMessageOwnerPhoneNumber,
+                          whatsappContactMessageID: whatsappContactMessageID,
+                          whatsappContactMessageName: whatsappContactMessageName,
+                          whatsappContactMessagePhoneNumber: whatsappContactMessagePhoneNumber
+                        }
+                      };
+                      websocketConnection.sendWebsocketMessage('/receiveWhatsappMessage', websocketMessageContent);
+                    }
+                  }
+
+                } else if ((whatsappMessageType == 'image') || (whatsappMessageType == 'sticker')){
+                  const whatsappImageMessageID = whatsappGeneralMessageID;
+                  const whatsappImageMessageFileID = whatsappMessageContent.id;
+                  var whatsappImageMessageCaption = whatsappMessageContent.caption;
+                  if (whatsappImageMessageCaption == undefined){
+                    whatsappImageMessageCaption = null;
+                  }
+                  const getWhatsappImageMessageFileFromWhatsappImageMessageFileIDResult = await this.getWhatsappImageMessageFileFromWhatsappImageMessageFileID(whatsappImageMessageFileID);
+                  if (getWhatsappImageMessageFileFromWhatsappImageMessageFileIDResult.success){
+                    const whatsappImageMessageFile = getWhatsappImageMessageFileFromWhatsappImageMessageFileIDResult.result;
+                    const createWhatsappImageMessageResult = await whatsappDatabaseFunctions.createWhatsappImageMessage(whatsappImageMessageID, whatsappImageMessageFile, whatsappImageMessageCaption, whatsappMessageType);
+                    if (createWhatsappImageMessageResult.success){
+                      const websocketMessageContent = selectOrCreateActiveWhatsappConversationIDResult.result;
+
+                      if (selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationIsActive){
+                        websocketMessageContent['whatsappConversationMessages'] = 
+                        [
+                          {
+                            whatsappConversationID: whatsappConversationID,
+                            whatsappGeneralMessageID: whatsappGeneralMessageID,
+                            whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
+                            whatsappGeneralMessageType: 'image',
+                            whatsappGeneralMessageRepliedMessageID: whatsappGeneralMessageRepliedMessageID,
+                            whatsappGeneralMessageCreationDateTime: whatsappGeneralMessageCreationDateTime,
+                            whatsappGeneralMessageOwnerPhoneNumber: whatsappGeneralMessageOwnerPhoneNumber,
+                            whatsappImageMessageID: whatsappImageMessageID,
+                            whatsappImageMessageFileID: whatsappImageMessageFileID,
+                            whatsappImageMessageCaption: whatsappImageMessageCaption,
+                            whatsappImageMessageType: whatsappMessageType,
+                            whatsappImageMessageFile: Buffer.from(whatsappImageMessageFile).toString('base64')
+                          }
+                        ]
+                        if (websocketMessageContent.whatsappConversationAssignedAgentID == null){
+                          websocketConnection.sendWebsocketMessage('/receiveWhatsappPendingConversation', websocketMessageContent);
+                        } else {
+                          websocketConnection.sendWebsocketMessage('/receiveWhatsappConversation', websocketMessageContent);
+                        }
+                      } else {
+                        const websocketMessageContent = 
+                        {
+                          success: true,
+                          result: 
+                          {
+                            whatsappConversationID: whatsappConversationID,
+                            whatsappGeneralMessageID: whatsappGeneralMessageID,
+                            whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
+                            whatsappGeneralMessageType: 'image',
+                            whatsappGeneralMessageRepliedMessageID: whatsappGeneralMessageRepliedMessageID,
+                            whatsappGeneralMessageCreationDateTime: whatsappGeneralMessageCreationDateTime,
+                            whatsappGeneralMessageOwnerPhoneNumber: whatsappGeneralMessageOwnerPhoneNumber,
+                            whatsappImageMessageID: whatsappImageMessageID,
+                            whatsappImageMessageFileID: whatsappImageMessageFileID,
+                            whatsappImageMessageCaption: whatsappImageMessageCaption,
+                            whatsappImageMessageFile: Buffer.from(whatsappImageMessageFile).toString('base64')
+                          }
+                        };
+                        websocketConnection.sendWebsocketMessage('/receiveWhatsappMessage', websocketMessageContent);
+                      }
+                    }
+                  }
+                } else if (whatsappMessageType == 'video'){
+                  const whatsappVideoMessageID = whatsappGeneralMessageID;
+                  const whatsappVideoMessageFileID = whatsappMessageContent.id;
+                  var whatsappVideoMessageCaption = whatsappMessageContent.caption;
+                  if (whatsappVideoMessageCaption == undefined){
+                    whatsappVideoMessageCaption = null;
+                  }
+                  const getWhatsappVideoMessageFileFromWhatsappVideoMessageFileIDResult = await this.getWhatsappVideoMessageFileFromWhatsappVideoMessageFileID(whatsappVideoMessageFileID);
+                  if (getWhatsappVideoMessageFileFromWhatsappVideoMessageFileIDResult.success){
+                    const whatsappVideoMessageFile = getWhatsappVideoMessageFileFromWhatsappVideoMessageFileIDResult.result;
+                    const createWhatsappVideoMessageResult = await whatsappDatabaseFunctions.createWhatsappVideoMessage(whatsappVideoMessageID, whatsappVideoMessageFile, whatsappVideoMessageCaption);
+                    if (createWhatsappVideoMessageResult.success){
+                      const websocketMessageContent = selectOrCreateActiveWhatsappConversationIDResult.result;
+
+                      if (selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationIsActive){
+                        websocketMessageContent['whatsappConversationMessages'] = 
+                        [
+                          {
+                            whatsappConversationID: whatsappConversationID,
+                            whatsappGeneralMessageID: whatsappGeneralMessageID,
+                            whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
+                            whatsappGeneralMessageType: whatsappMessageType,
+                            whatsappGeneralMessageRepliedMessageID: whatsappGeneralMessageRepliedMessageID,
+                            whatsappGeneralMessageCreationDateTime: whatsappGeneralMessageCreationDateTime,
+                            whatsappGeneralMessageOwnerPhoneNumber: whatsappGeneralMessageOwnerPhoneNumber,
+                            whatsappVideoMessageID: whatsappVideoMessageID,
+                            whatsappVideoMessageFileID: whatsappVideoMessageFileID,
+                            whatsappVideoMessageCaption: whatsappVideoMessageCaption,
+                            whatsappVideoMessageFile: Buffer.from(whatsappVideoMessageFile).toString('base64')
+                          }
+                        ]
+                        if (websocketMessageContent.whatsappConversationAssignedAgentID == null){
+                          websocketConnection.sendWebsocketMessage('/receiveWhatsappPendingConversation', websocketMessageContent);
+                        } else {
+                          websocketConnection.sendWebsocketMessage('/receiveWhatsappConversation', websocketMessageContent);
+                        }
+                      } else {
+                        const websocketMessageContent = 
+                        {
+                          success: true,
+                          result: 
+                          {
+                            whatsappConversationID: whatsappConversationID,
+                            whatsappGeneralMessageID: whatsappGeneralMessageID,
+                            whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
+                            whatsappGeneralMessageType: whatsappMessageType,
+                            whatsappGeneralMessageRepliedMessageID: whatsappGeneralMessageRepliedMessageID,
+                            whatsappGeneralMessageCreationDateTime: whatsappGeneralMessageCreationDateTime,
+                            whatsappGeneralMessageOwnerPhoneNumber: whatsappGeneralMessageOwnerPhoneNumber,
+                            whatsappVideoMessageID: whatsappVideoMessageID,
+                            whatsappVideoMessageFileID: whatsappVideoMessageFileID,
+                            whatsappVideoMessageCaption: whatsappVideoMessageCaption,
+                            whatsappVideoMessageFile: Buffer.from(whatsappVideoMessageFile).toString('base64')
+                          }
+                        };
+                        websocketConnection.sendWebsocketMessage('/receiveWhatsappMessage', websocketMessageContent);
+                      }
+                    } 
+                  }
+                } else if (whatsappMessageType == 'audio'){
+                  const whatsappAudioMessageID = whatsappGeneralMessageID;
+                  const whatsappAudioMessageFileID = whatsappMessageContent.id;
+                  const getWhatsappAudioMessageFileFromWhatsappAudioMessageFileIDResult = await this.getWhatsappAudioMessageFileFromWhatsappAudioMessageFileID(whatsappAudioMessageFileID);
+                  if (getWhatsappAudioMessageFileFromWhatsappAudioMessageFileIDResult.success){
+                    const whatsappAudioMessageFile = getWhatsappAudioMessageFileFromWhatsappAudioMessageFileIDResult.result;
+                    const createWhatsappAudioMessageResult = await whatsappDatabaseFunctions.createWhatsappAudioMessage(whatsappAudioMessageID, whatsappAudioMessageFile);
+                    if (createWhatsappAudioMessageResult.success){
+                      const websocketMessageContent = selectOrCreateActiveWhatsappConversationIDResult.result;
+
+                      if (selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationIsActive){
+                        websocketMessageContent['whatsappConversationMessages'] = 
+                        [
+                          {
+                            whatsappConversationID: whatsappConversationID,
+                            whatsappGeneralMessageID: whatsappGeneralMessageID,
+                            whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
+                            whatsappGeneralMessageType: whatsappMessageType,
+                            whatsappGeneralMessageRepliedMessageID: whatsappGeneralMessageRepliedMessageID,
+                            whatsappGeneralMessageCreationDateTime: whatsappGeneralMessageCreationDateTime,
+                            whatsappGeneralMessageOwnerPhoneNumber: whatsappGeneralMessageOwnerPhoneNumber,
+                            whatsappAudioMessageID: whatsappAudioMessageID,
+                            whatsappAudioMessageFileID: whatsappAudioMessageFileID,
+                            whatsappAudioMessageFile: Buffer.from(whatsappAudioMessageFile).toString('base64')
+                          }
+                        ]
+                        if (websocketMessageContent.whatsappConversationAssignedAgentID == null){
+                          websocketConnection.sendWebsocketMessage('/receiveWhatsappPendingConversation', websocketMessageContent);
+                        } else {
+                          websocketConnection.sendWebsocketMessage('/receiveWhatsappConversation', websocketMessageContent);
+                        }
+                      } else {
+                        const websocketMessageContent = 
+                        {
+                          success: true,
+                          result: 
+                          {
+                            whatsappConversationID: whatsappConversationID,
+                            whatsappGeneralMessageID: whatsappGeneralMessageID,
+                            whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
+                            whatsappGeneralMessageType: whatsappMessageType,
+                            whatsappGeneralMessageRepliedMessageID: whatsappGeneralMessageRepliedMessageID,
+                            whatsappGeneralMessageCreationDateTime: whatsappGeneralMessageCreationDateTime,
+                            whatsappGeneralMessageOwnerPhoneNumber: whatsappGeneralMessageOwnerPhoneNumber,
+                            whatsappAudioMessageID: whatsappAudioMessageID,
+                            whatsappAudioMessageFileID: whatsappAudioMessageFileID,
+                            whatsappAudioMessageFile: Buffer.from(whatsappAudioMessageFile).toString('base64')
+                          }
+                        };
+                        websocketConnection.sendWebsocketMessage('/receiveWhatsappMessage', websocketMessageContent);
+                      }
+                    } 
+                  }  
+
+                } else if (whatsappMessageType == 'document'){
+                  const whatsappDocumentMessageID = whatsappGeneralMessageID;
+                  const whatsappDocumentMessageFileID = whatsappMessageContent.id;
+                  const whatsappDocumentMessageFileName = whatsappMessageContent.filename;
+                  const whatsappDocumentMessageMimeType = whatsappMessageContent.mime_type;
+                  const getWhatsappDocumentessageFileFromWhatsappDocumentMessageFileIDResult = await this.getWhatsappDocumentessageFileFromWhatsappDocumentMessageFileID(whatsappDocumentMessageFileID);
+                  if (getWhatsappDocumentessageFileFromWhatsappDocumentMessageFileIDResult.success){
+                    const whatsappDocumentMessageFile = getWhatsappDocumentessageFileFromWhatsappDocumentMessageFileIDResult.result;
+                    const createWhatsappDocumentMessageResult = await whatsappDatabaseFunctions.createWhatsappDocumentMessage(whatsappDocumentMessageID, whatsappDocumentMessageFile, whatsappDocumentMessageMimeType, whatsappDocumentMessageFileName);
+                    if (createWhatsappDocumentMessageResult.success){
+                      const websocketMessageContent = selectOrCreateActiveWhatsappConversationIDResult.result;
+
+                      if (selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationIsActive){
+                        websocketMessageContent['whatsappConversationMessages'] = 
+                        [
+                          {
+                            whatsappConversationID: whatsappConversationID,
+                            whatsappGeneralMessageID: whatsappGeneralMessageID,
+                            whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
+                            whatsappGeneralMessageType: whatsappMessageType,
+                            whatsappGeneralMessageRepliedMessageID: whatsappGeneralMessageRepliedMessageID,
+                            whatsappGeneralMessageCreationDateTime: whatsappGeneralMessageCreationDateTime,
+                            whatsappGeneralMessageOwnerPhoneNumber: whatsappGeneralMessageOwnerPhoneNumber,
+                            whatsappDocumentMessageID: whatsappDocumentMessageID,
+                            whatsappDocumentMessageFileID: whatsappDocumentMessageFileID,
+                            whatsappDocumentMessageMimeType: whatsappDocumentMessageMimeType,
+                            whatsappDocumentMessageFileName: whatsappDocumentMessageFileName,
+                            whatsappDocumentMessageFile: Buffer.from(whatsappDocumentMessageFile).toString('base64')
+                          }
+                        ]
+                        if (websocketMessageContent.whatsappConversationAssignedAgentID == null){
+                          websocketConnection.sendWebsocketMessage('/receiveWhatsappPendingConversation', websocketMessageContent);
+                        } else {
+                          websocketConnection.sendWebsocketMessage('/receiveWhatsappConversation', websocketMessageContent);
+                        }
+                      } else {
+                        const websocketMessageContent = 
+                        {
+                          success: true,
+                          result: 
+                          {
+                            whatsappConversationID: whatsappConversationID,
+                            whatsappGeneralMessageID: whatsappGeneralMessageID,
+                            whatsappGeneralMessageIndex: whatsappGeneralMessageIndex,
+                            whatsappGeneralMessageType: whatsappMessageType,
+                            whatsappGeneralMessageRepliedMessageID: whatsappGeneralMessageRepliedMessageID,
+                            whatsappGeneralMessageCreationDateTime: whatsappGeneralMessageCreationDateTime,
+                            whatsappGeneralMessageOwnerPhoneNumber: whatsappGeneralMessageOwnerPhoneNumber,
+                            whatsappDocumentMessageID: whatsappDocumentMessageID,
+                            whatsappDocumentMessageFileID: whatsappDocumentMessageFileID,
+                            whatsappDocumentMessageMimeType: whatsappDocumentMessageMimeType,
+                            whatsappDocumentMessageFileName: whatsappDocumentMessageFileName,
+                            whatsappDocumentMessageFile: Buffer.from(whatsappDocumentMessageFile).toString('base64')
+                          }
+                        };
+                        websocketConnection.sendWebsocketMessage('/receiveWhatsappMessage', websocketMessageContent);
+                      }
+                    } 
+                  }          
+                }
+              
+                
+              }
             }
           }
+        } else {
+          
         }
       }
     } catch (error) {
