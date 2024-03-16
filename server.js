@@ -24,6 +24,7 @@ const backendWhatsappHttpRequestServer = require('./whatsappModule/whatsappServe
 const backendStoreHttpRequestServer = require('./storeModule/storeServer.js');
 const backendDashboardHttpRequestServer = require('./dashboardModule/dashboardServer.js');
 const backendPaymentHttpRequestServer = require('./paymentModule/paymentServer.js');
+const backendWhatsappInvoiceHttpRequestServer = require('./whatsappInvoiceModule/whatsappInvoiceServer.js');
 
 backendHttpRequestServer.use(backendAgentHttpRequestServer);
 backendHttpRequestServer.use(backendContactHttpRequestServer);
@@ -31,3 +32,4 @@ backendHttpRequestServer.use(backendWhatsappHttpRequestServer);
 backendHttpRequestServer.use(backendStoreHttpRequestServer);
 backendHttpRequestServer.use(backendDashboardHttpRequestServer);
 backendHttpRequestServer.use(backendPaymentHttpRequestServer);
+backendHttpRequestServer.use(backendWhatsappInvoiceHttpRequestServer);
