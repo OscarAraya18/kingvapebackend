@@ -26,6 +26,7 @@ module.exports = {
           WhatsappInvoices.whatsappInvoiceAgentID,
           WhatsappInvoices.whatsappInvoiceLocalityAgentID,
           WhatsappInvoices.whatsappInvoiceState,
+          WhatsappInvoices.whatsappInvoiceHasBeenBilled,
           WhatsappInvoices.whatsappInvoiceCentralDateTime,
           WhatsappInvoices.whatsappInvoiceLocalityDateTime,
           WhatsappInvoices.whatsappInvoiceShippingDateTime,
@@ -70,6 +71,7 @@ module.exports = {
           WhatsappInvoices.whatsappInvoiceAgentID,
           WhatsappInvoices.whatsappInvoiceLocalityAgentID,
           WhatsappInvoices.whatsappInvoiceState,
+          WhatsappInvoices.whatsappInvoiceHasBeenBilled,
           WhatsappInvoices.whatsappInvoiceCentralDateTime,
           WhatsappInvoices.whatsappInvoiceLocalityDateTime,
           WhatsappInvoices.whatsappInvoiceShippingDateTime,
@@ -114,6 +116,7 @@ module.exports = {
         WhatsappInvoices.whatsappInvoiceAgentID,
         WhatsappInvoices.whatsappInvoiceLocalityAgentID,
         WhatsappInvoices.whatsappInvoiceState,
+        WhatsappInvoices.whatsappInvoiceHasBeenBilled,
         WhatsappInvoices.whatsappInvoiceCentralDateTime,
         WhatsappInvoices.whatsappInvoiceLocalityDateTime,
         WhatsappInvoices.whatsappInvoiceShippingDateTime,
@@ -221,6 +224,15 @@ module.exports = {
       }
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateWhatsappInvoiceStateSQL, updateWhatsappInvoiceStateValues);
       updateWhatsappInvoiceStatePromiseResolve(JSON.stringify(databaseResult));      
+    });
+  },
+
+  updateWhatsappInvoiceHasBeenBilled: async function(whatsappInvoiceID, whatsappInvoiceHasBeenBilled){
+    return new Promise(async (updateWhatsappInvoiceHasBeenBilledPromiseResolve) => {
+      const updateWhatsappInvoiceHasBeenBilledSQL = `UPDATE WhatsappInvoices SET whatsappInvoiceHasBeenBilled=(?) WHERE whatsappInvoiceID=(?);`;
+      const updateWhatsappInvoiceHasBeenBilledValues = [whatsappInvoiceHasBeenBilled, whatsappInvoiceID];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateWhatsappInvoiceHasBeenBilledSQL, updateWhatsappInvoiceHasBeenBilledValues);
+      updateWhatsappInvoiceHasBeenBilledPromiseResolve(JSON.stringify(databaseResult));      
     });
   },
 

@@ -63,6 +63,14 @@ backendWhatsappInvoiceHttpRequestServer.post('/updateWhatsappInvoiceState', asyn
   httpResponse.end(updateWhatsappInvoiceStateResult);
 });
 
+backendWhatsappInvoiceHttpRequestServer.post('/updateWhatsappInvoiceHasBeenBilled', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const whatsappInvoiceID = httpRequestQuery.whatsappInvoiceID;
+  const whatsappInvoiceHasBeenBilled = httpRequestQuery.whatsappInvoiceHasBeenBilled;
+  const updateWhatsappInvoiceHasBeenBilledResult = await whatsappInvoiceManagementFunctions.updateWhatsappInvoiceHasBeenBilled(whatsappInvoiceID, whatsappInvoiceHasBeenBilled);
+  httpResponse.end(updateWhatsappInvoiceHasBeenBilledResult);
+});
+
 backendWhatsappInvoiceHttpRequestServer.post('/updateWhatsappInvoiceClientName', async (httpRequest, httpResponse) => {
   const httpRequestQuery = httpRequest.body;
   const whatsappInvoiceID = httpRequestQuery.whatsappInvoiceID;
