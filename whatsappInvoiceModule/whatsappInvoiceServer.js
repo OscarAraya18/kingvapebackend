@@ -26,11 +26,7 @@ backendWhatsappInvoiceHttpRequestServer.post('/insertWhatsappInvoice', async (ht
   const whatsappInvoiceLocationNote = httpRequestQuery.whatsappInvoiceLocationNote;
   const whatsappInvoiceShippingNote = httpRequestQuery.whatsappInvoiceShippingNote;
   const whatsappInvoiceProducts = httpRequestQuery.whatsappInvoiceProducts;
-
-  console.log(whatsappInvoiceAgentID);
-
   const insertWhatsappInvoiceResult = await whatsappInvoiceManagementFunctions.insertWhatsappInvoice(whatsappInvoiceWhatsappConversationID, whatsappInvoiceLocalityID, whatsappInvoiceAgentID, whatsappInvoiceState, whatsappInvoiceCentralDateTime, whatsappInvoiceClientName, whatsappInvoiceClientPhoneNumber, whatsappInvoiceClientLocation, whatsappInvoiceClientLocationURL, whatsappInvoiceAmount, whatsappInvoiceShippingMethod, whatsappInvoicePaymentMethod, whatsappInvoicePaymentState, whatsappInvoiceLocationNote, whatsappInvoiceShippingNote, whatsappInvoiceProducts);
-  console.log(insertWhatsappInvoiceResult);
   httpResponse.end(insertWhatsappInvoiceResult);
 });
 
@@ -233,6 +229,18 @@ backendWhatsappInvoiceHttpRequestServer.post('/selectTodayInvoicesByLocalityAgen
   const httpRequestQuery = httpRequest.body;
   const whatsappInvoiceLocalityID = httpRequestQuery.whatsappInvoiceLocalityID;
   const selectTodayInvoicesByLocalityAgentResult = await whatsappInvoiceManagementFunctions.selectTodayInvoicesByLocalityAgent(whatsappInvoiceLocalityID);
-  console.log(selectTodayInvoicesByLocalityAgentResult);
   httpResponse.end(selectTodayInvoicesByLocalityAgentResult);
+});
+
+
+
+
+
+backendWhatsappInvoiceHttpRequestServer.post('/returnWhatsappConversation', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const whatsappConversationRecipientPhoneNumber = httpRequestQuery.whatsappConversationRecipientPhoneNumber;
+  const whatsappConversationID = httpRequestQuery.whatsappConversationID;
+  const whatsappInvoiceID = httpRequestQuery.whatsappInvoiceID;
+  const returnWhatsappConversationResult = await whatsappInvoiceManagementFunctions.returnWhatsappConversation(whatsappConversationRecipientPhoneNumber, whatsappConversationID, whatsappInvoiceID);
+  httpResponse.end(returnWhatsappConversationResult);
 });

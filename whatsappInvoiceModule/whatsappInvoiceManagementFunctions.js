@@ -789,19 +789,38 @@ module.exports = {
  
 
 
-  /*
-  returnWhatsappInvoice: async function(whatsappInvoiceID, whatsappInvoiceShippingNote){
-    return new Promise(async (returnWhatsappInvoicePromiseResolve) => {
-      const returnWhatsappInvoiceSQL = 
-      `
-      UPDATE FROM WhatsappInvoices SET whatsappInvoiceShippingNote=(?) WHERE whatsappInvoiceID=(?);
-      `;
-      const returnWhatsappInvoice = [whatsappInvoiceShippingNote, whatsappInvoiceID];
-      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateWhatsappInvoiceShippingNoteSQL, updateWhatsappInvoiceShippingNoteValues);
-      returnWhatsappInvoicePromiseResolve(JSON.stringify(databaseResult));      
+  
+  returnWhatsappConversation: async function(whatsappConversationRecipientPhoneNumber, whatsappConversationID, whatsappInvoiceID){
+    return new Promise(async (returnWhatsappConversationPromiseResolve) => {
+      const selectWhatsappActiveConversationByPhoneNumberSQL = `SELECT whatsappConversationID FROM WhatsappConversations WHERE whatsappConversationRecipientPhoneNumber=(?) AND whatsappConversationIsActive=(?);`;
+      const selectWhatsappActiveConversationByPhoneNumberValues = [whatsappConversationRecipientPhoneNumber, true];
+      const selectWhatsappActiveConversationByPhoneNumberResult = await databaseManagementFunctions.executeDatabaseSQL(selectWhatsappActiveConversationByPhoneNumberSQL, selectWhatsappActiveConversationByPhoneNumberValues);
+      if (selectWhatsappActiveConversationByPhoneNumberResult.success){
+        if (selectWhatsappActiveConversationByPhoneNumberResult.result.length == 0){
+          const deleteWhatsappInvoiceSQL = `DELETE FROM WhatsappInvoices WHERE whatsappInvoiceID=(?);`;
+          const deleteWhatsappInvoiceValues = [whatsappInvoiceID];
+          const deleteWhatsappInvoiceResult = await databaseManagementFunctions.executeDatabaseSQL(deleteWhatsappInvoiceSQL, deleteWhatsappInvoiceValues);
+          if (deleteWhatsappInvoiceResult.success){
+            const updateWhatsappConversationSQL =  `UPDATE WhatsappConversations SET whatsappConversationIsActive=(?) WHERE whatsappConversationID=(?);`;
+            const updateWhatsappConversationValues = [true, whatsappConversationID];
+            const updateWhatsappConversationResult = await databaseManagementFunctions.executeDatabaseSQL(updateWhatsappConversationSQL, updateWhatsappConversationValues);
+            if (updateWhatsappConversationResult.success){
+              returnWhatsappConversationPromiseResolve(JSON.stringify(updateWhatsappConversationResult));
+            } else {
+              returnWhatsappConversationPromiseResolve(JSON.stringify({success: false, result: 4}));
+            }
+          } else {
+            returnWhatsappConversationPromiseResolve(JSON.stringify({success: false, result: 3}));
+          }
+        } else {
+          returnWhatsappConversationPromiseResolve(JSON.stringify({success: false, result: 2}));
+        }
+      } else {
+        returnWhatsappConversationPromiseResolve(JSON.stringify({success: false, result: 1}));
+      }
     });
   },
-  */
+  
   
 
 }
