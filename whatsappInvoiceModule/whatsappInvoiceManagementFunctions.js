@@ -521,7 +521,9 @@ module.exports = {
           LEFT JOIN LocalityAgents ON WhatsappInvoices.whatsappInvoiceLocalityAgentID = LocalityAgents.localityAgentID
           LEFT JOIN Localities ON WhatsappInvoices.whatsappInvoiceLocalityID = Localities.localityID
         WHERE 
-          WhatsappInvoices.whatsappInvoiceState=(?) 
+          WhatsappInvoices.whatsappInvoiceState=(?)
+            AND
+          WhatsappInvoices.whatsappInvoiceLocalityID=(?)
             AND 
           STR_TO_DATE(whatsappInvoiceDeliveredDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW() - INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
             AND
@@ -563,7 +565,9 @@ module.exports = {
           LEFT JOIN LocalityAgents ON WhatsappInvoices.whatsappInvoiceLocalityAgentID = LocalityAgents.localityAgentID
           LEFT JOIN Localities ON WhatsappInvoices.whatsappInvoiceLocalityID = Localities.localityID
         WHERE 
-          WhatsappInvoices.whatsappInvoiceState=(?) 
+          WhatsappInvoices.whatsappInvoiceState=(?)
+            AND
+          WhatsappInvoices.whatsappInvoiceLocalityID=(?) 
             AND 
           STR_TO_DATE(whatsappInvoiceDeliveredDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
             AND
@@ -571,7 +575,7 @@ module.exports = {
         ORDER BY WhatsappInvoices.whatsappInvoiceID DESC;
         `; 
       }
-      const selectTodayDeliveredInvoicesByLocalityValues = ['E', whatsappInvoiceLocalityID];
+      const selectTodayDeliveredInvoicesByLocalityValues = ['E', whatsappInvoiceLocalityID, whatsappInvoiceLocalityID];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectTodayDeliveredInvoicesByLocalitySQL, selectTodayDeliveredInvoicesByLocalityValues);
       selectTodayDeliveredInvoicesByLocalityPromiseResolve(JSON.stringify(databaseResult));      
     });
@@ -620,7 +624,9 @@ module.exports = {
           LEFT JOIN LocalityAgents ON WhatsappInvoices.whatsappInvoiceLocalityAgentID = LocalityAgents.localityAgentID
           LEFT JOIN Localities ON WhatsappInvoices.whatsappInvoiceLocalityID = Localities.localityID
         WHERE 
-          WhatsappInvoices.whatsappInvoiceState=(?) 
+          WhatsappInvoices.whatsappInvoiceState=(?)
+            AND
+          WhatsappInvoices.whatsappInvoiceLocalityID=(?) 
             AND 
           STR_TO_DATE(whatsappInvoiceCentralDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW() - INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
             AND
@@ -662,7 +668,9 @@ module.exports = {
           LEFT JOIN LocalityAgents ON WhatsappInvoices.whatsappInvoiceLocalityAgentID = LocalityAgents.localityAgentID
           LEFT JOIN Localities ON WhatsappInvoices.whatsappInvoiceLocalityID = Localities.localityID
         WHERE 
-          WhatsappInvoices.whatsappInvoiceState=(?) 
+          WhatsappInvoices.whatsappInvoiceState=(?)
+            AND
+          WhatsappInvoices.whatsappInvoiceLocalityID=(?)  
             AND 
           STR_TO_DATE(whatsappInvoiceCentralDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
             AND
@@ -670,7 +678,7 @@ module.exports = {
         ORDER BY WhatsappInvoices.whatsappInvoiceID DESC;
         `; 
       }
-      const selectTodayCanceledInvoicesByLocalityValues = ['X', whatsappInvoiceLocalityID];
+      const selectTodayCanceledInvoicesByLocalityValues = ['X', whatsappInvoiceLocalityID, whatsappInvoiceLocalityID];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectTodayCanceledInvoicesByLocalitySQL, selectTodayCanceledInvoicesByLocalityValues);
       selectTodayCanceledInvoicesByLocalityPromiseResolve(JSON.stringify(databaseResult));      
     });
@@ -721,6 +729,8 @@ module.exports = {
         WHERE 
           (WhatsappInvoices.whatsappInvoiceState=(?) OR WhatsappInvoices.whatsappInvoiceState=(?))
             AND 
+          WhatsappInvoices.whatsappInvoiceLocalityID=(?)
+            AND
           STR_TO_DATE(whatsappInvoiceCentralDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW() - INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
             AND
           STR_TO_DATE(whatsappInvoiceCentralDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
@@ -763,13 +773,15 @@ module.exports = {
         WHERE 
           (WhatsappInvoices.whatsappInvoiceState=(?) OR WhatsappInvoices.whatsappInvoiceState=(?))
             AND 
+          WhatsappInvoices.whatsappInvoiceLocalityID=(?)
+            AND
           STR_TO_DATE(whatsappInvoiceCentralDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
             AND
           STR_TO_DATE(whatsappInvoiceCentralDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
         ORDER BY WhatsappInvoices.whatsappInvoiceID DESC;
         `; 
       }
-      const selectTodayInvoicesByLocalityAgentValues = ['R', 'E', whatsappInvoiceLocalityID];
+      const selectTodayInvoicesByLocalityAgentValues = ['R', 'E', whatsappInvoiceLocalityID, whatsappInvoiceLocalityID];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectTodayInvoicesByLocalityAgentSQL, selectTodayInvoicesByLocalityAgentValues);
       selectTodayInvoicesByLocalityAgentPromiseResolve(JSON.stringify(databaseResult));      
     });
