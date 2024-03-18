@@ -460,7 +460,7 @@ module.exports = {
         `
         SELECT 
           COUNT(whatsappInvoiceID) as result
-        FROM WhatsappConversations
+        FROM WhatsappInvoices
         WHERE 
           whatsappInvoiceState = (?) 
             AND 
@@ -473,6 +473,7 @@ module.exports = {
       }
       const selectTodayLocalityAgentShippedInvoicesValues = ['E', whatsappInvoiceLocalityAgentID];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectTodayLocalityAgentShippedInvoicesSQL, selectTodayLocalityAgentShippedInvoicesValues);
+      console.log(databaseResult);
       selectTodayLocalityAgentShippedInvoicesPromiseResolve(JSON.stringify(databaseResult));      
     });
   },
