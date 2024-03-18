@@ -70,3 +70,13 @@ backendDashboardHttpRequestServer.post('/selectAllWhatsappFavoriteImages', async
   const selectAllWhatsappFavoriteImagesResult = await dashboardManagementFunctions.selectAllWhatsappFavoriteImages();
   httpResponse.end(selectAllWhatsappFavoriteImagesResult);
 });
+
+
+
+backendDashboardHttpRequestServer.post('/selectTodayConversationsByLocalityNameAndType', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const whatsappConversationLocalityName = httpRequestQuery.whatsappConversationLocalityName;
+  const whatsappConversationType = httpRequestQuery.whatsappConversationType;
+  const selectTodayConversationsByLocalityNameAndCloseCommentResult = await dashboardManagementFunctions.selectTodayConversationsByLocalityNameAndType(whatsappConversationLocalityName, whatsappConversationType);
+  httpResponse.end(selectTodayConversationsByLocalityNameAndCloseCommentResult);
+});

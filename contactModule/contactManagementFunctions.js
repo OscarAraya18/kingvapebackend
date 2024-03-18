@@ -217,6 +217,7 @@ module.exports = {
       const selectNotResolvedWhatsappFeedbackSQL = 
       `
       SELECT 
+        WhatsappConversations.whatsappConversationID,
         WhatsappConversations.whatsappConversationRecipientPhoneNumber,
         WhatsappConversations.whatsappConversationRecipientProfileName,
         Agents.agentName,

@@ -8,6 +8,33 @@ const backendWhatsappInvoiceHttpRequestServer = express.Router();
 module.exports = backendWhatsappInvoiceHttpRequestServer;
 
 
+backendWhatsappInvoiceHttpRequestServer.post('/insertWhatsappInvoice', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const whatsappInvoiceWhatsappConversationID = httpRequestQuery.whatsappInvoiceWhatsappConversationID;
+  const whatsappInvoiceLocalityID = httpRequestQuery.whatsappInvoiceLocalityID;
+  const whatsappInvoiceAgentID = httpRequestQuery.whatsappInvoiceAgentID;
+  const whatsappInvoiceState = httpRequestQuery.whatsappInvoiceState;
+  const whatsappInvoiceCentralDateTime = new Date().toString();
+  const whatsappInvoiceClientName = httpRequestQuery.whatsappInvoiceClientName;
+  const whatsappInvoiceClientPhoneNumber = httpRequestQuery.whatsappInvoiceClientPhoneNumber;
+  const whatsappInvoiceClientLocation = httpRequestQuery.whatsappInvoiceClientLocation;
+  const whatsappInvoiceClientLocationURL = httpRequestQuery.whatsappInvoiceClientLocationURL;
+  const whatsappInvoiceAmount = httpRequestQuery.whatsappInvoiceAmount;
+  const whatsappInvoiceShippingMethod = httpRequestQuery.whatsappInvoiceShippingMethod;
+  const whatsappInvoicePaymentMethod = httpRequestQuery.whatsappInvoicePaymentMethod;
+  const whatsappInvoicePaymentState = httpRequestQuery.whatsappInvoicePaymentState;
+  const whatsappInvoiceLocationNote = httpRequestQuery.whatsappInvoiceLocationNote;
+  const whatsappInvoiceShippingNote = httpRequestQuery.whatsappInvoiceShippingNote;
+  const whatsappInvoiceProducts = httpRequestQuery.whatsappInvoiceProducts;
+
+  console.log(whatsappInvoiceAgentID);
+
+  const insertWhatsappInvoiceResult = await whatsappInvoiceManagementFunctions.insertWhatsappInvoice(whatsappInvoiceWhatsappConversationID, whatsappInvoiceLocalityID, whatsappInvoiceAgentID, whatsappInvoiceState, whatsappInvoiceCentralDateTime, whatsappInvoiceClientName, whatsappInvoiceClientPhoneNumber, whatsappInvoiceClientLocation, whatsappInvoiceClientLocationURL, whatsappInvoiceAmount, whatsappInvoiceShippingMethod, whatsappInvoicePaymentMethod, whatsappInvoicePaymentState, whatsappInvoiceLocationNote, whatsappInvoiceShippingNote, whatsappInvoiceProducts);
+  console.log(insertWhatsappInvoiceResult);
+  httpResponse.end(insertWhatsappInvoiceResult);
+});
+
+
 backendWhatsappInvoiceHttpRequestServer.post('/selectAllActiveWhatsappInvoice', async (httpRequest, httpResponse) => {
   const selectAllActiveWhatsappInvoiceResult = await whatsappInvoiceManagementFunctions.selectAllActiveWhatsappInvoice();
   httpResponse.end(selectAllActiveWhatsappInvoiceResult);
@@ -34,7 +61,9 @@ backendWhatsappInvoiceHttpRequestServer.post('/updateWhatsappInvoiceState', asyn
   const whatsappInvoiceStateDateTime = new Date().toString();
   const whatsappInvoiceLocalityID = httpRequestQuery.whatsappInvoiceLocalityID;
   const whatsappInvoiceLocalityAgentID = httpRequestQuery.whatsappInvoiceLocalityAgentID;
-  const updateWhatsappInvoiceStateResult = await whatsappInvoiceManagementFunctions.updateWhatsappInvoiceState(whatsappInvoiceID, whatsappInvoiceState, whatsappInvoiceStateDateTime, whatsappInvoiceLocalityID, whatsappInvoiceLocalityAgentID);
+  const returnedFromShippingToLocality = httpRequestQuery.returnedFromShippingToLocality;
+  const whatsappInvoiceNotShippedReason = httpRequestQuery.whatsappInvoiceNotShippedReason;
+  const updateWhatsappInvoiceStateResult = await whatsappInvoiceManagementFunctions.updateWhatsappInvoiceState(whatsappInvoiceID, whatsappInvoiceState, whatsappInvoiceStateDateTime, whatsappInvoiceLocalityID, whatsappInvoiceLocalityAgentID, returnedFromShippingToLocality, whatsappInvoiceNotShippedReason);
   httpResponse.end(updateWhatsappInvoiceStateResult);
 });
 
@@ -122,6 +151,14 @@ backendWhatsappInvoiceHttpRequestServer.post('/updateWhatsappInvoiceClientLocati
   httpResponse.end(updateWhatsappInvoiceClientLocationResult);
 });
 
+backendWhatsappInvoiceHttpRequestServer.post('/updateWhatsappInvoiceClientLocationURL', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const whatsappInvoiceID = httpRequestQuery.whatsappInvoiceID;
+  const whatsappInvoiceClientLocationURL = httpRequestQuery.whatsappInvoiceClientLocationURL;
+  const updateWhatsappInvoiceClientLocationURLResult = await whatsappInvoiceManagementFunctions.updateWhatsappInvoiceClientLocationURL(whatsappInvoiceID, whatsappInvoiceClientLocationURL);
+  httpResponse.end(updateWhatsappInvoiceClientLocationURLResult);
+});
+
 backendWhatsappInvoiceHttpRequestServer.post('/updateWhatsappInvoiceLocationNote', async (httpRequest, httpResponse) => {
   const httpRequestQuery = httpRequest.body;
   const whatsappInvoiceID = httpRequestQuery.whatsappInvoiceID;
@@ -167,23 +204,35 @@ backendWhatsappInvoiceHttpRequestServer.post('/localityAgentLogin', async (httpR
   const localityAgentUsername = httpRequestQuery.localityAgentUsername;
   const localityAgentPassword = httpRequestQuery.localityAgentPassword;
   const localityAgentLoginResult = await whatsappInvoiceManagementFunctions.localityAgentLogin(localityAgentUsername, localityAgentPassword);
-  console.log(localityAgentLoginResult);
   httpResponse.end(localityAgentLoginResult);
 });
 
 
-
-
-
-
-
-
-/*
-
-backendWhatsappInvoiceHttpRequestServer.post('/conversationTest', async (httpRequest, httpResponse) => {
+backendWhatsappInvoiceHttpRequestServer.post('/selectTodayLocalityAgentShippedInvoices', async (httpRequest, httpResponse) => {
   const httpRequestQuery = httpRequest.body;
-  const selectLocalityAgentNamesResult = await whatsappInvoiceManagementFunctions.conversationTest();
-  httpResponse.end(selectLocalityAgentNamesResult);
+  const whatsappInvoiceLocalityAgentID = httpRequestQuery.whatsappInvoiceLocalityAgentID;
+  const selectTodayLocalityAgentShippedInvoicesResult = await whatsappInvoiceManagementFunctions.selectTodayLocalityAgentShippedInvoices(whatsappInvoiceLocalityAgentID);
+  httpResponse.end(selectTodayLocalityAgentShippedInvoicesResult);
 });
 
-*/
+backendWhatsappInvoiceHttpRequestServer.post('/selectTodayDeliveredInvoicesByLocality', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const whatsappInvoiceLocalityID = httpRequestQuery.whatsappInvoiceLocalityID;
+  const selectTodayDeliveredInvoicesByLocalityResult = await whatsappInvoiceManagementFunctions.selectTodayDeliveredInvoicesByLocality(whatsappInvoiceLocalityID);
+  httpResponse.end(selectTodayDeliveredInvoicesByLocalityResult);
+});
+
+backendWhatsappInvoiceHttpRequestServer.post('/selectTodayCanceledInvoicesByLocality', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const whatsappInvoiceLocalityID = httpRequestQuery.whatsappInvoiceLocalityID;
+  const selectTodayCanceledInvoicesByLocalityResult = await whatsappInvoiceManagementFunctions.selectTodayCanceledInvoicesByLocality(whatsappInvoiceLocalityID);
+  httpResponse.end(selectTodayCanceledInvoicesByLocalityResult);
+});
+
+backendWhatsappInvoiceHttpRequestServer.post('/selectTodayInvoicesByLocalityAgent', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const whatsappInvoiceLocalityID = httpRequestQuery.whatsappInvoiceLocalityID;
+  const selectTodayInvoicesByLocalityAgentResult = await whatsappInvoiceManagementFunctions.selectTodayInvoicesByLocalityAgent(whatsappInvoiceLocalityID);
+  console.log(selectTodayInvoicesByLocalityAgentResult);
+  httpResponse.end(selectTodayInvoicesByLocalityAgentResult);
+});

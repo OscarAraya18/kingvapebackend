@@ -5,6 +5,15 @@ const axios = require('axios');
 
 
 module.exports = {
+
+  insertWhatsappInvoice: async function(whatsappInvoiceWhatsappConversationID, whatsappInvoiceLocalityID, whatsappInvoiceAgentID, whatsappInvoiceState, whatsappInvoiceCentralDateTime, whatsappInvoiceClientName, whatsappInvoiceClientPhoneNumber, whatsappInvoiceClientLocation, whatsappInvoiceClientLocationURL, whatsappInvoiceAmount, whatsappInvoiceShippingMethod, whatsappInvoicePaymentMethod, whatsappInvoicePaymentState, whatsappInvoiceLocationNote, whatsappInvoiceShippingNote, whatsappInvoiceProducts){
+    return new Promise(async (insertWhatsappInvoicePromiseResolve) => {
+      const insertWhatsappInvoiceSQL = `INSERT INTO WhatsappInvoices (whatsappInvoiceWhatsappConversationID, whatsappInvoiceLocalityID, whatsappInvoiceAgentID, whatsappInvoiceState, whatsappInvoiceCentralDateTime, whatsappInvoiceClientName, whatsappInvoiceClientPhoneNumber, whatsappInvoiceClientLocation, whatsappInvoiceClientLocationURL, whatsappInvoiceAmount, whatsappInvoiceShippingMethod, whatsappInvoicePaymentMethod, whatsappInvoicePaymentState, whatsappInvoiceLocationNote, whatsappInvoiceShippingNote, whatsappInvoiceProducts) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);`;
+      const insertWhatsappInvoiceValues = [whatsappInvoiceWhatsappConversationID, whatsappInvoiceLocalityID, whatsappInvoiceAgentID, whatsappInvoiceState, whatsappInvoiceCentralDateTime, whatsappInvoiceClientName, whatsappInvoiceClientPhoneNumber, JSON.stringify(whatsappInvoiceClientLocation), whatsappInvoiceClientLocationURL, whatsappInvoiceAmount, whatsappInvoiceShippingMethod, whatsappInvoicePaymentMethod, whatsappInvoicePaymentState, whatsappInvoiceLocationNote, whatsappInvoiceShippingNote, JSON.stringify(whatsappInvoiceProducts)];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(insertWhatsappInvoiceSQL, insertWhatsappInvoiceValues);
+      insertWhatsappInvoicePromiseResolve(JSON.stringify(databaseResult));      
+    });
+  },
   
   selectAllActiveWhatsappInvoice: async function(){
     return new Promise(async (selectAllActiveWhatsappInvoicePromiseResolve) => {
@@ -24,6 +33,7 @@ module.exports = {
           WhatsappInvoices.whatsappInvoiceClientName,
           WhatsappInvoices.whatsappInvoiceClientPhoneNumber,
           WhatsappInvoices.whatsappInvoiceClientLocation,
+          WhatsappInvoices.whatsappInvoiceClientLocationURL,
           WhatsappInvoices.whatsappInvoiceAmount,
           WhatsappInvoices.whatsappInvoiceShippingMethod,
           WhatsappInvoices.whatsappInvoicePaymentMethod,
@@ -31,6 +41,8 @@ module.exports = {
           WhatsappInvoices.whatsappInvoiceLocationNote,
           WhatsappInvoices.whatsappInvoiceShippingNote,
           WhatsappInvoices.whatsappInvoiceProducts,
+          WhatsappInvoices.whatsappInvoiceNotShippedReason,
+          WhatsappInvoices.whatsappInvoiceHasBeenUpdated,
           Agents.agentName,
           LocalityAgents.localityAgentName,
           Localities.localityName
@@ -38,7 +50,8 @@ module.exports = {
           LEFT JOIN Agents ON WhatsappInvoices.whatsappInvoiceAgentID = Agents.agentID
           LEFT JOIN LocalityAgents ON WhatsappInvoices.whatsappInvoiceLocalityAgentID = LocalityAgents.localityAgentID
           LEFT JOIN Localities ON WhatsappInvoices.whatsappInvoiceLocalityID = Localities.localityID
-        WHERE WhatsappInvoices.whatsappInvoiceState!=(?) AND WhatsappInvoices.whatsappInvoiceState!=(?);
+        WHERE WhatsappInvoices.whatsappInvoiceState!=(?) AND WhatsappInvoices.whatsappInvoiceState!=(?)
+        ORDER BY WhatsappInvoices.whatsappInvoiceID DESC;
       `;
       const selectAllActiveWhatsappInvoiceValues = ['E', 'X'];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAllActiveWhatsappInvoiceSQL, selectAllActiveWhatsappInvoiceValues);
@@ -64,6 +77,7 @@ module.exports = {
           WhatsappInvoices.whatsappInvoiceClientName,
           WhatsappInvoices.whatsappInvoiceClientPhoneNumber,
           WhatsappInvoices.whatsappInvoiceClientLocation,
+          WhatsappInvoices.whatsappInvoiceClientLocationURL,
           WhatsappInvoices.whatsappInvoiceAmount,
           WhatsappInvoices.whatsappInvoiceShippingMethod,
           WhatsappInvoices.whatsappInvoicePaymentMethod,
@@ -71,6 +85,8 @@ module.exports = {
           WhatsappInvoices.whatsappInvoiceLocationNote,
           WhatsappInvoices.whatsappInvoiceShippingNote,
           WhatsappInvoices.whatsappInvoiceProducts,
+          WhatsappInvoices.whatsappInvoiceNotShippedReason,
+          WhatsappInvoices.whatsappInvoiceHasBeenUpdated,
           Agents.agentName,
           LocalityAgents.localityAgentName,
           Localities.localityName
@@ -78,9 +94,10 @@ module.exports = {
         LEFT JOIN Agents ON WhatsappInvoices.whatsappInvoiceAgentID = Agents.agentID
         LEFT JOIN LocalityAgents ON WhatsappInvoices.whatsappInvoiceLocalityAgentID = LocalityAgents.localityAgentID
         LEFT JOIN Localities ON WhatsappInvoices.whatsappInvoiceLocalityID = Localities.localityID
-        WHERE WhatsappInvoices.whatsappInvoiceState!=(?) AND WhatsappInvoices.whatsappInvoiceState!=(?) AND WhatsappInvoices.whatsappInvoiceLocalityID=(?);
+        WHERE WhatsappInvoices.whatsappInvoiceState!=(?) AND WhatsappInvoices.whatsappInvoiceState!=(?) AND WhatsappInvoices.whatsappInvoiceState!=(?) AND WhatsappInvoices.whatsappInvoiceLocalityID=(?)
+        ORDER BY WhatsappInvoices.whatsappInvoiceID DESC;
       `;
-      const selectAllActiveWhatsappInvoiceValues = ['E', 'X', localityID];
+      const selectAllActiveWhatsappInvoiceValues = ['E', 'X', 'C', localityID];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAllActiveWhatsappInvoiceSQL, selectAllActiveWhatsappInvoiceValues);
       selectAllActiveWhatsappInvoiceFromLocalityPromiseResolve(JSON.stringify(databaseResult));      
     });
@@ -104,6 +121,7 @@ module.exports = {
         WhatsappInvoices.whatsappInvoiceClientName,
         WhatsappInvoices.whatsappInvoiceClientPhoneNumber,
         WhatsappInvoices.whatsappInvoiceClientLocation,
+        WhatsappInvoices.whatsappInvoiceClientLocationURL,
         WhatsappInvoices.whatsappInvoiceAmount,
         WhatsappInvoices.whatsappInvoiceShippingMethod,
         WhatsappInvoices.whatsappInvoicePaymentMethod,
@@ -111,6 +129,8 @@ module.exports = {
         WhatsappInvoices.whatsappInvoiceLocationNote,
         WhatsappInvoices.whatsappInvoiceShippingNote,
         WhatsappInvoices.whatsappInvoiceProducts,
+        WhatsappInvoices.whatsappInvoiceNotShippedReason,
+        WhatsappInvoices.whatsappInvoiceHasBeenUpdated,
         Agents.agentName,
         LocalityAgents.localityAgentName,
         Localities.localityName
@@ -118,15 +138,16 @@ module.exports = {
       LEFT JOIN Agents ON WhatsappInvoices.whatsappInvoiceAgentID = Agents.agentID
       LEFT JOIN LocalityAgents ON WhatsappInvoices.whatsappInvoiceLocalityAgentID = LocalityAgents.localityAgentID
       LEFT JOIN Localities ON WhatsappInvoices.whatsappInvoiceLocalityID = Localities.localityID
-      WHERE WhatsappInvoices.whatsappInvoiceState!=(?) AND WhatsappInvoices.whatsappInvoiceState!=(?) AND WhatsappInvoices.whatsappInvoiceLocalityAgentID=(?);
+      WHERE WhatsappInvoices.whatsappInvoiceState=(?) AND WhatsappInvoices.whatsappInvoiceLocalityAgentID=(?)
+      ORDER BY WhatsappInvoices.whatsappInvoiceID DESC;
       `;
-      const selectAllActiveWhatsappInvoiceFromLocalityAgentValues = ['E', 'X', localityAgentID];
+      const selectAllActiveWhatsappInvoiceFromLocalityAgentValues = ['R', localityAgentID];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAllActiveWhatsappInvoiceFromLocalityAgentSQL, selectAllActiveWhatsappInvoiceFromLocalityAgentValues);
       selectAllActiveWhatsappInvoiceFromLocalityAgentPromiseResolve(JSON.stringify(databaseResult));      
     });
   },
 
-  updateWhatsappInvoiceState: async function(whatsappInvoiceID, whatsappInvoiceState, whatsappInvoiceStateDateTime, whatsappInvoiceLocalityID, whatsappInvoiceLocalityAgentID){
+  updateWhatsappInvoiceState: async function(whatsappInvoiceID, whatsappInvoiceState, whatsappInvoiceStateDateTime, whatsappInvoiceLocalityID, whatsappInvoiceLocalityAgentID, returnedFromShippingToLocality, whatsappInvoiceNotShippedReason){
     return new Promise(async (updateWhatsappInvoiceStatePromiseResolve) => {
       var updateWhatsappInvoiceStateSQL = '';
       var updateWhatsappInvoiceStateValues = [];
@@ -134,20 +155,35 @@ module.exports = {
         updateWhatsappInvoiceStateSQL = 
         `
         UPDATE WhatsappInvoices 
-        SET whatsappInvoiceState=(?), whatsappInvoiceLocalityID=(?), whatsappInvoiceLocalityAgentID=(?)
-        WHERE whatsappInvoiceID=(?);
-        `;
-        whatsappInvoiceLocalityID = null;
-        updateWhatsappInvoiceStateValues = [whatsappInvoiceState, whatsappInvoiceLocalityID, whatsappInvoiceID];
-      } else if (whatsappInvoiceState == 'S'){
-        updateWhatsappInvoiceStateSQL = 
-        `
-        UPDATE WhatsappInvoices 
-        SET whatsappInvoiceState=(?), whatsappInvoiceLocalityDateTime=(?), whatsappInvoiceLocalityAgentID=(?)
+        SET whatsappInvoiceState=(?), whatsappInvoiceLocalityID=(?), whatsappInvoiceLocalityAgentID=(?), whatsappInvoiceLocalityDateTime=(?), whatsappInvoiceShippingDateTime=(?)
         WHERE whatsappInvoiceID=(?);
         `;
         whatsappInvoiceLocalityAgentID = null;
-        updateWhatsappInvoiceStateValues = [whatsappInvoiceState, whatsappInvoiceStateDateTime, whatsappInvoiceLocalityAgentID, whatsappInvoiceID];
+        const whatsappInvoiceLocalityDateTime = null;
+        const whatsappInvoiceShippingDateTime = null;
+        updateWhatsappInvoiceStateValues = [whatsappInvoiceState, whatsappInvoiceLocalityID, whatsappInvoiceLocalityAgentID, whatsappInvoiceLocalityDateTime, whatsappInvoiceShippingDateTime, whatsappInvoiceID,];
+      } else if (whatsappInvoiceState == 'S'){
+        if (returnedFromShippingToLocality){
+          updateWhatsappInvoiceStateSQL = 
+          `
+          UPDATE WhatsappInvoices 
+          SET whatsappInvoiceState=(?), whatsappInvoiceLocalityAgentID=(?), whatsappInvoiceShippingDateTime=(?)
+          WHERE whatsappInvoiceID=(?);
+          `;
+          whatsappInvoiceLocalityAgentID = null;
+          const whatsappInvoiceShippingDateTime = null;
+          updateWhatsappInvoiceStateValues = [whatsappInvoiceState, whatsappInvoiceLocalityAgentID, whatsappInvoiceShippingDateTime, whatsappInvoiceID];
+        } else {
+          updateWhatsappInvoiceStateSQL = 
+          `
+          UPDATE WhatsappInvoices 
+          SET whatsappInvoiceState=(?), whatsappInvoiceLocalityDateTime=(?), whatsappInvoiceLocalityAgentID=(?), whatsappInvoiceShippingDateTime=(?)
+          WHERE whatsappInvoiceID=(?);
+          `;
+          whatsappInvoiceLocalityAgentID = null;
+          const whatsappInvoiceShippingDateTime = null;
+          updateWhatsappInvoiceStateValues = [whatsappInvoiceState, whatsappInvoiceStateDateTime, whatsappInvoiceLocalityAgentID, whatsappInvoiceShippingDateTime, whatsappInvoiceID];
+        }
       } else if (whatsappInvoiceState == 'R'){
         updateWhatsappInvoiceStateSQL = 
         `
@@ -164,6 +200,24 @@ module.exports = {
         WHERE whatsappInvoiceID=(?);
         `;
         updateWhatsappInvoiceStateValues = [whatsappInvoiceState, whatsappInvoiceStateDateTime, whatsappInvoiceID];
+      } else if (whatsappInvoiceState == 'NE'){
+        updateWhatsappInvoiceStateSQL = 
+        `
+        UPDATE WhatsappInvoices 
+        SET whatsappInvoiceState=(?), whatsappInvoiceShippingDateTime=(?), whatsappInvoiceNotShippedReason=(?)
+        WHERE whatsappInvoiceID=(?);
+        `;
+        const whatsappInvoiceShippingDateTime = null;
+        updateWhatsappInvoiceStateValues = [whatsappInvoiceState, whatsappInvoiceShippingDateTime, whatsappInvoiceNotShippedReason, whatsappInvoiceID];
+      } else if (whatsappInvoiceState == 'X'){
+        updateWhatsappInvoiceStateSQL = 
+        `
+        UPDATE WhatsappInvoices 
+        SET whatsappInvoiceState=(?), whatsappInvoiceLocalityAgentID=(?)
+        WHERE whatsappInvoiceID=(?);
+        `;
+        const whatsappInvoiceLocalityAgentID = null;
+        updateWhatsappInvoiceStateValues = [whatsappInvoiceState, whatsappInvoiceLocalityAgentID, whatsappInvoiceID];
       }
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateWhatsappInvoiceStateSQL, updateWhatsappInvoiceStateValues);
       updateWhatsappInvoiceStatePromiseResolve(JSON.stringify(databaseResult));      
@@ -172,8 +226,8 @@ module.exports = {
 
   updateWhatsappInvoiceClientName: async function(whatsappInvoiceID, whatsappInvoiceClientName){
     return new Promise(async (updateWhatsappInvoiceClientNamePromiseResolve) => {
-      const updateWhatsappInvoiceClientNameSQL = `UPDATE WhatsappInvoices SET whatsappInvoiceClientName=(?) WHERE whatsappInvoiceID=(?);`;
-      const updateWhatsappInvoiceClientNameValues = [whatsappInvoiceClientName, whatsappInvoiceID]
+      const updateWhatsappInvoiceClientNameSQL = `UPDATE WhatsappInvoices SET whatsappInvoiceClientName=(?), whatsappInvoiceHasBeenUpdated=(?) WHERE whatsappInvoiceID=(?);`;
+      const updateWhatsappInvoiceClientNameValues = [whatsappInvoiceClientName, true, whatsappInvoiceID]
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateWhatsappInvoiceClientNameSQL, updateWhatsappInvoiceClientNameValues);
       updateWhatsappInvoiceClientNamePromiseResolve(JSON.stringify(databaseResult));      
     });
@@ -181,18 +235,17 @@ module.exports = {
 
   updateWhatsappInvoiceClientPhoneNumber: async function(whatsappInvoiceID, whatsappInvoiceClientPhoneNumber){
     return new Promise(async (updateWhatsappInvoiceClientPhoneNumberPromiseResolve) => {
-      const updateWhatsappInvoiceClientPhoneNumberSQL = `UPDATE WhatsappInvoices SET whatsappInvoiceClientPhoneNumber=(?) WHERE whatsappInvoiceID=(?);`;
-      const updateWhatsappInvoiceClientPhoneNumberValues = [whatsappInvoiceClientPhoneNumber, whatsappInvoiceID];
+      const updateWhatsappInvoiceClientPhoneNumberSQL = `UPDATE WhatsappInvoices SET whatsappInvoiceClientPhoneNumber=(?), whatsappInvoiceHasBeenUpdated=(?) WHERE whatsappInvoiceID=(?);`;
+      const updateWhatsappInvoiceClientPhoneNumberValues = [whatsappInvoiceClientPhoneNumber, true, whatsappInvoiceID];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateWhatsappInvoiceClientPhoneNumberSQL, updateWhatsappInvoiceClientPhoneNumberValues);
-      console.log(databaseResult);
       updateWhatsappInvoiceClientPhoneNumberPromiseResolve(JSON.stringify(databaseResult));      
     });
   },
 
   updateWhatsappInvoiceAmount: async function(whatsappInvoiceID, whatsappInvoiceAmount){
     return new Promise(async (updateWhatsappInvoiceAmountPromiseResolve) => {
-      const updateWhatsappInvoiceAmountSQL = `UPDATE WhatsappInvoices SET whatsappInvoiceAmount=(?) WHERE whatsappInvoiceID=(?);`;
-      const updateWhatsappInvoiceAmountValues = [whatsappInvoiceAmount, whatsappInvoiceID];
+      const updateWhatsappInvoiceAmountSQL = `UPDATE WhatsappInvoices SET whatsappInvoiceAmount=(?), whatsappInvoiceHasBeenUpdated=(?) WHERE whatsappInvoiceID=(?);`;
+      const updateWhatsappInvoiceAmountValues = [whatsappInvoiceAmount, true, whatsappInvoiceID];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateWhatsappInvoiceAmountSQL, updateWhatsappInvoiceAmountValues);
       updateWhatsappInvoiceAmountPromiseResolve(JSON.stringify(databaseResult));      
     });
@@ -200,8 +253,8 @@ module.exports = {
 
   updateWhatsappInvoiceAgentID: async function(whatsappInvoiceID, whatsappInvoiceAgentID){
     return new Promise(async (updateWhatsappInvoiceAgentIDPromiseResolve) => {
-      const updateWhatsappInvoiceAgentIDSQL = `UPDATE WhatsappInvoices SET whatsappInvoiceAgentID=(?) WHERE whatsappInvoiceID=(?);`;
-      const updateWhatsappInvoiceAgentIDValues = [whatsappInvoiceAgentID, whatsappInvoiceID];
+      const updateWhatsappInvoiceAgentIDSQL = `UPDATE WhatsappInvoices SET whatsappInvoiceAgentID=(?), whatsappInvoiceHasBeenUpdated=(?) WHERE whatsappInvoiceID=(?);`;
+      const updateWhatsappInvoiceAgentIDValues = [whatsappInvoiceAgentID, true, whatsappInvoiceID];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateWhatsappInvoiceAgentIDSQL, updateWhatsappInvoiceAgentIDValues);
       updateWhatsappInvoiceAgentIDPromiseResolve(JSON.stringify(databaseResult));      
     });
@@ -243,9 +296,9 @@ module.exports = {
         updateWhatsappInvoiceShippingMethodSQL = 
         `
         UPDATE WhatsappInvoices 
-        SET whatsappInvoiceShippingMethod=(?), whatsappInvoiceLocalityAgentID=(?)
+        SET whatsappInvoiceShippingMethod=(?), whatsappInvoiceLocalityAgentID=(?), whatsappInvoiceHasBeenUpdated=(?)
         WHERE whatsappInvoiceID=(?);`;
-        updateWhatsappInvoiceShippingMethodValues = [whatsappInvoiceShippingMethod, whatsappInvoiceLocalityAgentID, whatsappInvoiceID];
+        updateWhatsappInvoiceShippingMethodValues = [whatsappInvoiceShippingMethod, whatsappInvoiceLocalityAgentID, true, whatsappInvoiceID];
       } else {
         updateWhatsappInvoiceShippingMethodSQL = `UPDATE WhatsappInvoices SET whatsappInvoiceShippingMethod=(?) WHERE whatsappInvoiceID=(?);`;
         updateWhatsappInvoiceShippingMethodValues = [whatsappInvoiceShippingMethod, whatsappInvoiceID];
@@ -257,8 +310,8 @@ module.exports = {
 
   updateWhatsappInvoicePaymentMethod: async function(whatsappInvoiceID, whatsappInvoicePaymentMethod){
     return new Promise(async (updateWhatsappInvoicePaymentMethodPromiseResolve) => {
-      const updateWhatsappInvoicePaymentMethodSQL = `UPDATE WhatsappInvoices SET whatsappInvoicePaymentMethod=(?) WHERE whatsappInvoiceID=(?);`;
-      const updateWhatsappInvoicePaymentMethodValues = [whatsappInvoicePaymentMethod, whatsappInvoiceID];
+      const updateWhatsappInvoicePaymentMethodSQL = `UPDATE WhatsappInvoices SET whatsappInvoicePaymentMethod=(?), whatsappInvoiceHasBeenUpdated=(?) WHERE whatsappInvoiceID=(?);`;
+      const updateWhatsappInvoicePaymentMethodValues = [whatsappInvoicePaymentMethod, true, whatsappInvoiceID];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateWhatsappInvoicePaymentMethodSQL, updateWhatsappInvoicePaymentMethodValues);
       updateWhatsappInvoicePaymentMethodPromiseResolve(JSON.stringify(databaseResult));      
     });
@@ -266,8 +319,8 @@ module.exports = {
 
   updateWhatsappInvoicePaymentState: async function(whatsappInvoiceID, whatsappInvoicePaymentState){ 
     return new Promise(async (updateWhatsappInvoicePaymentStatePromiseResolve) => {
-      const updateWhatsappInvoicePaymentStateSQL = `UPDATE WhatsappInvoices SET whatsappInvoicePaymentState=(?) WHERE whatsappInvoiceID=(?);`;
-      const updateWhatsappInvoicePaymentStateValues = [whatsappInvoicePaymentState, whatsappInvoiceID];
+      const updateWhatsappInvoicePaymentStateSQL = `UPDATE WhatsappInvoices SET whatsappInvoicePaymentState=(?), whatsappInvoiceHasBeenUpdated=(?) WHERE whatsappInvoiceID=(?);`;
+      const updateWhatsappInvoicePaymentStateValues = [whatsappInvoicePaymentState, true, whatsappInvoiceID];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateWhatsappInvoicePaymentStateSQL, updateWhatsappInvoicePaymentStateValues);
       updateWhatsappInvoicePaymentStatePromiseResolve(JSON.stringify(databaseResult));      
     });
@@ -275,8 +328,8 @@ module.exports = {
 
   updateWhatsappInvoiceClientLocation: async function(whatsappInvoiceID, whatsappInvoiceClientLocation, whatsappInvoiceLocationID){
     return new Promise(async (updateWhatsappInvoiceClientLocationPromiseResolve) => {
-      const updateWhatsappInvoiceClientLocationSQL = `UPDATE WhatsappInvoices SET whatsappInvoiceClientLocation=(?) WHERE whatsappInvoiceID=(?);`;
-      const updateWhatsappInvoiceClientLocationValues = [whatsappInvoiceClientLocation, whatsappInvoiceID];
+      const updateWhatsappInvoiceClientLocationSQL = `UPDATE WhatsappInvoices SET whatsappInvoiceClientLocation=(?), whatsappInvoiceHasBeenUpdated=(?) WHERE whatsappInvoiceID=(?);`;
+      const updateWhatsappInvoiceClientLocationValues = [whatsappInvoiceClientLocation, true, whatsappInvoiceID];
       const updateWhatsappInvoiceClientLocationDatabaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateWhatsappInvoiceClientLocationSQL, updateWhatsappInvoiceClientLocationValues);
       if (updateWhatsappInvoiceClientLocationDatabaseResult.success){
         const updateWhatsappInvoiceLocationSQL = `UPDATE WhatsappInvoiceLocations SET whatsappInvoiceLocationIsActive=(?) WHERE whatsappInvoiceLocationID=(?);`;
@@ -290,10 +343,19 @@ module.exports = {
     });
   },
 
+  updateWhatsappInvoiceClientLocationURL: async function(whatsappInvoiceID, whatsappInvoiceClientLocationURL){
+    return new Promise(async (updateWhatsappInvoiceClientLocationURLPromiseResolve) => {
+      const updateWhatsappInvoiceClientLocationURLSQL = `UPDATE WhatsappInvoices SET whatsappInvoiceClientLocationURL=(?), whatsappInvoiceHasBeenUpdated=(?) WHERE whatsappInvoiceID=(?);`;
+      const updateWhatsappInvoiceClientLocationURLValues = [whatsappInvoiceClientLocationURL, true, whatsappInvoiceID];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateWhatsappInvoiceClientLocationURLSQL, updateWhatsappInvoiceClientLocationURLValues);
+      updateWhatsappInvoiceClientLocationURLPromiseResolve(JSON.stringify(databaseResult));        
+    });
+  },
+
   updateWhatsappInvoiceLocationNote: async function(whatsappInvoiceID, whatsappInvoiceLocationNote){
     return new Promise(async (updateWhatsappInvoiceLocationNotePromiseResolve) => {
-      const updateWhatsappInvoiceLocationNoteSQL = `UPDATE WhatsappInvoices SET whatsappInvoiceLocationNote=(?) WHERE whatsappInvoiceID=(?);`;
-      const updateWhatsappInvoiceLocationNoteValues = [whatsappInvoiceLocationNote, whatsappInvoiceID];
+      const updateWhatsappInvoiceLocationNoteSQL = `UPDATE WhatsappInvoices SET whatsappInvoiceLocationNote=(?), whatsappInvoiceHasBeenUpdated=(?) WHERE whatsappInvoiceID=(?);`;
+      const updateWhatsappInvoiceLocationNoteValues = [whatsappInvoiceLocationNote, true, whatsappInvoiceID];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateWhatsappInvoiceLocationNoteSQL, updateWhatsappInvoiceLocationNoteValues);
       updateWhatsappInvoiceLocationNotePromiseResolve(JSON.stringify(databaseResult));      
     });
@@ -301,8 +363,8 @@ module.exports = {
 
   updateWhatsappInvoiceShippingNote: async function(whatsappInvoiceID, whatsappInvoiceShippingNote){
     return new Promise(async (updateWhatsappInvoiceShippingNotePromiseResolve) => {
-      const updateWhatsappInvoiceShippingNoteSQL = `UPDATE WhatsappInvoices SET whatsappInvoiceShippingNote=(?) WHERE whatsappInvoiceID=(?);`;
-      const updateWhatsappInvoiceShippingNoteValues = [whatsappInvoiceShippingNote, whatsappInvoiceID];
+      const updateWhatsappInvoiceShippingNoteSQL = `UPDATE WhatsappInvoices SET whatsappInvoiceShippingNote=(?), whatsappInvoiceHasBeenUpdated=(?) WHERE whatsappInvoiceID=(?);`;
+      const updateWhatsappInvoiceShippingNoteValues = [whatsappInvoiceShippingNote, true, whatsappInvoiceID];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateWhatsappInvoiceShippingNoteSQL, updateWhatsappInvoiceShippingNoteValues);
       updateWhatsappInvoiceShippingNotePromiseResolve(JSON.stringify(databaseResult));      
     });
@@ -371,34 +433,360 @@ module.exports = {
     });
   },
 
-
-
-
-
-
-
-
-
-
-
-
-  conversationTest: async function(){
-    return new Promise((sendWhatsappMessagePromiseResolve) => {
-      const sendWhatsappMessageURL = `https://graph.facebook.com/${constants.credentials.apiVersion}/${constants.credentials.phoneNumberID}/message_qrdls`;
-      const sendWhatsappMessageHeaders = {'Content-Type': 'application/json', 'Authorization': `Bearer ${constants.credentials.apiKey}`};
-      const sendWhatsappMessageData = {
-        "prefilled_message": "Hola, me encantaría realizar un pedido de: ",
-        "generate_qr_image": "PNG"
+  selectTodayLocalityAgentShippedInvoices: async function(whatsappInvoiceLocalityAgentID){
+    return new Promise(async (selectTodayLocalityAgentShippedInvoicesPromiseResolve) => {
+      var selectTodayLocalityAgentShippedInvoicesSQL = '';
+      let currentDate = new Date();
+      currentDate.setHours(currentDate.getHours() - 6);
+      let hourPart = currentDate.toISOString().substring(11, 13);
+      let hour = parseInt(hourPart, 10);
+      if (hour >= 18){
+        selectTodayLocalityAgentShippedInvoicesSQL = 
+        `
+        SELECT 
+          COUNT(whatsappInvoiceID) as result
+        FROM WhatsappInvoices
+        WHERE 
+          whatsappInvoiceState = (?) 
+            AND 
+          whatsappInvoiceLocalityAgentID = (?)
+            AND
+          STR_TO_DATE(whatsappInvoiceDeliveredDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW() - INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
+            AND
+          STR_TO_DATE(whatsappInvoiceDeliveredDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
+        `;
+      } else {
+        selectTodayLocalityAgentShippedInvoicesSQL = 
+        `
+        SELECT 
+          COUNT(whatsappInvoiceID) as result
+        FROM WhatsappConversations
+        WHERE 
+          whatsappInvoiceState = (?) 
+            AND 
+          whatsappInvoiceLocalityAgentID = (?)
+            AND
+          STR_TO_DATE(whatsappInvoiceDeliveredDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
+            AND
+          STR_TO_DATE(whatsappInvoiceDeliveredDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
+        `; 
       }
-      axios.post(sendWhatsappMessageURL, sendWhatsappMessageData, {headers: sendWhatsappMessageHeaders}).then((response) => {
-        console.log(response.data);
-        sendWhatsappMessagePromiseResolve({success: true, result: whatsappMessageID});
-      })
-      .catch((error) => {
-        sendWhatsappMessagePromiseResolve({success: false, result: error});
-      });  
+      const selectTodayLocalityAgentShippedInvoicesValues = ['E', whatsappInvoiceLocalityAgentID];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectTodayLocalityAgentShippedInvoicesSQL, selectTodayLocalityAgentShippedInvoicesValues);
+      selectTodayLocalityAgentShippedInvoicesPromiseResolve(JSON.stringify(databaseResult));      
     });
   },
+
+
+  selectTodayDeliveredInvoicesByLocality: async function(whatsappInvoiceLocalityID){
+    return new Promise(async (selectTodayDeliveredInvoicesByLocalityPromiseResolve) => {
+      var selectTodayDeliveredInvoicesByLocalitySQL = '';
+      let currentDate = new Date();
+      currentDate.setHours(currentDate.getHours() - 6);
+      let hourPart = currentDate.toISOString().substring(11, 13);
+      let hour = parseInt(hourPart, 10);
+      if (hour >= 18){
+        selectTodayDeliveredInvoicesByLocalitySQL = 
+        `
+        SELECT
+          WhatsappInvoices.whatsappInvoiceID,
+          WhatsappInvoices.whatsappInvoiceWhatsappConversationID,
+          WhatsappInvoices.whatsappInvoiceLocalityID,
+          WhatsappInvoices.whatsappInvoiceAgentID,
+          WhatsappInvoices.whatsappInvoiceLocalityAgentID,
+          WhatsappInvoices.whatsappInvoiceState,
+          WhatsappInvoices.whatsappInvoiceCentralDateTime,
+          WhatsappInvoices.whatsappInvoiceLocalityDateTime,
+          WhatsappInvoices.whatsappInvoiceShippingDateTime,
+          WhatsappInvoices.whatsappInvoiceDeliveredDateTime,
+          WhatsappInvoices.whatsappInvoiceClientName,
+          WhatsappInvoices.whatsappInvoiceClientPhoneNumber,
+          WhatsappInvoices.whatsappInvoiceClientLocation,
+          WhatsappInvoices.whatsappInvoiceClientLocationURL,
+          WhatsappInvoices.whatsappInvoiceAmount,
+          WhatsappInvoices.whatsappInvoiceShippingMethod,
+          WhatsappInvoices.whatsappInvoicePaymentMethod,
+          WhatsappInvoices.whatsappInvoicePaymentState,
+          WhatsappInvoices.whatsappInvoiceLocationNote,
+          WhatsappInvoices.whatsappInvoiceShippingNote,
+          WhatsappInvoices.whatsappInvoiceProducts,
+          WhatsappInvoices.whatsappInvoiceNotShippedReason,
+          WhatsappInvoices.whatsappInvoiceHasBeenUpdated,
+          Agents.agentName,
+          LocalityAgents.localityAgentName,
+          Localities.localityName
+        FROM WhatsappInvoices
+          LEFT JOIN Agents ON WhatsappInvoices.whatsappInvoiceAgentID = Agents.agentID
+          LEFT JOIN LocalityAgents ON WhatsappInvoices.whatsappInvoiceLocalityAgentID = LocalityAgents.localityAgentID
+          LEFT JOIN Localities ON WhatsappInvoices.whatsappInvoiceLocalityID = Localities.localityID
+        WHERE 
+          WhatsappInvoices.whatsappInvoiceState=(?) 
+            AND 
+          STR_TO_DATE(whatsappInvoiceDeliveredDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW() - INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
+            AND
+          STR_TO_DATE(whatsappInvoiceDeliveredDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
+        ORDER BY WhatsappInvoices.whatsappInvoiceID DESC;
+        `;
+      } else {
+        selectTodayDeliveredInvoicesByLocalitySQL = 
+        `
+        SELECT
+          WhatsappInvoices.whatsappInvoiceID,
+          WhatsappInvoices.whatsappInvoiceWhatsappConversationID,
+          WhatsappInvoices.whatsappInvoiceLocalityID,
+          WhatsappInvoices.whatsappInvoiceAgentID,
+          WhatsappInvoices.whatsappInvoiceLocalityAgentID,
+          WhatsappInvoices.whatsappInvoiceState,
+          WhatsappInvoices.whatsappInvoiceCentralDateTime,
+          WhatsappInvoices.whatsappInvoiceLocalityDateTime,
+          WhatsappInvoices.whatsappInvoiceShippingDateTime,
+          WhatsappInvoices.whatsappInvoiceDeliveredDateTime,
+          WhatsappInvoices.whatsappInvoiceClientName,
+          WhatsappInvoices.whatsappInvoiceClientPhoneNumber,
+          WhatsappInvoices.whatsappInvoiceClientLocation,
+          WhatsappInvoices.whatsappInvoiceClientLocationURL,
+          WhatsappInvoices.whatsappInvoiceAmount,
+          WhatsappInvoices.whatsappInvoiceShippingMethod,
+          WhatsappInvoices.whatsappInvoicePaymentMethod,
+          WhatsappInvoices.whatsappInvoicePaymentState,
+          WhatsappInvoices.whatsappInvoiceLocationNote,
+          WhatsappInvoices.whatsappInvoiceShippingNote,
+          WhatsappInvoices.whatsappInvoiceProducts,
+          WhatsappInvoices.whatsappInvoiceNotShippedReason,
+          WhatsappInvoices.whatsappInvoiceHasBeenUpdated,
+          Agents.agentName,
+          LocalityAgents.localityAgentName,
+          Localities.localityName
+        FROM WhatsappInvoices
+          LEFT JOIN Agents ON WhatsappInvoices.whatsappInvoiceAgentID = Agents.agentID
+          LEFT JOIN LocalityAgents ON WhatsappInvoices.whatsappInvoiceLocalityAgentID = LocalityAgents.localityAgentID
+          LEFT JOIN Localities ON WhatsappInvoices.whatsappInvoiceLocalityID = Localities.localityID
+        WHERE 
+          WhatsappInvoices.whatsappInvoiceState=(?) 
+            AND 
+          STR_TO_DATE(whatsappInvoiceDeliveredDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
+            AND
+          STR_TO_DATE(whatsappInvoiceDeliveredDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
+        ORDER BY WhatsappInvoices.whatsappInvoiceID DESC;
+        `; 
+      }
+      const selectTodayDeliveredInvoicesByLocalityValues = ['E', whatsappInvoiceLocalityID];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectTodayDeliveredInvoicesByLocalitySQL, selectTodayDeliveredInvoicesByLocalityValues);
+      selectTodayDeliveredInvoicesByLocalityPromiseResolve(JSON.stringify(databaseResult));      
+    });
+  },
+
+
+  selectTodayCanceledInvoicesByLocality: async function(whatsappInvoiceLocalityID){
+    return new Promise(async (selectTodayCanceledInvoicesByLocalityPromiseResolve) => {
+      var selectTodayCanceledInvoicesByLocalitySQL = '';
+      let currentDate = new Date();
+      currentDate.setHours(currentDate.getHours() - 6);
+      let hourPart = currentDate.toISOString().substring(11, 13);
+      let hour = parseInt(hourPart, 10);
+      if (hour >= 18){
+        selectTodayCanceledInvoicesByLocalitySQL = 
+        `
+        SELECT
+          WhatsappInvoices.whatsappInvoiceID,
+          WhatsappInvoices.whatsappInvoiceWhatsappConversationID,
+          WhatsappInvoices.whatsappInvoiceLocalityID,
+          WhatsappInvoices.whatsappInvoiceAgentID,
+          WhatsappInvoices.whatsappInvoiceLocalityAgentID,
+          WhatsappInvoices.whatsappInvoiceState,
+          WhatsappInvoices.whatsappInvoiceCentralDateTime,
+          WhatsappInvoices.whatsappInvoiceLocalityDateTime,
+          WhatsappInvoices.whatsappInvoiceShippingDateTime,
+          WhatsappInvoices.whatsappInvoiceDeliveredDateTime,
+          WhatsappInvoices.whatsappInvoiceClientName,
+          WhatsappInvoices.whatsappInvoiceClientPhoneNumber,
+          WhatsappInvoices.whatsappInvoiceClientLocation,
+          WhatsappInvoices.whatsappInvoiceClientLocationURL,
+          WhatsappInvoices.whatsappInvoiceAmount,
+          WhatsappInvoices.whatsappInvoiceShippingMethod,
+          WhatsappInvoices.whatsappInvoicePaymentMethod,
+          WhatsappInvoices.whatsappInvoicePaymentState,
+          WhatsappInvoices.whatsappInvoiceLocationNote,
+          WhatsappInvoices.whatsappInvoiceShippingNote,
+          WhatsappInvoices.whatsappInvoiceProducts,
+          WhatsappInvoices.whatsappInvoiceNotShippedReason,
+          WhatsappInvoices.whatsappInvoiceHasBeenUpdated,
+          Agents.agentName,
+          LocalityAgents.localityAgentName,
+          Localities.localityName
+        FROM WhatsappInvoices
+          LEFT JOIN Agents ON WhatsappInvoices.whatsappInvoiceAgentID = Agents.agentID
+          LEFT JOIN LocalityAgents ON WhatsappInvoices.whatsappInvoiceLocalityAgentID = LocalityAgents.localityAgentID
+          LEFT JOIN Localities ON WhatsappInvoices.whatsappInvoiceLocalityID = Localities.localityID
+        WHERE 
+          WhatsappInvoices.whatsappInvoiceState=(?) 
+            AND 
+          STR_TO_DATE(whatsappInvoiceCentralDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW() - INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
+            AND
+          STR_TO_DATE(whatsappInvoiceCentralDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
+        ORDER BY WhatsappInvoices.whatsappInvoiceID DESC;
+        `;
+      } else {
+        selectTodayCanceledInvoicesByLocalitySQL = 
+        `
+        SELECT
+          WhatsappInvoices.whatsappInvoiceID,
+          WhatsappInvoices.whatsappInvoiceWhatsappConversationID,
+          WhatsappInvoices.whatsappInvoiceLocalityID,
+          WhatsappInvoices.whatsappInvoiceAgentID,
+          WhatsappInvoices.whatsappInvoiceLocalityAgentID,
+          WhatsappInvoices.whatsappInvoiceState,
+          WhatsappInvoices.whatsappInvoiceCentralDateTime,
+          WhatsappInvoices.whatsappInvoiceLocalityDateTime,
+          WhatsappInvoices.whatsappInvoiceShippingDateTime,
+          WhatsappInvoices.whatsappInvoiceDeliveredDateTime,
+          WhatsappInvoices.whatsappInvoiceClientName,
+          WhatsappInvoices.whatsappInvoiceClientPhoneNumber,
+          WhatsappInvoices.whatsappInvoiceClientLocation,
+          WhatsappInvoices.whatsappInvoiceClientLocationURL,
+          WhatsappInvoices.whatsappInvoiceAmount,
+          WhatsappInvoices.whatsappInvoiceShippingMethod,
+          WhatsappInvoices.whatsappInvoicePaymentMethod,
+          WhatsappInvoices.whatsappInvoicePaymentState,
+          WhatsappInvoices.whatsappInvoiceLocationNote,
+          WhatsappInvoices.whatsappInvoiceShippingNote,
+          WhatsappInvoices.whatsappInvoiceProducts,
+          WhatsappInvoices.whatsappInvoiceNotShippedReason,
+          WhatsappInvoices.whatsappInvoiceHasBeenUpdated,
+          Agents.agentName,
+          LocalityAgents.localityAgentName,
+          Localities.localityName
+        FROM WhatsappInvoices
+          LEFT JOIN Agents ON WhatsappInvoices.whatsappInvoiceAgentID = Agents.agentID
+          LEFT JOIN LocalityAgents ON WhatsappInvoices.whatsappInvoiceLocalityAgentID = LocalityAgents.localityAgentID
+          LEFT JOIN Localities ON WhatsappInvoices.whatsappInvoiceLocalityID = Localities.localityID
+        WHERE 
+          WhatsappInvoices.whatsappInvoiceState=(?) 
+            AND 
+          STR_TO_DATE(whatsappInvoiceCentralDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
+            AND
+          STR_TO_DATE(whatsappInvoiceCentralDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
+        ORDER BY WhatsappInvoices.whatsappInvoiceID DESC;
+        `; 
+      }
+      const selectTodayCanceledInvoicesByLocalityValues = ['X', whatsappInvoiceLocalityID];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectTodayCanceledInvoicesByLocalitySQL, selectTodayCanceledInvoicesByLocalityValues);
+      selectTodayCanceledInvoicesByLocalityPromiseResolve(JSON.stringify(databaseResult));      
+    });
+  },
+
+
+  selectTodayInvoicesByLocalityAgent: async function(whatsappInvoiceLocalityID){
+    return new Promise(async (selectTodayInvoicesByLocalityAgentPromiseResolve) => {
+      var selectTodayInvoicesByLocalityAgentSQL = '';
+      let currentDate = new Date();
+      currentDate.setHours(currentDate.getHours() - 6);
+      let hourPart = currentDate.toISOString().substring(11, 13);
+      let hour = parseInt(hourPart, 10);
+      if (hour >= 18){
+        selectTodayInvoicesByLocalityAgentSQL = 
+        `
+        SELECT
+          WhatsappInvoices.whatsappInvoiceID,
+          WhatsappInvoices.whatsappInvoiceWhatsappConversationID,
+          WhatsappInvoices.whatsappInvoiceLocalityID,
+          WhatsappInvoices.whatsappInvoiceAgentID,
+          WhatsappInvoices.whatsappInvoiceLocalityAgentID,
+          WhatsappInvoices.whatsappInvoiceState,
+          WhatsappInvoices.whatsappInvoiceCentralDateTime,
+          WhatsappInvoices.whatsappInvoiceLocalityDateTime,
+          WhatsappInvoices.whatsappInvoiceShippingDateTime,
+          WhatsappInvoices.whatsappInvoiceDeliveredDateTime,
+          WhatsappInvoices.whatsappInvoiceClientName,
+          WhatsappInvoices.whatsappInvoiceClientPhoneNumber,
+          WhatsappInvoices.whatsappInvoiceClientLocation,
+          WhatsappInvoices.whatsappInvoiceClientLocationURL,
+          WhatsappInvoices.whatsappInvoiceAmount,
+          WhatsappInvoices.whatsappInvoiceShippingMethod,
+          WhatsappInvoices.whatsappInvoicePaymentMethod,
+          WhatsappInvoices.whatsappInvoicePaymentState,
+          WhatsappInvoices.whatsappInvoiceLocationNote,
+          WhatsappInvoices.whatsappInvoiceShippingNote,
+          WhatsappInvoices.whatsappInvoiceProducts,
+          WhatsappInvoices.whatsappInvoiceNotShippedReason,
+          WhatsappInvoices.whatsappInvoiceHasBeenUpdated,
+          Agents.agentName,
+          LocalityAgents.localityAgentName,
+          Localities.localityName
+        FROM WhatsappInvoices
+          LEFT JOIN Agents ON WhatsappInvoices.whatsappInvoiceAgentID = Agents.agentID
+          LEFT JOIN LocalityAgents ON WhatsappInvoices.whatsappInvoiceLocalityAgentID = LocalityAgents.localityAgentID
+          LEFT JOIN Localities ON WhatsappInvoices.whatsappInvoiceLocalityID = Localities.localityID
+        WHERE 
+          (WhatsappInvoices.whatsappInvoiceState=(?) OR WhatsappInvoices.whatsappInvoiceState=(?))
+            AND 
+          STR_TO_DATE(whatsappInvoiceCentralDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW() - INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
+            AND
+          STR_TO_DATE(whatsappInvoiceCentralDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
+        ORDER BY WhatsappInvoices.whatsappInvoiceID DESC;
+        `;
+      } else {
+        selectTodayInvoicesByLocalityAgentSQL = 
+        `
+        SELECT
+          WhatsappInvoices.whatsappInvoiceID,
+          WhatsappInvoices.whatsappInvoiceWhatsappConversationID,
+          WhatsappInvoices.whatsappInvoiceLocalityID,
+          WhatsappInvoices.whatsappInvoiceAgentID,
+          WhatsappInvoices.whatsappInvoiceLocalityAgentID,
+          WhatsappInvoices.whatsappInvoiceState,
+          WhatsappInvoices.whatsappInvoiceCentralDateTime,
+          WhatsappInvoices.whatsappInvoiceLocalityDateTime,
+          WhatsappInvoices.whatsappInvoiceShippingDateTime,
+          WhatsappInvoices.whatsappInvoiceDeliveredDateTime,
+          WhatsappInvoices.whatsappInvoiceClientName,
+          WhatsappInvoices.whatsappInvoiceClientPhoneNumber,
+          WhatsappInvoices.whatsappInvoiceClientLocation,
+          WhatsappInvoices.whatsappInvoiceClientLocationURL,
+          WhatsappInvoices.whatsappInvoiceAmount,
+          WhatsappInvoices.whatsappInvoiceShippingMethod,
+          WhatsappInvoices.whatsappInvoicePaymentMethod,
+          WhatsappInvoices.whatsappInvoicePaymentState,
+          WhatsappInvoices.whatsappInvoiceLocationNote,
+          WhatsappInvoices.whatsappInvoiceShippingNote,
+          WhatsappInvoices.whatsappInvoiceProducts,
+          WhatsappInvoices.whatsappInvoiceNotShippedReason,
+          WhatsappInvoices.whatsappInvoiceHasBeenUpdated,
+          Agents.agentName,
+          LocalityAgents.localityAgentName,
+          Localities.localityName
+        FROM WhatsappInvoices
+          LEFT JOIN Agents ON WhatsappInvoices.whatsappInvoiceAgentID = Agents.agentID
+          LEFT JOIN LocalityAgents ON WhatsappInvoices.whatsappInvoiceLocalityAgentID = LocalityAgents.localityAgentID
+          LEFT JOIN Localities ON WhatsappInvoices.whatsappInvoiceLocalityID = Localities.localityID
+        WHERE 
+          (WhatsappInvoices.whatsappInvoiceState=(?) OR WhatsappInvoices.whatsappInvoiceState=(?))
+            AND 
+          STR_TO_DATE(whatsappInvoiceCentralDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
+            AND
+          STR_TO_DATE(whatsappInvoiceCentralDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
+        ORDER BY WhatsappInvoices.whatsappInvoiceID DESC;
+        `; 
+      }
+      const selectTodayInvoicesByLocalityAgentValues = ['R', 'E', whatsappInvoiceLocalityID];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectTodayInvoicesByLocalityAgentSQL, selectTodayInvoicesByLocalityAgentValues);
+      selectTodayInvoicesByLocalityAgentPromiseResolve(JSON.stringify(databaseResult));      
+    });
+  },
+
+
+
+  
+
+
+
+
+
+
+
+
+
+ 
 
 
   /*

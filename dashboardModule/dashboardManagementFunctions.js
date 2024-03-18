@@ -218,7 +218,7 @@ module.exports = {
     return new Promise(async (selectRankingFilteredConversationsPromiseResolve) => {
       
       var selectRankingFilteredConversationsSQL = '';
-
+      
       if (initialDate == '' && endDate == ''){
         let currentDate = new Date();
         currentDate.setHours(currentDate.getHours() - 6);
@@ -600,6 +600,72 @@ module.exports = {
       const selectAllWhatsappFavoriteImagesSQL = `SELECT * FROM WhatsappFavoriteImages ORDER BY whatsappFavoriteImageName;`;
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAllWhatsappFavoriteImagesSQL);
       selectAllWhatsappFavoriteImagesPromiseResolve(JSON.stringify(databaseResult));
+    });
+  },
+
+  selectTodayConversationsByLocalityNameAndType: function(whatsappConversationLocalityName, whatsappConversationType){
+    return new Promise(async (selectTodayConversationsByLocalityNameAndTypePromiseResolve) => {
+      var selectTodayConversationsByLocalityNameAndTypeSQL = '';
+      const whatsappConversationIsActive = false;
+      var selectTodayConversationsByLocalityNameAndTypeValues = [];
+      let currentDate = new Date();
+      currentDate.setHours(currentDate.getHours() - 6);
+      let hourPart = currentDate.toISOString().substring(11, 13);
+      let hour = parseInt(hourPart, 10);
+      if (hour >= 18){
+        selectTodayConversationsByLocalityNameAndTypeSQL = 
+        `
+        SELECT 
+          whatsappConversationID,
+          whatsappConversationRecipientPhoneNumber,
+          whatsappConversationRecipientProfileName,
+          whatsappConversationAmount,
+          whatsappConversationStartDateTime,
+          whatsappConversationCloseComment
+        FROM WhatsappConversations
+        WHERE 
+          whatsappConversationLocalityName = (?) 
+            AND 
+          whatsappConversationIsActive = (?)
+            AND
+          STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW() - INTERVAL 1 DAY, '%Y-%m-%d 6:00:00')
+            AND
+          STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
+        `;
+      } else {
+        selectTodayConversationsByLocalityNameAndTypeSQL = 
+        `
+        SELECT 
+          whatsappConversationID,
+          whatsappConversationRecipientPhoneNumber,
+          whatsappConversationRecipientProfileName,
+          whatsappConversationAmount,
+          whatsappConversationStartDateTime,
+          whatsappConversationCloseComment
+        FROM WhatsappConversations
+        WHERE 
+          whatsappConversationLocalityName = (?) 
+            AND 
+          whatsappConversationIsActive = (?)
+            AND
+          STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
+            AND
+          STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
+        `; 
+      }
+
+      if (whatsappConversationType == 1){
+        selectTodayConversationsByLocalityNameAndTypeSQL = selectTodayConversationsByLocalityNameAndTypeSQL + ' AND whatsappConversationCloseComment=(?)';
+        selectTodayConversationsByLocalityNameAndTypeValues = [whatsappConversationLocalityName, whatsappConversationIsActive, 'Venta'];
+      } else if (whatsappConversationType == 2){
+        selectTodayConversationsByLocalityNameAndTypeSQL = selectTodayConversationsByLocalityNameAndTypeSQL + ' AND whatsappConversationCloseComment!=(?)';
+        selectTodayConversationsByLocalityNameAndTypeValues = [whatsappConversationLocalityName, whatsappConversationIsActive, 'Venta'];
+      } else {
+        selectTodayConversationsByLocalityNameAndTypeValues = [whatsappConversationLocalityName, whatsappConversationIsActive];
+      }
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectTodayConversationsByLocalityNameAndTypeSQL, selectTodayConversationsByLocalityNameAndTypeValues);
+      console.log(databaseResult);
+      selectTodayConversationsByLocalityNameAndTypePromiseResolve(JSON.stringify(databaseResult));
     });
   },
 
