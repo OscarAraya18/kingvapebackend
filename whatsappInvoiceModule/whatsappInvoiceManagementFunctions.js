@@ -430,6 +430,8 @@ module.exports = {
           const localityAgentID = databaseResult.result[0].localityAgentID;
           const localityAgentLocalityID = databaseResult.result[0].localityAgentLocalityID;
           const localityAgentName = databaseResult.result[0].localityAgentName;
+          const localityAgentColor = databaseResult.result[0].localityAgentColor;
+
           const localityAgentLoginResult = 
           {
             success: true,
@@ -437,7 +439,8 @@ module.exports = {
             {
               'localityAgentID': localityAgentID,
               'localityAgentLocalityID': localityAgentLocalityID,
-              'localityAgentName': localityAgentName
+              'localityAgentName': localityAgentName,
+              'localityAgentColor': localityAgentColor
             }
           };
           localityAgentLoginPromiseResolve(JSON.stringify(localityAgentLoginResult));
