@@ -44,6 +44,7 @@ module.exports = {
           WhatsappInvoices.whatsappInvoiceProducts,
           WhatsappInvoices.whatsappInvoiceNotShippedReason,
           WhatsappInvoices.whatsappInvoiceHasBeenUpdated,
+          WhatsappInvoices.whatsappInvoicesUpdatedField,
           Agents.agentName,
           LocalityAgents.localityAgentName,
           Localities.localityName
@@ -89,6 +90,7 @@ module.exports = {
           WhatsappInvoices.whatsappInvoiceProducts,
           WhatsappInvoices.whatsappInvoiceNotShippedReason,
           WhatsappInvoices.whatsappInvoiceHasBeenUpdated,
+          WhatsappInvoices.whatsappInvoicesUpdatedField,
           Agents.agentName,
           LocalityAgents.localityAgentName,
           Localities.localityName
@@ -134,6 +136,7 @@ module.exports = {
         WhatsappInvoices.whatsappInvoiceProducts,
         WhatsappInvoices.whatsappInvoiceNotShippedReason,
         WhatsappInvoices.whatsappInvoiceHasBeenUpdated,
+        WhatsappInvoices.whatsappInvoicesUpdatedField,
         Agents.agentName,
         LocalityAgents.localityAgentName,
         Localities.localityName
@@ -238,8 +241,8 @@ module.exports = {
 
   updateWhatsappInvoiceClientName: async function(whatsappInvoiceID, whatsappInvoiceClientName){
     return new Promise(async (updateWhatsappInvoiceClientNamePromiseResolve) => {
-      const updateWhatsappInvoiceClientNameSQL = `UPDATE WhatsappInvoices SET whatsappInvoiceClientName=(?), whatsappInvoiceHasBeenUpdated=(?) WHERE whatsappInvoiceID=(?);`;
-      const updateWhatsappInvoiceClientNameValues = [whatsappInvoiceClientName, true, whatsappInvoiceID]
+      const updateWhatsappInvoiceClientNameSQL = `UPDATE WhatsappInvoices SET whatsappInvoiceClientName=(?), whatsappInvoiceHasBeenUpdated=(?), whatsappInvoiceUpdatedField=(?) WHERE whatsappInvoiceID=(?);`;
+      const updateWhatsappInvoiceClientNameValues = [whatsappInvoiceClientName, true, 'whatsappInvoiceClientName', whatsappInvoiceID]
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateWhatsappInvoiceClientNameSQL, updateWhatsappInvoiceClientNameValues);
       updateWhatsappInvoiceClientNamePromiseResolve(JSON.stringify(databaseResult));      
     });
@@ -247,8 +250,8 @@ module.exports = {
 
   updateWhatsappInvoiceClientPhoneNumber: async function(whatsappInvoiceID, whatsappInvoiceClientPhoneNumber){
     return new Promise(async (updateWhatsappInvoiceClientPhoneNumberPromiseResolve) => {
-      const updateWhatsappInvoiceClientPhoneNumberSQL = `UPDATE WhatsappInvoices SET whatsappInvoiceClientPhoneNumber=(?), whatsappInvoiceHasBeenUpdated=(?) WHERE whatsappInvoiceID=(?);`;
-      const updateWhatsappInvoiceClientPhoneNumberValues = [whatsappInvoiceClientPhoneNumber, true, whatsappInvoiceID];
+      const updateWhatsappInvoiceClientPhoneNumberSQL = `UPDATE WhatsappInvoices SET whatsappInvoiceClientPhoneNumber=(?), whatsappInvoiceHasBeenUpdated=(?), whatsappInvoiceUpdatedField=(?) WHERE whatsappInvoiceID=(?);`;
+      const updateWhatsappInvoiceClientPhoneNumberValues = [whatsappInvoiceClientPhoneNumber, true, 'whatsappInvoiceClientPhoneNumber', whatsappInvoiceID];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateWhatsappInvoiceClientPhoneNumberSQL, updateWhatsappInvoiceClientPhoneNumberValues);
       updateWhatsappInvoiceClientPhoneNumberPromiseResolve(JSON.stringify(databaseResult));      
     });
@@ -256,8 +259,8 @@ module.exports = {
 
   updateWhatsappInvoiceAmount: async function(whatsappInvoiceID, whatsappInvoiceAmount){
     return new Promise(async (updateWhatsappInvoiceAmountPromiseResolve) => {
-      const updateWhatsappInvoiceAmountSQL = `UPDATE WhatsappInvoices SET whatsappInvoiceAmount=(?), whatsappInvoiceHasBeenUpdated=(?) WHERE whatsappInvoiceID=(?);`;
-      const updateWhatsappInvoiceAmountValues = [whatsappInvoiceAmount, true, whatsappInvoiceID];
+      const updateWhatsappInvoiceAmountSQL = `UPDATE WhatsappInvoices SET whatsappInvoiceAmount=(?), whatsappInvoiceHasBeenUpdated=(?), whatsappInvoiceUpdatedField=(?) WHERE whatsappInvoiceID=(?);`;
+      const updateWhatsappInvoiceAmountValues = [whatsappInvoiceAmount, true, 'whatsappInvoiceAmount', whatsappInvoiceID];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateWhatsappInvoiceAmountSQL, updateWhatsappInvoiceAmountValues);
       updateWhatsappInvoiceAmountPromiseResolve(JSON.stringify(databaseResult));      
     });
@@ -265,8 +268,8 @@ module.exports = {
 
   updateWhatsappInvoiceAgentID: async function(whatsappInvoiceID, whatsappInvoiceAgentID){
     return new Promise(async (updateWhatsappInvoiceAgentIDPromiseResolve) => {
-      const updateWhatsappInvoiceAgentIDSQL = `UPDATE WhatsappInvoices SET whatsappInvoiceAgentID=(?), whatsappInvoiceHasBeenUpdated=(?) WHERE whatsappInvoiceID=(?);`;
-      const updateWhatsappInvoiceAgentIDValues = [whatsappInvoiceAgentID, true, whatsappInvoiceID];
+      const updateWhatsappInvoiceAgentIDSQL = `UPDATE WhatsappInvoices SET whatsappInvoiceAgentID=(?), whatsappInvoiceHasBeenUpdated=(?), whatsappInvoiceUpdatedField=(?) WHERE whatsappInvoiceID=(?);`;
+      const updateWhatsappInvoiceAgentIDValues = [whatsappInvoiceAgentID, true, 'whatsappInvoiceAgentID', whatsappInvoiceID];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateWhatsappInvoiceAgentIDSQL, updateWhatsappInvoiceAgentIDValues);
       updateWhatsappInvoiceAgentIDPromiseResolve(JSON.stringify(databaseResult));      
     });
@@ -308,9 +311,9 @@ module.exports = {
         updateWhatsappInvoiceShippingMethodSQL = 
         `
         UPDATE WhatsappInvoices 
-        SET whatsappInvoiceShippingMethod=(?), whatsappInvoiceLocalityAgentID=(?), whatsappInvoiceHasBeenUpdated=(?)
+        SET whatsappInvoiceShippingMethod=(?), whatsappInvoiceLocalityAgentID=(?), whatsappInvoiceHasBeenUpdated=(?), whatsappInvoiceUpdatedField=(?)
         WHERE whatsappInvoiceID=(?);`;
-        updateWhatsappInvoiceShippingMethodValues = [whatsappInvoiceShippingMethod, whatsappInvoiceLocalityAgentID, true, whatsappInvoiceID];
+        updateWhatsappInvoiceShippingMethodValues = [whatsappInvoiceShippingMethod, whatsappInvoiceLocalityAgentID, true, 'whatsappInvoiceShippingMethod', whatsappInvoiceID];
       } else {
         updateWhatsappInvoiceShippingMethodSQL = `UPDATE WhatsappInvoices SET whatsappInvoiceShippingMethod=(?) WHERE whatsappInvoiceID=(?);`;
         updateWhatsappInvoiceShippingMethodValues = [whatsappInvoiceShippingMethod, whatsappInvoiceID];
@@ -322,8 +325,8 @@ module.exports = {
 
   updateWhatsappInvoicePaymentMethod: async function(whatsappInvoiceID, whatsappInvoicePaymentMethod){
     return new Promise(async (updateWhatsappInvoicePaymentMethodPromiseResolve) => {
-      const updateWhatsappInvoicePaymentMethodSQL = `UPDATE WhatsappInvoices SET whatsappInvoicePaymentMethod=(?), whatsappInvoiceHasBeenUpdated=(?) WHERE whatsappInvoiceID=(?);`;
-      const updateWhatsappInvoicePaymentMethodValues = [whatsappInvoicePaymentMethod, true, whatsappInvoiceID];
+      const updateWhatsappInvoicePaymentMethodSQL = `UPDATE WhatsappInvoices SET whatsappInvoicePaymentMethod=(?), whatsappInvoiceHasBeenUpdated=(?), whatsappInvoiceUpdatedField=(?) WHERE whatsappInvoiceID=(?);`;
+      const updateWhatsappInvoicePaymentMethodValues = [whatsappInvoicePaymentMethod, true, 'whatsappInvoicePaymentMethod', whatsappInvoiceID];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateWhatsappInvoicePaymentMethodSQL, updateWhatsappInvoicePaymentMethodValues);
       updateWhatsappInvoicePaymentMethodPromiseResolve(JSON.stringify(databaseResult));      
     });
@@ -331,8 +334,8 @@ module.exports = {
 
   updateWhatsappInvoicePaymentState: async function(whatsappInvoiceID, whatsappInvoicePaymentState){ 
     return new Promise(async (updateWhatsappInvoicePaymentStatePromiseResolve) => {
-      const updateWhatsappInvoicePaymentStateSQL = `UPDATE WhatsappInvoices SET whatsappInvoicePaymentState=(?), whatsappInvoiceHasBeenUpdated=(?) WHERE whatsappInvoiceID=(?);`;
-      const updateWhatsappInvoicePaymentStateValues = [whatsappInvoicePaymentState, true, whatsappInvoiceID];
+      const updateWhatsappInvoicePaymentStateSQL = `UPDATE WhatsappInvoices SET whatsappInvoicePaymentState=(?), whatsappInvoiceHasBeenUpdated=(?), whatsappInvoiceUpdatedField=(?) WHERE whatsappInvoiceID=(?);`;
+      const updateWhatsappInvoicePaymentStateValues = [whatsappInvoicePaymentState, true, 'whatsappInvoicePaymentState', whatsappInvoiceID];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateWhatsappInvoicePaymentStateSQL, updateWhatsappInvoicePaymentStateValues);
       updateWhatsappInvoicePaymentStatePromiseResolve(JSON.stringify(databaseResult));      
     });
@@ -340,8 +343,8 @@ module.exports = {
 
   updateWhatsappInvoiceClientLocation: async function(whatsappInvoiceID, whatsappInvoiceClientLocation, whatsappInvoiceLocationID){
     return new Promise(async (updateWhatsappInvoiceClientLocationPromiseResolve) => {
-      const updateWhatsappInvoiceClientLocationSQL = `UPDATE WhatsappInvoices SET whatsappInvoiceClientLocation=(?), whatsappInvoiceHasBeenUpdated=(?) WHERE whatsappInvoiceID=(?);`;
-      const updateWhatsappInvoiceClientLocationValues = [whatsappInvoiceClientLocation, true, whatsappInvoiceID];
+      const updateWhatsappInvoiceClientLocationSQL = `UPDATE WhatsappInvoices SET whatsappInvoiceClientLocation=(?), whatsappInvoiceHasBeenUpdated=(?), whatsappInvoiceUpdatedField=(?) WHERE whatsappInvoiceID=(?);`;
+      const updateWhatsappInvoiceClientLocationValues = [whatsappInvoiceClientLocation, true, 'whatsappInvoiceClientLocation', whatsappInvoiceID];
       const updateWhatsappInvoiceClientLocationDatabaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateWhatsappInvoiceClientLocationSQL, updateWhatsappInvoiceClientLocationValues);
       if (updateWhatsappInvoiceClientLocationDatabaseResult.success){
         const updateWhatsappInvoiceLocationSQL = `UPDATE WhatsappInvoiceLocations SET whatsappInvoiceLocationIsActive=(?) WHERE whatsappInvoiceLocationID=(?);`;
@@ -357,8 +360,8 @@ module.exports = {
 
   updateWhatsappInvoiceClientLocationURL: async function(whatsappInvoiceID, whatsappInvoiceClientLocationURL){
     return new Promise(async (updateWhatsappInvoiceClientLocationURLPromiseResolve) => {
-      const updateWhatsappInvoiceClientLocationURLSQL = `UPDATE WhatsappInvoices SET whatsappInvoiceClientLocationURL=(?), whatsappInvoiceHasBeenUpdated=(?) WHERE whatsappInvoiceID=(?);`;
-      const updateWhatsappInvoiceClientLocationURLValues = [whatsappInvoiceClientLocationURL, true, whatsappInvoiceID];
+      const updateWhatsappInvoiceClientLocationURLSQL = `UPDATE WhatsappInvoices SET whatsappInvoiceClientLocationURL=(?), whatsappInvoiceHasBeenUpdated=(?), whatsappInvoiceUpdatedField=(?) WHERE whatsappInvoiceID=(?);`;
+      const updateWhatsappInvoiceClientLocationURLValues = [whatsappInvoiceClientLocationURL, true, 'whatsappInvoiceClientLocationURL', whatsappInvoiceID];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateWhatsappInvoiceClientLocationURLSQL, updateWhatsappInvoiceClientLocationURLValues);
       updateWhatsappInvoiceClientLocationURLPromiseResolve(JSON.stringify(databaseResult));        
     });
@@ -366,8 +369,8 @@ module.exports = {
 
   updateWhatsappInvoiceLocationNote: async function(whatsappInvoiceID, whatsappInvoiceLocationNote){
     return new Promise(async (updateWhatsappInvoiceLocationNotePromiseResolve) => {
-      const updateWhatsappInvoiceLocationNoteSQL = `UPDATE WhatsappInvoices SET whatsappInvoiceLocationNote=(?), whatsappInvoiceHasBeenUpdated=(?) WHERE whatsappInvoiceID=(?);`;
-      const updateWhatsappInvoiceLocationNoteValues = [whatsappInvoiceLocationNote, true, whatsappInvoiceID];
+      const updateWhatsappInvoiceLocationNoteSQL = `UPDATE WhatsappInvoices SET whatsappInvoiceLocationNote=(?), whatsappInvoiceHasBeenUpdated=(?), whatsappInvoiceUpdatedField=(?) WHERE whatsappInvoiceID=(?);`;
+      const updateWhatsappInvoiceLocationNoteValues = [whatsappInvoiceLocationNote, true, 'whatsappInvoiceLocationNote', whatsappInvoiceID];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateWhatsappInvoiceLocationNoteSQL, updateWhatsappInvoiceLocationNoteValues);
       updateWhatsappInvoiceLocationNotePromiseResolve(JSON.stringify(databaseResult));      
     });
@@ -375,8 +378,8 @@ module.exports = {
 
   updateWhatsappInvoiceShippingNote: async function(whatsappInvoiceID, whatsappInvoiceShippingNote){
     return new Promise(async (updateWhatsappInvoiceShippingNotePromiseResolve) => {
-      const updateWhatsappInvoiceShippingNoteSQL = `UPDATE WhatsappInvoices SET whatsappInvoiceShippingNote=(?), whatsappInvoiceHasBeenUpdated=(?) WHERE whatsappInvoiceID=(?);`;
-      const updateWhatsappInvoiceShippingNoteValues = [whatsappInvoiceShippingNote, true, whatsappInvoiceID];
+      const updateWhatsappInvoiceShippingNoteSQL = `UPDATE WhatsappInvoices SET whatsappInvoiceShippingNote=(?), whatsappInvoiceHasBeenUpdated=(?), whatsappInvoiceUpdatedField=(?) WHERE whatsappInvoiceID=(?);`;
+      const updateWhatsappInvoiceShippingNoteValues = [whatsappInvoiceShippingNote, true, 'whatsappInvoiceShippingNote', whatsappInvoiceID];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateWhatsappInvoiceShippingNoteSQL, updateWhatsappInvoiceShippingNoteValues);
       updateWhatsappInvoiceShippingNotePromiseResolve(JSON.stringify(databaseResult));      
     });
@@ -525,6 +528,7 @@ module.exports = {
           WhatsappInvoices.whatsappInvoiceProducts,
           WhatsappInvoices.whatsappInvoiceNotShippedReason,
           WhatsappInvoices.whatsappInvoiceHasBeenUpdated,
+          WhatsappInvoices.whatsappInvoiceUpdatedField,
           Agents.agentName,
           LocalityAgents.localityAgentName,
           Localities.localityName
@@ -569,6 +573,7 @@ module.exports = {
           WhatsappInvoices.whatsappInvoiceProducts,
           WhatsappInvoices.whatsappInvoiceNotShippedReason,
           WhatsappInvoices.whatsappInvoiceHasBeenUpdated,
+          WhatsappInvoices.whatsappInvoiceUpdatedField,
           Agents.agentName,
           LocalityAgents.localityAgentName,
           Localities.localityName
@@ -628,6 +633,7 @@ module.exports = {
           WhatsappInvoices.whatsappInvoiceProducts,
           WhatsappInvoices.whatsappInvoiceNotShippedReason,
           WhatsappInvoices.whatsappInvoiceHasBeenUpdated,
+          WhatsappInvoices.whatsappInvoiceUpdatedField,
           Agents.agentName,
           LocalityAgents.localityAgentName,
           Localities.localityName
@@ -672,6 +678,7 @@ module.exports = {
           WhatsappInvoices.whatsappInvoiceProducts,
           WhatsappInvoices.whatsappInvoiceNotShippedReason,
           WhatsappInvoices.whatsappInvoiceHasBeenUpdated,
+          WhatsappInvoices.whatsappInvoiceUpdatedField,
           Agents.agentName,
           LocalityAgents.localityAgentName,
           Localities.localityName
@@ -731,6 +738,7 @@ module.exports = {
           WhatsappInvoices.whatsappInvoiceProducts,
           WhatsappInvoices.whatsappInvoiceNotShippedReason,
           WhatsappInvoices.whatsappInvoiceHasBeenUpdated,
+          WhatsappInvoices.whatsappInvoiceUpdatedField,
           Agents.agentName,
           LocalityAgents.localityAgentName,
           Localities.localityName
@@ -775,6 +783,7 @@ module.exports = {
           WhatsappInvoices.whatsappInvoiceProducts,
           WhatsappInvoices.whatsappInvoiceNotShippedReason,
           WhatsappInvoices.whatsappInvoiceHasBeenUpdated,
+          WhatsappInvoices.whatsappInvoiceUpdatedField,
           Agents.agentName,
           LocalityAgents.localityAgentName,
           Localities.localityName
