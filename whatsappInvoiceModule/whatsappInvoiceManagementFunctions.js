@@ -44,7 +44,7 @@ module.exports = {
           WhatsappInvoices.whatsappInvoiceProducts,
           WhatsappInvoices.whatsappInvoiceNotShippedReason,
           WhatsappInvoices.whatsappInvoiceHasBeenUpdated,
-          WhatsappInvoices.whatsappInvoicesUpdatedField,
+          WhatsappInvoices.whatsappInvoiceUpdatedField,
           Agents.agentName,
           LocalityAgents.localityAgentName,
           Localities.localityName
@@ -90,7 +90,7 @@ module.exports = {
           WhatsappInvoices.whatsappInvoiceProducts,
           WhatsappInvoices.whatsappInvoiceNotShippedReason,
           WhatsappInvoices.whatsappInvoiceHasBeenUpdated,
-          WhatsappInvoices.whatsappInvoicesUpdatedField,
+          WhatsappInvoices.whatsappInvoiceUpdatedField,
           Agents.agentName,
           LocalityAgents.localityAgentName,
           Localities.localityName
@@ -136,7 +136,7 @@ module.exports = {
         WhatsappInvoices.whatsappInvoiceProducts,
         WhatsappInvoices.whatsappInvoiceNotShippedReason,
         WhatsappInvoices.whatsappInvoiceHasBeenUpdated,
-        WhatsappInvoices.whatsappInvoicesUpdatedField,
+        WhatsappInvoices.whatsappInvoiceUpdatedField,
         Agents.agentName,
         LocalityAgents.localityAgentName,
         Localities.localityName
@@ -488,7 +488,6 @@ module.exports = {
       }
       const selectTodayLocalityAgentShippedInvoicesValues = ['E', whatsappInvoiceLocalityAgentID];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectTodayLocalityAgentShippedInvoicesSQL, selectTodayLocalityAgentShippedInvoicesValues);
-      console.log(databaseResult);
       selectTodayLocalityAgentShippedInvoicesPromiseResolve(JSON.stringify(databaseResult));      
     });
   },
