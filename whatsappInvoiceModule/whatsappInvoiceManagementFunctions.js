@@ -811,6 +811,50 @@ module.exports = {
   },
 
 
+  insertLocalityAgentLocation: async function(localityAgentLocationLocalityAgentID, localityAgentLocationLatitude, localityAgentLocationLongitude){
+    return new Promise(async (insertLocalityAgentLocationPromiseResolve) => {
+      const countLocalityAgentLocationsSQL = `SELECT COUNT(*) AS localityAgentLocationsAmount FROM LocalityAgentLocations WHERE localityAgentLocationLocalityAgentID = (?);`;
+      const countLocalityAgentLocationsValues = [localityAgentLocationLocalityAgentID];
+      const countLocalityAgentLocationsResult = await databaseManagementFunctions.executeDatabaseSQL(countLocalityAgentLocationsSQL, countLocalityAgentLocationsValues);
+      if (countLocalityAgentLocationsResult.success){
+        if (countLocalityAgentLocationsResult.result[0]){
+          const localityAgentLocationsAmount = countLocalityAgentLocationsResult.result[0].localityAgentLocationsAmount;
+          if (localityAgentLocationsAmount >= 500){
+            const deleteOldestLocalityAgentLocationSQL = 
+            `
+            DELETE FROM LocalityAgentLocations 
+            WHERE localityAgentLocationLocalityAgentID=(?)
+            ORDER BY localityAgentLocationID ASC
+            LIMIT 1;
+            `;
+            const deleteOldestLocalityAgentLocationValues = [localityAgentLocationLocalityAgentID];
+            const deleteOldestLocalityAgentLocationResult = await databaseManagementFunctions.executeDatabaseSQL(deleteOldestLocalityAgentLocationSQL, deleteOldestLocalityAgentLocationValues);
+            if (deleteOldestLocalityAgentLocationResult.success){
+              const insertLocalityAgentLocationSQL = `INSERT INTO LocalityAgentLocations (localityAgentLocationLocalityAgentID, localityAgentLocationLatitude, localityAgentLocationLongitude, localityAgentLocationDateTime) VALUES (?,?,?,?);`;
+              const localityAgentLocationDateTime = new Date().toString();
+              const insertLocalityAgentLocationValues = [localityAgentLocationLocalityAgentID, localityAgentLocationLatitude, localityAgentLocationLongitude, localityAgentLocationDateTime];
+              const insertLocalityAgentLocationResult = await databaseManagementFunctions.executeDatabaseSQL(insertLocalityAgentLocationSQL, insertLocalityAgentLocationValues);
+              insertLocalityAgentLocationPromiseResolve(JSON.stringify(insertLocalityAgentLocationResult));      
+            } else {
+              insertLocalityAgentLocationPromiseResolve(JSON.stringify(deleteOldestLocalityAgentLocationResult));      
+            }
+          } else {
+            const insertLocalityAgentLocationSQL = `INSERT INTO LocalityAgentLocations (localityAgentLocationLocalityAgentID, localityAgentLocationLatitude, localityAgentLocationLongitude, localityAgentLocationDateTime) VALUES (?,?,?,?);`;
+            const localityAgentLocationDateTime = new Date().toString();
+            const insertLocalityAgentLocationValues = [localityAgentLocationLocalityAgentID, localityAgentLocationLatitude, localityAgentLocationLongitude, localityAgentLocationDateTime];
+            const insertLocalityAgentLocationResult = await databaseManagementFunctions.executeDatabaseSQL(insertLocalityAgentLocationSQL, insertLocalityAgentLocationValues);
+            insertLocalityAgentLocationPromiseResolve(JSON.stringify(insertLocalityAgentLocationResult));      
+          }
+        } else {
+          insertLocalityAgentLocationPromiseResolve(JSON.stringify({success: false}));      
+        }
+      } else {
+        insertLocalityAgentLocationPromiseResolve(JSON.stringify(countLocalityAgentLocationsResult));      
+      }
+    });
+  },
+
+
 
   
 
@@ -822,10 +866,7 @@ module.exports = {
 
 
 
- 
-
-
-  
+   
   returnWhatsappConversation: async function(whatsappConversationRecipientPhoneNumber, whatsappConversationID, whatsappInvoiceID){
     return new Promise(async (returnWhatsappConversationPromiseResolve) => {
       const selectWhatsappActiveConversationByPhoneNumberSQL = `SELECT whatsappConversationID FROM WhatsappConversations WHERE whatsappConversationRecipientPhoneNumber=(?) AND whatsappConversationIsActive=(?);`;

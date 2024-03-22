@@ -50,6 +50,16 @@ backendWhatsappInvoiceHttpRequestServer.post('/selectAllActiveWhatsappInvoiceFro
   httpResponse.end(selectAllActiveWhatsappInvoiceFromLocalityAgentResult);
 });
 
+backendWhatsappInvoiceHttpRequestServer.post('/insertLocalityAgentLocation', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const localityAgentLocationLocalityAgentID = httpRequestQuery.localityAgentLocationLocalityAgentID;
+  const localityAgentLocationLatitude = httpRequestQuery.localityAgentLocationLatitude;
+  const localityAgentLocationLongitude = httpRequestQuery.localityAgentLocationLongitude;
+  const insertLocalityAgentLocationResult = await whatsappInvoiceManagementFunctions.insertLocalityAgentLocation(localityAgentLocationLocalityAgentID, localityAgentLocationLatitude, localityAgentLocationLongitude);
+  httpResponse.end(insertLocalityAgentLocationResult);
+});
+
+
 backendWhatsappInvoiceHttpRequestServer.post('/updateWhatsappInvoiceState', async (httpRequest, httpResponse) => {
   const httpRequestQuery = httpRequest.body;
   const whatsappInvoiceID = httpRequestQuery.whatsappInvoiceID;
