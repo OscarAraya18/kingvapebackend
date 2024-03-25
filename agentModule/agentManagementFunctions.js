@@ -9,8 +9,8 @@ module.exports = {
   */
   agentLogin: async function(agentUsername, agentPassword){
     return new Promise(async (agentLoginPromiseResolve) => {
-      const selectAgentSQL = `SELECT * FROM Agents WHERE agentUsername=(?) AND agentPassword=(?);`;
-      const selectAgentValues = [agentUsername, agentPassword];
+      const selectAgentSQL = `SELECT * FROM Agents WHERE agentUsername=(?) AND agentPassword=(?) AND agentIsWorking=(?);`;
+      const selectAgentValues = [agentUsername, agentPassword, true];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAgentSQL, selectAgentValues);
       if (databaseResult.success){
         if (databaseResult.result.length == 0){
@@ -87,30 +87,34 @@ module.exports = {
 
   updateAgentStatus: async function(websocketConnection, agentID, agentName, agentStatus){
     return new Promise(async (updateAgentStatusPromiseResolve) => {
-      const updateAgentStatusSQL = `UPDATE Agents SET agentStatus=(?) WHERE agentID=(?);`;
-      const updateAgentStatusValues = [agentStatus, agentID];
+      const updateAgentStatusSQL = `UPDATE Agents SET agentStatus=(?) WHERE agentID=(?) AND agentIsWorking=(?);`;
+      const updateAgentStatusValues = [agentStatus, agentID, true];
       const updateAgentStatusDatabaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateAgentStatusSQL, updateAgentStatusValues);
       if (updateAgentStatusDatabaseResult.success){
-        const insertAgentStatusChangeSQL = `INSERT INTO AgentStatusChanges (agentStatusChangeAgentID, agentStatusChangeStatus, agentStatusChangeDateTime) VALUES (?,?,?);`;
-        const agentStatusChangeDateTime = new Date().toString();
-        const insertAgentStatusChangeValues = [agentID, agentStatus, agentStatusChangeDateTime];
-        const insertAgentStatusChangeDatabaseResult = await databaseManagementFunctions.executeDatabaseSQL(insertAgentStatusChangeSQL, insertAgentStatusChangeValues);
-        if (insertAgentStatusChangeDatabaseResult.success){
-          const websocketMessageContent = 
-          {
-            success: true, 
-            result: 
+        if (updateAgentStatusDatabaseResult.result.affectedRows == 1){
+          const insertAgentStatusChangeSQL = `INSERT INTO AgentStatusChanges (agentStatusChangeAgentID, agentStatusChangeStatus, agentStatusChangeDateTime) VALUES (?,?,?);`;
+          const agentStatusChangeDateTime = new Date().toString();
+          const insertAgentStatusChangeValues = [agentID, agentStatus, agentStatusChangeDateTime];
+          const insertAgentStatusChangeDatabaseResult = await databaseManagementFunctions.executeDatabaseSQL(insertAgentStatusChangeSQL, insertAgentStatusChangeValues);
+          if (insertAgentStatusChangeDatabaseResult.success){
+            const websocketMessageContent = 
             {
-              agentID: agentID, 
-              agentName: agentName, 
-              agentStatus: agentStatus
-            }
-          };
-          websocketConnection.sendWebsocketMessage('/agent/update/agentStatus', websocketMessageContent);
-          updateAgentStatusPromiseResolve(JSON.stringify(websocketMessageContent));
+              success: true, 
+              result: 
+              {
+                agentID: agentID, 
+                agentName: agentName, 
+                agentStatus: agentStatus
+              }
+            };
+            websocketConnection.sendWebsocketMessage('/agent/update/agentStatus', websocketMessageContent);
+            updateAgentStatusPromiseResolve(JSON.stringify(websocketMessageContent));
+          } else {
+            websocketConnection.sendWebsocketMessage('/agent/update/agentStatus', insertAgentStatusChangeDatabaseResult);
+            updateAgentStatusPromiseResolve(JSON.stringify(insertAgentStatusChangeDatabaseResult));
+          }
         } else {
-          websocketConnection.sendWebsocketMessage('/agent/update/agentStatus', insertAgentStatusChangeDatabaseResult);
-          updateAgentStatusPromiseResolve(JSON.stringify(insertAgentStatusChangeDatabaseResult));
+          updateAgentStatusPromiseResolve(JSON.stringify({success: false}));
         }
       } else {
         websocketConnection.sendWebsocketMessage('/agent/update/agentStatus', updateAgentStatusDatabaseResult);
@@ -118,6 +122,16 @@ module.exports = {
       }
     });
   },
+
+  updateAgentWorkingStatus: async function(agentID, agentIsWorking){
+    return new Promise(async (updateAgentWorkingStatusPromiseResolve) => {
+      const updateAgentWorkingStatusSQL = `UPDATE Agents SET agentIsWorking=(?) WHERE agentID=(?);`;
+      const updateAgentWorkingStatusValues = [agentIsWorking, agentID];
+      const updateAgentStatusDatabaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateAgentWorkingStatusSQL, updateAgentWorkingStatusValues);
+      updateAgentWorkingStatusPromiseResolve(JSON.stringify(updateAgentStatusDatabaseResult))
+    });
+  },
+
 
   updateAgentAutomaticMessages: async function(agentID, agentStartMessage, agentEndMessage){
     return new Promise(async (updateAgentAutomaticMessagesPromiseResolve) => {

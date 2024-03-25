@@ -49,6 +49,14 @@ backendAgentHttpRequestServer.post('/agent/update/agentStatus', async (httpReque
   httpResponse.end(updateAgentStatusResult);
 });
 
+backendAgentHttpRequestServer.post('/agent/update/agentIsWorking', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const agentID = httpRequestQuery.agentID;
+  const agentIsWorking = httpRequestQuery.agentIsWorking;
+  const updateAgentWorkingStatusResult = await agentManagementFunctions.updateAgentWorkingStatus(agentID, agentIsWorking);
+  httpResponse.end(updateAgentWorkingStatusResult);
+});
+
 backendAgentHttpRequestServer.post('/agent/update/automaticMessages', async (httpRequest, httpResponse) => {
   const httpRequestQuery = httpRequest.body;
   const agentID = httpRequestQuery.agentID;
