@@ -628,7 +628,7 @@ module.exports = {
             AND 
           whatsappConversationIsActive = (?)
             AND
-          STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW() - INTERVAL 1 DAY, '%Y-%m-%d 6:00:00')
+          STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW() - INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
             AND
           STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
         `;
@@ -661,7 +661,9 @@ module.exports = {
         selectTodayConversationsByLocalityNameAndTypeSQL = selectTodayConversationsByLocalityNameAndTypeSQL + ' AND (whatsappConversationCloseComment=(?) OR whatsappConversationCloseComment=(?) OR whatsappConversationCloseComment=(?) OR whatsappConversationCloseComment=(?))';
         selectTodayConversationsByLocalityNameAndTypeValues = [whatsappConversationLocalityName, whatsappConversationIsActive, 'Venta perdida', 'Venta para otro día', 'Consulta sobre productos', 'No contestó'];
       } else {
-        selectTodayConversationsByLocalityNameAndTypeValues = [whatsappConversationLocalityName, whatsappConversationIsActive];
+        selectTodayConversationsByLocalityNameAndTypeSQL = selectTodayConversationsByLocalityNameAndTypeSQL + ' AND (whatsappConversationCloseComment=(?) OR whatsappConversationCloseComment=(?) OR whatsappConversationCloseComment=(?) OR whatsappConversationCloseComment=(?) OR whatsappConversationCloseComment=(?))';
+
+        selectTodayConversationsByLocalityNameAndTypeValues = [whatsappConversationLocalityName, whatsappConversationIsActive, 'Venta perdida', 'Venta para otro día', 'Consulta sobre productos', 'No contestó', 'Venta'];
       }
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectTodayConversationsByLocalityNameAndTypeSQL, selectTodayConversationsByLocalityNameAndTypeValues);
       selectTodayConversationsByLocalityNameAndTypePromiseResolve(JSON.stringify(databaseResult));

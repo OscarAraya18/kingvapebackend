@@ -878,8 +878,8 @@ module.exports = {
           const deleteWhatsappInvoiceValues = [whatsappInvoiceID];
           const deleteWhatsappInvoiceResult = await databaseManagementFunctions.executeDatabaseSQL(deleteWhatsappInvoiceSQL, deleteWhatsappInvoiceValues);
           if (deleteWhatsappInvoiceResult.success){
-            const updateWhatsappConversationSQL =  `UPDATE WhatsappConversations SET whatsappConversationIsActive=(?) WHERE whatsappConversationID=(?);`;
-            const updateWhatsappConversationValues = [true, whatsappConversationID];
+            const updateWhatsappConversationSQL =  `UPDATE WhatsappConversations SET whatsappConversationIsActive=(?), whatsappConversationCloseComment=(?), whatsappConversationProducts=(?), whatsappConversationLocalityName=(?), whatsappConversationAmount=(?) WHERE whatsappConversationID=(?);`;
+            const updateWhatsappConversationValues = [true, '', [], null, 0, whatsappConversationID];
             const updateWhatsappConversationResult = await databaseManagementFunctions.executeDatabaseSQL(updateWhatsappConversationSQL, updateWhatsappConversationValues);
             if (updateWhatsappConversationResult.success){
               returnWhatsappConversationPromiseResolve(JSON.stringify(updateWhatsappConversationResult));
