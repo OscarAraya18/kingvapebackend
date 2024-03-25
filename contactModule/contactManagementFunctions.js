@@ -256,32 +256,34 @@ module.exports = {
   },
 
 
-  /*
+  
   compress: async function (){
     return new Promise(async (compressPromiseResult) => {
-      const selectWhatsappImageMessageIDSSQL = 
+      const selectCurrentWhatsappImageMessageIDSSQL = 
       `
-      SELECT whatsappImageMessageID 
-      FROM WhatsappImageMessages
-      LEFT JOIN WhatsappGeneralMessages ON WhatsappImageMessages.whatsappImageMessageID = WhatsappGeneralMessages.whatsappGeneralMessageID
-      LEFT JOIN WhatsappConversations ON WhatsappGeneralMessages.whatsappGeneralMessageWhatsappConversationID = WhatsappConversations.whatsappConversationID
-      WHERE WhatsappImageMessages.whatsappImageMessageCompressed = (?)
-      ;
+      SELECT whatsappImageMessageID
+      FROM WhatsappImageMessagesCurrent
+      WHERE whatsappImageMessageCompressed=(?)
       `;
-      const selectWhatsappImageMessageIDValues = [false];
-      const selectWhatsappImageMessageIDSResult = await databaseManagementFunctions.executeDatabaseSQL(selectWhatsappImageMessageIDSSQL, selectWhatsappImageMessageIDValues);
-      if (selectWhatsappImageMessageIDSResult.success){
-        var whatsappImageMessageIDS = selectWhatsappImageMessageIDSResult.result.sort(() => Math.random() - 0.5);
-        for (var whatsappImageMessageIndex in whatsappImageMessageIDS){
-          const whatsappImageMessageID = whatsappImageMessageIDS[whatsappImageMessageIndex].whatsappImageMessageID;
+      const selectCurrentWhatsappImageMessageIDSValues = [false];
+      const selectCurrentWhatsappImageMessagesIDSResult = await databaseManagementFunctions.executeDatabaseSQL(selectCurrentWhatsappImageMessageIDSSQL, selectCurrentWhatsappImageMessageIDSValues);
+      if (selectCurrentWhatsappImageMessagesIDSResult.success){
+        var currentWhatsappImageMessageIDS = selectCurrentWhatsappImageMessagesIDSResult.result.sort(() => Math.random() - 0.5);
+        for (var whatsappImageMessageIndex in currentWhatsappImageMessageIDS){
+          const whatsappImageMessageID = currentWhatsappImageMessageIDS[whatsappImageMessageIndex].whatsappImageMessageID;
           
-          const selectWhatsappImageMessageFileSQL = `SELECT whatsappImageMessageFile FROM WhatsappImageMessages WHERE whatsappImageMessageID=(?);`
-          const selectWhatsappImageMessageFileValues = [whatsappImageMessageID];
-          const selectWhatsappImageMessageFileResult = await databaseManagementFunctions.executeDatabaseSQL(selectWhatsappImageMessageFileSQL, selectWhatsappImageMessageFileValues);
-          
-          if (selectWhatsappImageMessageFileResult.success){
-            const whatsappImageMessageFile = selectWhatsappImageMessageFileResult.result[0].whatsappImageMessageFile;
-          
+          const selectCurrentWhatsappImageMessageSQL = 
+          `
+          SELECT *
+          FROM WhatsappImageMessagesCurrent
+          WHERE whatsappImageMessageID=(?)
+          `;
+          const selectCurrentWhatsappImageMessageValues = [whatsappImageMessageID];
+          const selectCurrentWhatsappImageMessageResult = await databaseManagementFunctions.executeDatabaseSQL(selectCurrentWhatsappImageMessageSQL, selectCurrentWhatsappImageMessageValues);
+          if (selectCurrentWhatsappImageMessageResult.success){
+            const whatsappImageMessageFile = selectCurrentWhatsappImageMessageResult.result[0].whatsappImageMessageFile;
+            const whatsappImageMessageCaption = selectCurrentWhatsappImageMessageResult.result[0].whatsappImageMessageCaption;
+            const whatsappImageMessageType = selectCurrentWhatsappImageMessageResult.result[0].whatsappImageMessageType;
             sharp(whatsappImageMessageFile)
             .resize({ width: 200 })
             .webp({ quality: 80 })
@@ -289,26 +291,29 @@ module.exports = {
             .toBuffer()
             .then(async whatsappImageMessageFileCompressed => {
               if (Buffer.byteLength(whatsappImageMessageFileCompressed) < Buffer.byteLength(whatsappImageMessageFile)){
-                const updateWhatsappImageMessageSQL = `UPDATE WhatsappImageMessages SET whatsappImageMessageFile=(?), whatsappImageMessageCompressed=(?) WHERE whatsappImageMessageID=(?) AND whatsappImageMessageCompressed=(?);`;
-                const updateWhatsappImageMessageValues = [whatsappImageMessageFileCompressed, true, whatsappImageMessageID, false];
-                const updateWhatsappImageMessageResult = await databaseManagementFunctions.executeDatabaseSQL(updateWhatsappImageMessageSQL, updateWhatsappImageMessageValues);
-                if (updateWhatsappImageMessageResult.success){
-                  console.log('Imagen convertida');
+                const insertWhatsappImageMessageSQL = `INSERT INTO WhatsappImageMessages (whatsappImageMessageID, whatsappImageMessageFile, whatsappImageMessageCaption, whatsappImageMessageType) VALUES (?,?,?,?)`;
+                const insertWhatsappImageMessageValues = [whatsappImageMessageID, whatsappImageMessageFileCompressed, whatsappImageMessageCaption, whatsappImageMessageType];
+                const insertWhatsappImageMessageResult = await databaseManagementFunctions.executeDatabaseSQL(insertWhatsappImageMessageSQL, insertWhatsappImageMessageValues);
+                if (insertWhatsappImageMessageResult.success){
+                  const updateWhatsappImageMessageSQL = `UPDATE WhatsappImageMessagesCurrent SET whatsappImageMessageCompressed=(?) WHERE whatsappImageMessageID=(?);`;
+                  const updateWhatsappImageMessageValues = [true, whatsappImageMessageID];
+                  const updateWhatsappImageMessageResult = await databaseManagementFunctions.executeDatabaseSQL(updateWhatsappImageMessageSQL, updateWhatsappImageMessageValues);
+                  if (updateWhatsappImageMessageResult.success){
+                    console.log('COMPRESSED ' + whatsappImageMessageID);
+                  } else {
+                    console.log('ERROR ON UPDATE');
+                  }
                 }
               } else {
-                console.log('Mayor')
+                console.log('EVEN BIGGER')
               }
-              
-
             })
-
-          } else {
-            console.log('Error');
           }
+          
         }
-        console.log('termino');
+        console.log('END');
       }
     });
   },
-  */
+  
 }

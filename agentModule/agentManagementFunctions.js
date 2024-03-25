@@ -269,6 +269,53 @@ module.exports = {
       }
     });
   },
+
+  selectAgentComments: async function (whatsappConversationAssignedAgentID, whatsappConversationIsActive){
+    return new Promise(async (selectAgentCommentsPromiseResolve) => {
+      const selectAgentCommentsSQL = 
+      `
+        SELECT WhatsappConversationComments.*
+        FROM WhatsappConversationComments
+        LEFT JOIN 
+        WhatsappConversations ON WhatsappConversationComments.whatsappConversationCommentWhatsappConversationID = WhatsappConversations.whatsappConversationID
+        WHERE
+          WhatsappConversations.whatsappConversationAssignedAgentID=(?)
+            AND
+          WhatsappConversations.whatsappConversationIsActive=(?);
+      `
+      const selectAgentCommentsValues = [whatsappConversationAssignedAgentID, whatsappConversationIsActive];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAgentCommentsSQL, selectAgentCommentsValues);
+      if (databaseResult.success){
+        const composeWhatsappCommentsResult = await this.composeWhatsappComments(databaseResult.result);
+        selectAgentCommentsPromiseResolve(JSON.stringify({success: true, result: composeWhatsappCommentsResult}));
+      } else {
+        selectAgentCommentsPromiseResolve(JSON.stringify(databaseResult));
+      }
+    });
+  },
+
+  composeWhatsappComments: async function(comments){
+    return new Promise(async (composeWhatsappCommentsPromiseResolve) => {
+      const whatsappComments = {};
+      
+      for (var commentIndex in comments){
+        var comment = comments[commentIndex];
+        var whatsappConversationID = comment.whatsappConversationCommentWhatsappConversationID;
+        if (!(whatsappConversationID in whatsappComments)){
+          if (comment.whatsappConversationAudioCommentFile != null){
+            comment.whatsappConversationAudioCommentFile = comment.whatsappConversationAudioCommentFile.toString('base64');
+          }
+          whatsappComments[whatsappConversationID] = [comment];
+        } else {
+          if (comment.whatsappConversationAudioCommentFile != null){
+            comment.whatsappConversationAudioCommentFile = comment.whatsappConversationAudioCommentFile.toString('base64');
+          }
+          whatsappComments[whatsappConversationID].push(comment);
+        }
+      }
+      composeWhatsappCommentsPromiseResolve(whatsappComments);
+    });
+  },
   
   selectAgentConversations: async function (whatsappConversationAssignedAgentID, whatsappConversationIsActive){
     return new Promise(async (selectAgentConversationsPromiseResolve) => {
@@ -318,7 +365,8 @@ module.exports = {
           WhatsappDocumentMessages.whatsappDocumentMessageFile,
           WhatsappDocumentMessages.whatsappDocumentMessageMimeType,
           WhatsappDocumentMessages.whatsappDocumentMessageFileName,
-          WhatsappFavoriteImageMessages.whatsappFavoriteImageMessageDriveURL
+          WhatsappFavoriteImageMessages.whatsappFavoriteImageMessageDriveURL,
+          WhatsappFavoriteImageMessages.whatsappFavoriteImageMessageCaption
         FROM WhatsappConversations
           LEFT JOIN WhatsappGeneralMessages ON WhatsappConversations.whatsappConversationID = WhatsappGeneralMessages.whatsappGeneralMessageWhatsappConversationID
           LEFT JOIN WhatsappTextMessages ON WhatsappGeneralMessages.whatsappGeneralMessageID = WhatsappTextMessages.whatsappTextMessageID
@@ -339,7 +387,6 @@ module.exports = {
       `;
       const selectAgentActiveConversationsValues = [whatsappConversationAssignedAgentID, whatsappConversationIsActive];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAgentActiveConversationsSQL, selectAgentActiveConversationsValues);
-
       if (databaseResult.success){
         const composeWhatsappConversationsResult = await this.composeWhatsappConversations(databaseResult.result);
         selectAgentConversationsPromiseResolve(JSON.stringify({success: true, result: composeWhatsappConversationsResult}));

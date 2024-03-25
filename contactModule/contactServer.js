@@ -107,10 +107,12 @@ backendContactHttpRequestServer.post('/updateWhatsappFeedback', async (httpReque
   httpResponse.end(selectNotResolvedWhatsappFeedbackResult);
 });
 
-
 /*
+
 backendContactHttpRequestServer.get('/compress', async (httpRequest, httpResponse) => {
+  console.log('START');
   const compressResult = await contactsManagementFunctions.compress();
   httpResponse.end(compressResult);
 });
+
 */

@@ -129,6 +129,16 @@ backendAgentHttpRequestServer.post('/selectAgentConversations', async (httpReque
   httpResponse.end(selectAgentConversationsResult);
 });
 
+backendAgentHttpRequestServer.post('/selectAgentComments', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const whatsappConversationAssignedAgentID = httpRequestQuery.whatsappConversationAssignedAgentID;
+  const whatsappConversationIsActive = httpRequestQuery.whatsappConversationIsActive;
+  const selectAgentCommentsResult = await agentManagementFunctions.selectAgentComments(whatsappConversationAssignedAgentID, whatsappConversationIsActive);
+  httpResponse.end(selectAgentCommentsResult);
+});
+
+
+
 backendAgentHttpRequestServer.post('/selectAgentConversation', async (httpRequest, httpResponse) => {
   const httpRequestQuery = httpRequest.body;
   const whatsappConversationID = httpRequestQuery.whatsappConversationID;

@@ -658,17 +658,116 @@ module.exports = {
         selectTodayConversationsByLocalityNameAndTypeSQL = selectTodayConversationsByLocalityNameAndTypeSQL + ' AND whatsappConversationCloseComment=(?)';
         selectTodayConversationsByLocalityNameAndTypeValues = [whatsappConversationLocalityName, whatsappConversationIsActive, 'Venta'];
       } else if (whatsappConversationType == 2){
-        selectTodayConversationsByLocalityNameAndTypeSQL = selectTodayConversationsByLocalityNameAndTypeSQL + ' AND whatsappConversationCloseComment!=(?)';
-        selectTodayConversationsByLocalityNameAndTypeValues = [whatsappConversationLocalityName, whatsappConversationIsActive, 'Venta'];
+        selectTodayConversationsByLocalityNameAndTypeSQL = selectTodayConversationsByLocalityNameAndTypeSQL + ' AND (whatsappConversationCloseComment=(?) OR whatsappConversationCloseComment=(?) OR whatsappConversationCloseComment=(?) OR whatsappConversationCloseComment=(?))';
+        selectTodayConversationsByLocalityNameAndTypeValues = [whatsappConversationLocalityName, whatsappConversationIsActive, 'Venta perdida', 'Venta para otro día', 'Consulta sobre productos', 'No contestó'];
       } else {
         selectTodayConversationsByLocalityNameAndTypeValues = [whatsappConversationLocalityName, whatsappConversationIsActive];
       }
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectTodayConversationsByLocalityNameAndTypeSQL, selectTodayConversationsByLocalityNameAndTypeValues);
-      console.log(databaseResult);
       selectTodayConversationsByLocalityNameAndTypePromiseResolve(JSON.stringify(databaseResult));
     });
   },
 
 
+
+  insertWhatsappConversationTextComment: function(websocketConnection, whatsappConversationTextCommentWhatsappConversationID, whatsappConversationTextCommentBody){
+    return new Promise(async (insertWhatsappConversationTextCommentPromiseResolve) => {
+      const insertWhatsappConversationTextCommentSQL = `INSERT INTO WhatsappConversationComments (whatsappConversationCommentWhatsappConversationID, whatsappConversationTextCommentBody, whatsappConversationCommentSentDateTime) VALUES (?,?,?);`;
+      const insertWhatsappConversationTextCommentValues = [whatsappConversationTextCommentWhatsappConversationID, whatsappConversationTextCommentBody, new Date().toString()];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(insertWhatsappConversationTextCommentSQL, insertWhatsappConversationTextCommentValues);
+      if (databaseResult.success){
+        const websocketMessageContent = 
+        {
+          'whatsappConversationCommentID': databaseResult.result.insertId,
+          'whatsappConversationID': whatsappConversationTextCommentWhatsappConversationID,
+          'whatsappConversationTextCommentBody': whatsappConversationTextCommentBody,
+          'whatsappConversationCommentSentDateTime': new Date().toString()
+        };
+        websocketConnection.sendWebsocketMessage('/dashboardComment', websocketMessageContent);
+        insertWhatsappConversationTextCommentPromiseResolve(JSON.stringify(databaseResult));
+      } else {
+        insertWhatsappConversationTextCommentPromiseResolve(JSON.stringify(databaseResult));
+      }
+    });
+  },
+
+  insertWhatsappConversationAudioComment: function(websocketConnection, whatsappConversationAudioCommentWhatsappConversationID, whatsappConversationAudioCommentFile){
+    return new Promise(async (insertWhatsappConversationAudioCommentPromiseResolve) => {
+      const insertWhatsappConversationAudioCommentSQL = `INSERT INTO WhatsappConversationComments (whatsappConversationCommentWhatsappConversationID, whatsappConversationAudioCommentFile, whatsappConversationCommentSentDateTime) VALUES (?,?,?);`;
+      const insertWhatsappConversationAudioCommentValues = [whatsappConversationAudioCommentWhatsappConversationID, Buffer.from(whatsappConversationAudioCommentFile, 'base64'), new Date().toString()];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(insertWhatsappConversationAudioCommentSQL, insertWhatsappConversationAudioCommentValues);
+      if (databaseResult.success){
+        const websocketMessageContent = 
+        {
+          'whatsappConversationCommentID': databaseResult.result.insertId,
+          'whatsappConversationID': whatsappConversationAudioCommentWhatsappConversationID,
+          'whatsappConversationAudioCommentFile': whatsappConversationAudioCommentFile,
+          'whatsappConversationCommentSentDateTime': new Date().toString()
+        };
+        websocketConnection.sendWebsocketMessage('/dashboardComment', websocketMessageContent);
+        insertWhatsappConversationAudioCommentPromiseResolve(JSON.stringify(databaseResult));
+      } else {
+        insertWhatsappConversationAudioCommentPromiseResolve(JSON.stringify(databaseResult));
+      }
+    });
+  },
+
+  insertWhatsappConversationProductComment: function(websocketConnection, whatsappConversationProductCommentWhatsappConversationID, whatsappConversationProductCommentName, whatsappConversationProductCommentSKU, whatsappConversationProductCommentImageURL){
+    return new Promise(async (insertWhatsappConversationProductCommentPromiseResolve) => {
+      const insertWhatsappConversationProductCommentSQL = `INSERT INTO WhatsappConversationComments (whatsappConversationCommentWhatsappConversationID, whatsappConversationProductCommentName, whatsappConversationProductCommentSKU, whatsappConversationProductCommentImageURL, whatsappConversationCommentSentDateTime) VALUES (?,?,?,?,?);`;
+      const insertWhatsappConversationProductCommentValues = [whatsappConversationProductCommentWhatsappConversationID, whatsappConversationProductCommentName, whatsappConversationProductCommentSKU, whatsappConversationProductCommentImageURL, new Date().toString()];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(insertWhatsappConversationProductCommentSQL, insertWhatsappConversationProductCommentValues);
+      if (databaseResult.success){
+        const websocketMessageContent = 
+        {
+          'whatsappConversationCommentID': databaseResult.result.insertId,
+          'whatsappConversationID': whatsappConversationProductCommentWhatsappConversationID,
+          'whatsappConversationProductCommentName': whatsappConversationProductCommentName,
+          'whatsappConversationProductCommentSKU': whatsappConversationProductCommentSKU,
+          'whatsappConversationCommentSentDateTime': new Date().toString()
+        };
+        websocketConnection.sendWebsocketMessage('/dashboardComment', websocketMessageContent);
+        insertWhatsappConversationProductCommentPromiseResolve(JSON.stringify(databaseResult));
+      } else {
+        insertWhatsappConversationProductCommentPromiseResolve(JSON.stringify(databaseResult));
+      }
+    });
+  },
+
+  updateWhatsappConversationCommentSeenDateTime: function(whatsappConversationCommentID){
+    return new Promise(async (updateWhatsappConversationCommentSeenDateTimePromiseResolve) => {
+      const updateWhatsappConversationCommentSeenDateTimeSQL = `UPDATE WhatsappConversationComments SET whatsappConversationCommentSeenDateTime=(?) WHERE whatsappConversationCommentID=(?);`;
+      const updateWhatsappConversationCommentSeenDateTimeValues = [new Date().toString(), whatsappConversationCommentID];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateWhatsappConversationCommentSeenDateTimeSQL, updateWhatsappConversationCommentSeenDateTimeValues);
+      updateWhatsappConversationCommentSeenDateTimePromiseResolve(JSON.stringify(databaseResult));
+    });
+  },
+
+
+
+  selectWhatsappConversationComments: function(whatsappConversationID){
+    return new Promise(async (selectWhatsappConversationCommentsPromiseResolve) => {
+      const selectWhatsappConversationCommentsSQL = 
+      `
+      SELECT WhatsappConversationComments.*
+        FROM WhatsappConversationComments
+        LEFT JOIN 
+        WhatsappConversations ON WhatsappConversations.whatsappConversationID = WhatsappConversationComments.whatsappConversationCommentWhatsappConversationID
+        WHERE WhatsappConversations.whatsappConversationID=(?)
+      `;
+      const selectWhatsappConversationCommentsValues = [whatsappConversationID];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectWhatsappConversationCommentsSQL, selectWhatsappConversationCommentsValues);
+      if (databaseResult.success){
+        for (var index in databaseResult.result){
+          if (databaseResult.result[index].whatsappConversationAudioCommentFile){
+            databaseResult.result[index].whatsappConversationAudioCommentFile = databaseResult.result[index].whatsappConversationAudioCommentFile.toString('base64');
+          }
+        }
+        selectWhatsappConversationCommentsPromiseResolve(JSON.stringify(databaseResult));
+      } else {
+        selectWhatsappConversationCommentsPromiseResolve(JSON.stringify(databaseResult));
+      }
+    });
+  },
 
 }

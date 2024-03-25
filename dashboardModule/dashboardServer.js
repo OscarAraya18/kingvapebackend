@@ -80,3 +80,50 @@ backendDashboardHttpRequestServer.post('/selectTodayConversationsByLocalityNameA
   const selectTodayConversationsByLocalityNameAndCloseCommentResult = await dashboardManagementFunctions.selectTodayConversationsByLocalityNameAndType(whatsappConversationLocalityName, whatsappConversationType);
   httpResponse.end(selectTodayConversationsByLocalityNameAndCloseCommentResult);
 });
+
+
+
+
+
+backendDashboardHttpRequestServer.post('/insertWhatsappConversationTextComment', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const whatsappConversationTextCommentWhatsappConversationID = httpRequestQuery.whatsappConversationTextCommentWhatsappConversationID;
+  const whatsappConversationTextCommentBody = httpRequestQuery.whatsappConversationTextCommentBody;
+  const insertWhatsappConversationTextCommentResult = await dashboardManagementFunctions.insertWhatsappConversationTextComment(websocketConnection, whatsappConversationTextCommentWhatsappConversationID, whatsappConversationTextCommentBody);
+  httpResponse.end(insertWhatsappConversationTextCommentResult);
+});
+
+backendDashboardHttpRequestServer.post('/insertWhatsappConversationAudioComment', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const whatsappConversationAudioCommentWhatsappConversationID = httpRequestQuery.whatsappConversationAudioCommentWhatsappConversationID;
+  const whatsappConversationAudioCommentFile = httpRequestQuery.whatsappConversationAudioCommentFile.split(',')[1];
+  const insertWhatsappConversationAudioCommentResult = await dashboardManagementFunctions.insertWhatsappConversationAudioComment(websocketConnection, whatsappConversationAudioCommentWhatsappConversationID, whatsappConversationAudioCommentFile);
+  httpResponse.end(insertWhatsappConversationAudioCommentResult);
+});
+
+backendDashboardHttpRequestServer.post('/insertWhatsappConversationProductComment', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const whatsappConversationProductCommentWhatsappConversationID = httpRequestQuery.whatsappConversationProductCommentWhatsappConversationID;
+  const whatsappConversationProductCommentName = httpRequestQuery.whatsappConversationProductCommentName;
+  const whatsappConversationProductCommentSKU = httpRequestQuery.whatsappConversationProductCommentSKU;
+  const whatsappConversationProductCommentImageURL = httpRequestQuery.whatsappConversationProductCommentImageURL;
+  const insertWhatsappConversationProductCommentResult = await dashboardManagementFunctions.insertWhatsappConversationProductComment(websocketConnection, whatsappConversationProductCommentWhatsappConversationID, whatsappConversationProductCommentName, whatsappConversationProductCommentSKU, whatsappConversationProductCommentImageURL);
+  httpResponse.end(insertWhatsappConversationProductCommentResult);
+});
+
+backendDashboardHttpRequestServer.post('/updateWhatsappConversationCommentSeenDateTime', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const whatsappConversationCommentID = httpRequestQuery.whatsappConversationCommentID;
+  const updateWhatsappConversationCommentSeenDateTimeResult = await dashboardManagementFunctions.updateWhatsappConversationCommentSeenDateTime(whatsappConversationCommentID);
+  httpResponse.end(updateWhatsappConversationCommentSeenDateTimeResult);
+});
+
+
+
+
+backendDashboardHttpRequestServer.post('/selectWhatsappConversationComments', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const whatsappConversationID = httpRequestQuery.whatsappConversationID;
+  const selectWhatsappConversationCommentsResult = await dashboardManagementFunctions.selectWhatsappConversationComments(whatsappConversationID);
+  httpResponse.end(selectWhatsappConversationCommentsResult);
+});
