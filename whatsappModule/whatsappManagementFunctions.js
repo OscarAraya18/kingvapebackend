@@ -46,6 +46,8 @@ module.exports = {
           whatsappGeneralMessageRepliedMessageID = null;
         }
         httpDataToSendWhatsappTextMessage = JSON.stringify(httpDataToSendWhatsappTextMessage);
+                console.log(httpDataToSendWhatsappTextMessage);
+
         const sendWhatsappMessageResult = await this.sendWhatsappMessage(httpDataToSendWhatsappTextMessage);
         if (sendWhatsappMessageResult.success){
           const whatsappGeneralMessageID = sendWhatsappMessageResult.result;
