@@ -745,7 +745,7 @@ module.exports = {
     try { 
       if (httpRequest['body']['entry'][0]['changes'][0]['value']['messages'][0].type != 'reaction'){
         const whatsappConversationRecipientPhoneNumber = httpRequest['body']['entry'][0]['changes'][0]['value']['messages'][0]['from'];
-        if (whatsappConversationRecipientPhoneNumber != '50683315852'){        
+        if (whatsappConversationRecipientPhoneNumber != '50683315852' && whatsappConversationRecipientPhoneNumber != '50663768669'){        
           const whatsappGeneralMessageID = httpRequest['body']['entry'][0]['changes'][0]['value']['messages'][0]['id'];
           const whatsappMessageInformation = httpRequest['body']['entry'][0]['changes'][0]['value']['messages'][0];
           const receiveWhatsappStoreMessageResult = await this.receiveWhatsappStoreMessage(websocketConnection, whatsappConversationRecipientPhoneNumber, whatsappGeneralMessageID, whatsappMessageInformation);

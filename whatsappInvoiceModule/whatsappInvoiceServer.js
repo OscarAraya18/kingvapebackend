@@ -128,6 +128,7 @@ backendWhatsappInvoiceHttpRequestServer.post('/updateWhatsappInvoiceLocalityID',
   const whatsappInvoiceLocalityID = httpRequestQuery.whatsappInvoiceLocalityID;
   const whatsappInvoiceLocalityAgentID = null;
   const updateWhatsappInvoiceLocalityIDResult = await whatsappInvoiceManagementFunctions.updateWhatsappInvoiceLocalityID(whatsappInvoiceID, whatsappInvoiceLocalityID, whatsappInvoiceLocalityAgentID);
+  console.log(updateWhatsappInvoiceLocalityIDResult);
   httpResponse.end(updateWhatsappInvoiceLocalityIDResult);
 });
 

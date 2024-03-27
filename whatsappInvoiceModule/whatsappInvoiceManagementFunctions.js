@@ -224,9 +224,35 @@ module.exports = {
         `;
         const whatsappInvoiceLocalityAgentID = null;
         updateWhatsappInvoiceStateValues = [whatsappInvoiceState, whatsappInvoiceLocalityAgentID, whatsappInvoiceID];
+        const updateWhatsappConversationWhenWhatsappInvoiceCancelledResult = await this.updateWhatsappConversationWhenWhatsappInvoiceCancelled(whatsappInvoiceID);
+        if (updateWhatsappConversationWhenWhatsappInvoiceCancelledResult.success == false){
+          updateWhatsappInvoiceStatePromiseResolve(JSON.stringify(updateWhatsappConversationWhenWhatsappInvoiceCancelledResult));
+        }
       }
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateWhatsappInvoiceStateSQL, updateWhatsappInvoiceStateValues);
       updateWhatsappInvoiceStatePromiseResolve(JSON.stringify(databaseResult));      
+    });
+  },
+
+
+  updateWhatsappConversationWhenWhatsappInvoiceCancelled: async function(whatsappInvoiceID){
+    return new Promise(async (updateWhatsappConversationWhenWhatsappInvoiceCancelledPromiseResolve) => {
+      const selectWhatsappConversationID = `SELECT whatsappInvoiceWhatsappConversationID FROM WhatsappInvoices WHERE whatsappInvoiceID=(?);`;
+      const selectWhatsappConversationValues = [whatsappInvoiceID];
+      const selectWhatsappConversationResult = await databaseManagementFunctions.executeDatabaseSQL(selectWhatsappConversationID, selectWhatsappConversationValues);
+      if (selectWhatsappConversationResult.success){
+        if (selectWhatsappConversationResult.result[0]){
+          const whatsappConversationID = selectWhatsappConversationResult.result[0].whatsappInvoiceWhatsappConversationID;
+          const updateWhatsappConversationSQL =  `UPDATE WhatsappConversations SET whatsappConversationCloseComment=(?), whatsappConversationProducts=(?), whatsappConversationAmount=(?) WHERE whatsappConversationID=(?);`;
+          const updateWhatsappConversationValues = ['Venta perdida', '[]', 0, whatsappConversationID];
+          const updateWhatsappConversationResult = await databaseManagementFunctions.executeDatabaseSQL(updateWhatsappConversationSQL, updateWhatsappConversationValues);
+          updateWhatsappConversationWhenWhatsappInvoiceCancelledPromiseResolve(updateWhatsappConversationResult);
+        } else {
+          updateWhatsappConversationWhenWhatsappInvoiceCancelledPromiseResolve({success: false});
+        }
+      } else {
+        updateWhatsappConversationWhenWhatsappInvoiceCancelledPromiseResolve(selectWhatsappConversationResult);
+      }
     });
   },
 
@@ -289,17 +315,44 @@ module.exports = {
     });
   },
 
+
+  updateWhatsappConversationLocalityNameWhenWhatsappInvoiceLocalityIDUpdated: async function(whatsappInvoiceID, whatsappConversationLocalityName){
+    return new Promise(async (updateWhatsappConversationLocalityNameWhenWhatsappInvoiceLocalityIDUpdatedPromiseResolve) => {
+      const selectWhatsappConversationID = `SELECT whatsappInvoiceWhatsappConversationID FROM WhatsappInvoices WHERE whatsappInvoiceID=(?);`;
+      const selectWhatsappConversationValues = [whatsappInvoiceID];
+      const selectWhatsappConversationResult = await databaseManagementFunctions.executeDatabaseSQL(selectWhatsappConversationID, selectWhatsappConversationValues);
+      if (selectWhatsappConversationResult.success){
+        if (selectWhatsappConversationResult.result[0]){
+          const whatsappConversationID = selectWhatsappConversationResult.result[0].whatsappInvoiceWhatsappConversationID;
+          const updateWhatsappConversationSQL =  `UPDATE WhatsappConversations SET whatsappConversationLocalityName=(?) WHERE whatsappConversationID=(?);`;
+          const updateWhatsappConversationValues = [whatsappConversationLocalityName, whatsappConversationID];
+          const updateWhatsappConversationResult = await databaseManagementFunctions.executeDatabaseSQL(updateWhatsappConversationSQL, updateWhatsappConversationValues);
+          updateWhatsappConversationLocalityNameWhenWhatsappInvoiceLocalityIDUpdatedPromiseResolve(updateWhatsappConversationResult);
+        } else {
+          updateWhatsappConversationLocalityNameWhenWhatsappInvoiceLocalityIDUpdatedPromiseResolve({success: false});
+        }
+      } else {
+        updateWhatsappConversationLocalityNameWhenWhatsappInvoiceLocalityIDUpdatedPromiseResolve(selectWhatsappConversationResult);
+      }
+    });
+  },
+
+
   updateWhatsappInvoiceLocalityID: async function(whatsappInvoiceID, whatsappInvoiceLocalityID, whatsappInvoiceLocalityAgentID){
     return new Promise(async (updateWhatsappInvoiceLocalityIDPromiseResolve) => {
-      const updateWhatsappInvoiceLocalityIDSQL = 
-      `
-      UPDATE WhatsappInvoices 
-      SET whatsappInvoiceLocalityID=(?), whatsappInvoiceLocalityAgentID=(?)
-      WHERE whatsappInvoiceID=(?);
-      `;
-      const updateWhatsappInvoiceLocalityIDValues = [whatsappInvoiceLocalityID, whatsappInvoiceLocalityAgentID, whatsappInvoiceID];
-      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateWhatsappInvoiceLocalityIDSQL, updateWhatsappInvoiceLocalityIDValues);
-      updateWhatsappInvoiceLocalityIDPromiseResolve(JSON.stringify(databaseResult));      
+      const updateWhatsappConversationLocalityNameWhenWhatsappInvoiceLocalityIDUpdatedResult = await this.updateWhatsappConversationLocalityNameWhenWhatsappInvoiceLocalityIDUpdated(whatsappInvoiceID, whatsappInvoiceLocalityID);
+      if (updateWhatsappConversationLocalityNameWhenWhatsappInvoiceLocalityIDUpdatedResult.success){
+        const updateWhatsappInvoiceLocalityIDSQL = 
+        `
+        UPDATE WhatsappInvoices 
+        SET whatsappInvoiceLocalityID=(?), whatsappInvoiceLocalityAgentID=(?)
+        WHERE whatsappInvoiceID=(?);
+        `;
+        const updateWhatsappInvoiceLocalityIDValues = [whatsappInvoiceLocalityID, whatsappInvoiceLocalityAgentID, whatsappInvoiceID];
+        const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateWhatsappInvoiceLocalityIDSQL, updateWhatsappInvoiceLocalityIDValues);
+        updateWhatsappInvoiceLocalityIDPromiseResolve(JSON.stringify(databaseResult));
+      }
+      updateWhatsappInvoiceLocalityIDPromiseResolve(JSON.stringify(updateWhatsappConversationLocalityNameWhenWhatsappInvoiceLocalityIDUpdatedResult));
     });
   },
 
