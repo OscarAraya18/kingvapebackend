@@ -12,6 +12,8 @@ module.exports = {
         WhatsappConversations.whatsappConversationRecipientProfileName,
         Agents.agentName,
         Agents.agentID,
+        Agents.agentColor,
+        Agents.agentFontColor,
         WhatsappConversations.whatsappConversationStartDateTime,
         WhatsappGeneralMessages.whatsappGeneralMessageCreationDateTime,
         WhatsappGeneralMessages.whatsappGeneralMessageOwnerPhoneNumber
@@ -616,41 +618,49 @@ module.exports = {
         selectTodayConversationsByLocalityNameAndTypeSQL = 
         `
         SELECT 
-          whatsappConversationID,
-          whatsappConversationRecipientPhoneNumber,
-          whatsappConversationRecipientProfileName,
-          whatsappConversationAmount,
-          whatsappConversationStartDateTime,
-          whatsappConversationCloseComment
+          WhatsappConversations.whatsappConversationID,
+          WhatsappConversations.whatsappConversationRecipientPhoneNumber,
+          WhatsappConversations.whatsappConversationRecipientProfileName,
+          WhatsappConversations.whatsappConversationAmount,
+          WhatsappConversations.whatsappConversationStartDateTime,
+          WhatsappConversations.whatsappConversationCloseComment,
+          Agents.agentName,
+          Agents.agentColor,
+          Agents.agentFontColor
         FROM WhatsappConversations
+        LEFT JOIN Agents ON Agents.agentID = WhatsappConversations.whatsappConversationAssignedAgentID
         WHERE 
-          whatsappConversationLocalityName = (?) 
+          WhatsappConversations.whatsappConversationLocalityName = (?) 
             AND 
-          whatsappConversationIsActive = (?)
+          WhatsappConversations.whatsappConversationIsActive = (?)
             AND
-          STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW() - INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
+          STR_TO_DATE(WhatsappConversations.whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW() - INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
             AND
-          STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
+          STR_TO_DATE(WhatsappConversations.whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
         `;
       } else {
         selectTodayConversationsByLocalityNameAndTypeSQL = 
         `
         SELECT 
-          whatsappConversationID,
-          whatsappConversationRecipientPhoneNumber,
-          whatsappConversationRecipientProfileName,
-          whatsappConversationAmount,
-          whatsappConversationStartDateTime,
-          whatsappConversationCloseComment
+          WhatsappConversations.whatsappConversationID,
+          WhatsappConversations.whatsappConversationRecipientPhoneNumber,
+          WhatsappConversations.whatsappConversationRecipientProfileName,
+          WhatsappConversations.whatsappConversationAmount,
+          WhatsappConversations.whatsappConversationStartDateTime,
+          WhatsappConversations.whatsappConversationCloseComment,
+          Agents.agentName,
+          Agents.agentColor,
+          Agents.agentFontColor
         FROM WhatsappConversations
+        LEFT JOIN Agents ON Agents.agentID = WhatsappConversations.whatsappConversationAssignedAgentID
         WHERE 
-          whatsappConversationLocalityName = (?) 
+          WhatsappConversations.whatsappConversationLocalityName = (?) 
             AND 
-          whatsappConversationIsActive = (?)
+          WhatsappConversations.whatsappConversationIsActive = (?)
             AND
-          STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
+          STR_TO_DATE(WhatsappConversations.whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
             AND
-          STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
+          STR_TO_DATE(WhatsappConversations.whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
         `; 
       }
 
