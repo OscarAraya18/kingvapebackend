@@ -188,7 +188,7 @@ module.exports = {
 
   selectAllAgentStatus: async function (){
     return new Promise(async (selectAllAgentStatusPromiseResolve) => {
-      const selectAllAgentStatusSQL = `SELECT agentID, agentName, agentStatus FROM Agents WHERE agentIsActive=(?);`;
+      const selectAllAgentStatusSQL = `SELECT agentID, agentName, agentStatus, agentColor, agentFontColor FROM Agents WHERE agentIsActive=(?);`;
       const agentIsActive = true;
       const selectAllAgentStatusValues = [agentIsActive];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAllAgentStatusSQL, selectAllAgentStatusValues);
