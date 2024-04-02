@@ -174,6 +174,14 @@ module.exports = {
     }
   },
 
+  selectContactAmount: async function(){
+    return new Promise(async (selectContactAmountPromiseResolve) => {
+      const selectContactAmountSQL = `SELECT COUNT(contactPhoneNumber) AS contactAmount FROM Contacts;`;
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectContactAmountSQL);
+      selectContactAmountPromiseResolve(JSON.stringify(databaseResult));
+    });
+  },
+  
 
   insertFeedback: async function (whatsappConversationID, answerOne, answerTwo, answerThree, answerFour, answerFive, answerSix){
     return new Promise(async (insertFeedbackPromiseResult) => {

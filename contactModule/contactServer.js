@@ -78,6 +78,10 @@ backendContactHttpRequestServer.get('/loadContact', async (httpRequest, httpResp
   httpResponse.end(loadContactResult);
 });
 
+backendContactHttpRequestServer.get('/selectContactAmount', async (httpRequest, httpResponse) => {
+  const selectContactAmountResult = await contactsManagementFunctions.selectContactAmount();
+  httpResponse.end(selectContactAmountResult);
+});
 
 
 /*FEEDBACK*/
