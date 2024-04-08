@@ -67,9 +67,10 @@ backendWhatsappInvoiceHttpRequestServer.post('/updateWhatsappInvoiceState', asyn
   const whatsappInvoiceStateDateTime = new Date().toString();
   const whatsappInvoiceLocalityID = httpRequestQuery.whatsappInvoiceLocalityID;
   const whatsappInvoiceLocalityAgentID = httpRequestQuery.whatsappInvoiceLocalityAgentID;
+  const whatsappInvoiceLocalityAgentBillerID = httpRequestQuery.whatsappInvoiceLocalityAgentBillerID;
   const returnedFromShippingToLocality = httpRequestQuery.returnedFromShippingToLocality;
   const whatsappInvoiceNotShippedReason = httpRequestQuery.whatsappInvoiceNotShippedReason;
-  const updateWhatsappInvoiceStateResult = await whatsappInvoiceManagementFunctions.updateWhatsappInvoiceState(whatsappInvoiceID, whatsappInvoiceState, whatsappInvoiceStateDateTime, whatsappInvoiceLocalityID, whatsappInvoiceLocalityAgentID, returnedFromShippingToLocality, whatsappInvoiceNotShippedReason);
+  const updateWhatsappInvoiceStateResult = await whatsappInvoiceManagementFunctions.updateWhatsappInvoiceState(whatsappInvoiceID, whatsappInvoiceState, whatsappInvoiceStateDateTime, whatsappInvoiceLocalityID, whatsappInvoiceLocalityAgentID, whatsappInvoiceLocalityAgentBillerID, returnedFromShippingToLocality, whatsappInvoiceNotShippedReason);
   httpResponse.end(updateWhatsappInvoiceStateResult);
 });
 

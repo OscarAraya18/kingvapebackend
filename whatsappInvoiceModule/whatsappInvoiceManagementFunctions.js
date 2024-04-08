@@ -153,7 +153,7 @@ module.exports = {
     });
   },
 
-  updateWhatsappInvoiceState: async function(whatsappInvoiceID, whatsappInvoiceState, whatsappInvoiceStateDateTime, whatsappInvoiceLocalityID, whatsappInvoiceLocalityAgentID, returnedFromShippingToLocality, whatsappInvoiceNotShippedReason){
+  updateWhatsappInvoiceState: async function(whatsappInvoiceID, whatsappInvoiceState, whatsappInvoiceStateDateTime, whatsappInvoiceLocalityID, whatsappInvoiceLocalityAgentID, whatsappInvoiceLocalityAgentBillerID, returnedFromShippingToLocality, whatsappInvoiceNotShippedReason){
     return new Promise(async (updateWhatsappInvoiceStatePromiseResolve) => {
       var updateWhatsappInvoiceStateSQL = '';
       var updateWhatsappInvoiceStateValues = [];
@@ -194,10 +194,10 @@ module.exports = {
         updateWhatsappInvoiceStateSQL = 
         `
         UPDATE WhatsappInvoices 
-        SET whatsappInvoiceState=(?), whatsappInvoiceShippingDateTime=(?), whatsappInvoiceLocalityAgentID=(?)
+        SET whatsappInvoiceState=(?), whatsappInvoiceShippingDateTime=(?), whatsappInvoiceLocalityAgentID=(?), whatsappInvoiceLocalityAgentBillerID=(?)
         WHERE whatsappInvoiceID=(?);
         `;
-        updateWhatsappInvoiceStateValues = [whatsappInvoiceState, whatsappInvoiceStateDateTime, whatsappInvoiceLocalityAgentID, whatsappInvoiceID];
+        updateWhatsappInvoiceStateValues = [whatsappInvoiceState, whatsappInvoiceStateDateTime, whatsappInvoiceLocalityAgentID, whatsappInvoiceLocalityAgentBillerID, whatsappInvoiceID];
       } else if (whatsappInvoiceState == 'E') {
         updateWhatsappInvoiceStateSQL = 
         `
@@ -459,9 +459,8 @@ module.exports = {
 
   selectLocalityAgentNames: async function(localityAgentLocalityID){
     return new Promise(async (selectLocalityAgentNamesPromiseResolve) => {
-      const selectLocalityAgentNamesSQL = `SELECT * FROM LocalityAgents WHERE localityAgentLocalityID=(?) AND localityAgentType=(?);`;
-      const localityAgentType = 'Mensajero';
-      const selectLocalityAgentNamesValues = [localityAgentLocalityID, localityAgentType];
+      const selectLocalityAgentNamesSQL = `SELECT * FROM LocalityAgents WHERE localityAgentLocalityID=(?);`;
+      const selectLocalityAgentNamesValues = [localityAgentLocalityID];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectLocalityAgentNamesSQL, selectLocalityAgentNamesValues);
       selectLocalityAgentNamesPromiseResolve(JSON.stringify(databaseResult));      
     });
