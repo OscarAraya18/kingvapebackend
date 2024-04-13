@@ -871,7 +871,7 @@ module.exports = {
       if (countLocalityAgentLocationsResult.success){
         if (countLocalityAgentLocationsResult.result[0]){
           const localityAgentLocationsAmount = countLocalityAgentLocationsResult.result[0].localityAgentLocationsAmount;
-          if (localityAgentLocationsAmount >= 500){
+          if (localityAgentLocationsAmount >= 250){
             const deleteOldestLocalityAgentLocationSQL = 
             `
             DELETE FROM LocalityAgentLocations 
