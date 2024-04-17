@@ -267,59 +267,65 @@ module.exports = {
   
   compress: async function (){
     return new Promise(async (compressPromiseResult) => {
-      const selectCurrentWhatsappImageMessageIDSSQL = 
-      `
-      SELECT whatsappImageMessageID
-      FROM WhatsappImageMessagesCurrent
-      WHERE whatsappImageMessageCompressed=(?)
-      `;
-      const selectCurrentWhatsappImageMessageIDSValues = [false];
-      const selectCurrentWhatsappImageMessagesIDSResult = await databaseManagementFunctions.executeDatabaseSQL(selectCurrentWhatsappImageMessageIDSSQL, selectCurrentWhatsappImageMessageIDSValues);
-      if (selectCurrentWhatsappImageMessagesIDSResult.success){
-        var currentWhatsappImageMessageIDS = selectCurrentWhatsappImageMessagesIDSResult.result.sort(() => Math.random() - 0.5);
-        for (var whatsappImageMessageIndex in currentWhatsappImageMessageIDS){
-          const whatsappImageMessageID = currentWhatsappImageMessageIDS[whatsappImageMessageIndex].whatsappImageMessageID;
-          
-          const selectCurrentWhatsappImageMessageSQL = 
-          `
-          SELECT *
-          FROM WhatsappImageMessagesCurrent
-          WHERE whatsappImageMessageID=(?)
-          `;
-          const selectCurrentWhatsappImageMessageValues = [whatsappImageMessageID];
-          const selectCurrentWhatsappImageMessageResult = await databaseManagementFunctions.executeDatabaseSQL(selectCurrentWhatsappImageMessageSQL, selectCurrentWhatsappImageMessageValues);
-          if (selectCurrentWhatsappImageMessageResult.success){
-            const whatsappImageMessageFile = selectCurrentWhatsappImageMessageResult.result[0].whatsappImageMessageFile;
-            const whatsappImageMessageCaption = selectCurrentWhatsappImageMessageResult.result[0].whatsappImageMessageCaption;
-            const whatsappImageMessageType = selectCurrentWhatsappImageMessageResult.result[0].whatsappImageMessageType;
-            sharp(whatsappImageMessageFile)
-            .resize({ width: 200 })
-            .webp({ quality: 80 })
-            .toColorspace('srgb')
-            .toBuffer()
-            .then(async whatsappImageMessageFileCompressed => {
-              if (Buffer.byteLength(whatsappImageMessageFileCompressed) < Buffer.byteLength(whatsappImageMessageFile)){
-                const insertWhatsappImageMessageSQL = `INSERT INTO WhatsappImageMessages (whatsappImageMessageID, whatsappImageMessageFile, whatsappImageMessageCaption, whatsappImageMessageType) VALUES (?,?,?,?)`;
-                const insertWhatsappImageMessageValues = [whatsappImageMessageID, whatsappImageMessageFileCompressed, whatsappImageMessageCaption, whatsappImageMessageType];
-                const insertWhatsappImageMessageResult = await databaseManagementFunctions.executeDatabaseSQL(insertWhatsappImageMessageSQL, insertWhatsappImageMessageValues);
-                if (insertWhatsappImageMessageResult.success){
-                  const updateWhatsappImageMessageSQL = `UPDATE WhatsappImageMessagesCurrent SET whatsappImageMessageCompressed=(?) WHERE whatsappImageMessageID=(?);`;
-                  const updateWhatsappImageMessageValues = [true, whatsappImageMessageID];
-                  const updateWhatsappImageMessageResult = await databaseManagementFunctions.executeDatabaseSQL(updateWhatsappImageMessageSQL, updateWhatsappImageMessageValues);
-                  if (updateWhatsappImageMessageResult.success){
-                    console.log('COMPRESSED ' + whatsappImageMessageID);
-                  } else {
-                    console.log('ERROR ON UPDATE');
+      try {
+        const selectCurrentWhatsappImageMessageIDSSQL = 
+        `
+        SELECT whatsappImageMessageID
+        FROM WhatsappImageMessagesCurrent
+        WHERE whatsappImageMessageCompressed=(?)
+        `;
+        const selectCurrentWhatsappImageMessageIDSValues = [false];
+        const selectCurrentWhatsappImageMessagesIDSResult = await databaseManagementFunctions.executeDatabaseSQL(selectCurrentWhatsappImageMessageIDSSQL, selectCurrentWhatsappImageMessageIDSValues);
+        if (selectCurrentWhatsappImageMessagesIDSResult.success){
+          var currentWhatsappImageMessageIDS = selectCurrentWhatsappImageMessagesIDSResult.result.sort(() => Math.random() - 0.5);
+          for (var whatsappImageMessageIndex in currentWhatsappImageMessageIDS){
+            const whatsappImageMessageID = currentWhatsappImageMessageIDS[whatsappImageMessageIndex].whatsappImageMessageID;
+            
+            const selectCurrentWhatsappImageMessageSQL = 
+            `
+            SELECT *
+            FROM WhatsappImageMessagesCurrent
+            WHERE whatsappImageMessageID=(?)
+            `;
+
+            console.log(whatsappImageMessageID);
+            const selectCurrentWhatsappImageMessageValues = [whatsappImageMessageID];
+            const selectCurrentWhatsappImageMessageResult = await databaseManagementFunctions.executeDatabaseSQL(selectCurrentWhatsappImageMessageSQL, selectCurrentWhatsappImageMessageValues);
+            if (selectCurrentWhatsappImageMessageResult.success){
+              const whatsappImageMessageFile = selectCurrentWhatsappImageMessageResult.result[0].whatsappImageMessageFile;
+              const whatsappImageMessageCaption = selectCurrentWhatsappImageMessageResult.result[0].whatsappImageMessageCaption;
+              const whatsappImageMessageType = selectCurrentWhatsappImageMessageResult.result[0].whatsappImageMessageType;
+              sharp(whatsappImageMessageFile)
+              .resize({ width: 200 })
+              .webp({ quality: 80 })
+              .toColorspace('srgb')
+              .toBuffer()
+              .then(async whatsappImageMessageFileCompressed => {
+                if (Buffer.byteLength(whatsappImageMessageFileCompressed) < Buffer.byteLength(whatsappImageMessageFile)){
+                  const insertWhatsappImageMessageSQL = `INSERT INTO WhatsappImageMessages (whatsappImageMessageID, whatsappImageMessageFile, whatsappImageMessageCaption, whatsappImageMessageType) VALUES (?,?,?,?)`;
+                  const insertWhatsappImageMessageValues = [whatsappImageMessageID, whatsappImageMessageFileCompressed, whatsappImageMessageCaption, whatsappImageMessageType];
+                  const insertWhatsappImageMessageResult = await databaseManagementFunctions.executeDatabaseSQL(insertWhatsappImageMessageSQL, insertWhatsappImageMessageValues);
+                  if (insertWhatsappImageMessageResult.success){
+                    const updateWhatsappImageMessageSQL = `UPDATE WhatsappImageMessagesCurrent SET whatsappImageMessageCompressed=(?) WHERE whatsappImageMessageID=(?);`;
+                    const updateWhatsappImageMessageValues = [true, whatsappImageMessageID];
+                    const updateWhatsappImageMessageResult = await databaseManagementFunctions.executeDatabaseSQL(updateWhatsappImageMessageSQL, updateWhatsappImageMessageValues);
+                    if (updateWhatsappImageMessageResult.success){
+                      console.log('COMPRESSED ' + whatsappImageMessageID);
+                    } else {
+                      console.log('ERROR ON UPDATE');
+                    }
                   }
+                } else {
+                  console.log('EVEN BIGGER')
                 }
-              } else {
-                console.log('EVEN BIGGER')
-              }
-            })
+              })
+            }
+            
           }
-          
+          console.log('END');
         }
-        console.log('END');
+      } catch {
+        
       }
     });
   },
