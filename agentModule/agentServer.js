@@ -233,8 +233,11 @@ backendAgentHttpRequestServer.post('/selectFilteredBarChartInformation', async (
   httpResponse.end(selectFilteredBarChartInformationResult);
 });
 
-backendAgentHttpRequestServer.get('/selectTodayInformation', async (httpRequest, httpResponse) => {
-  const selectBarChartInformationResult = await agentManagementFunctions.selectTodayInformation();
+backendAgentHttpRequestServer.post('/selectTodayInformation', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const initialDate = httpRequestQuery.initialDate;
+  const endDate = httpRequestQuery.endDate;
+  const selectBarChartInformationResult = await agentManagementFunctions.selectTodayInformation(initialDate, endDate);
   httpResponse.end(selectBarChartInformationResult);
 });
 

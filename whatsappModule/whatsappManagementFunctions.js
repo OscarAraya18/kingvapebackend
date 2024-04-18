@@ -46,7 +46,6 @@ module.exports = {
           whatsappGeneralMessageRepliedMessageID = null;
         }
         httpDataToSendWhatsappTextMessage = JSON.stringify(httpDataToSendWhatsappTextMessage);
-                console.log(httpDataToSendWhatsappTextMessage);
 
         const sendWhatsappMessageResult = await this.sendWhatsappMessage(httpDataToSendWhatsappTextMessage);
         if (sendWhatsappMessageResult.success){
@@ -249,7 +248,6 @@ module.exports = {
           fs.unlink(temporaryImageName, async (errorWhenDeletingTemporaryImage) => {
             if (!errorWhenDeletingTemporaryImage) {
               const whatsappImageMessageFileID = httpResponse.data.id;
-              console.log(whatsappImageMessageFileID);
               uploadWhatsappImageFilePromiseResolve({success: true, result: {whatsappImageMessageFileID: whatsappImageMessageFileID, whatsappImageMessageFile: convertedImageBuffer}});
             } else {
               uploadWhatsappImageFilePromiseResolve({success: false, result: errorWhenDeletingTemporaryImage});
@@ -1376,7 +1374,6 @@ module.exports = {
 
   selectWhatsappGeneralMessage: async function(whatsappGeneralMessageID){
     return new Promise(async (selectWhatsappGeneralMessagePromiseResolve) => {
-      console.log(whatsappGeneralMessageID);
       const selectWhatsappGeneralMessageResult = await whatsappDatabaseFunctions.selectWhatsappGeneralMessage(whatsappGeneralMessageID);
       selectWhatsappGeneralMessagePromiseResolve(JSON.stringify(selectWhatsappGeneralMessageResult));
     });

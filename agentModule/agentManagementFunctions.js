@@ -937,97 +937,71 @@ module.exports = {
     });
   },
 
-  selectTodayInformation: async function(){
+  selectTodayInformation: async function(initialDate, endDate){
     return new Promise(async (selectTodayInformationPromiseResolve) => {
-      let currentDate = new Date();
-      currentDate.setHours(currentDate.getHours() - 6);
-      let hourPart = currentDate.toISOString().substring(11, 13);
-      let hour = parseInt(hourPart, 10);
-
-      var selectAgentRankingInformationSQL = '';
-      if (hour >= 18){
-        selectAgentRankingInformationSQL = 
-        `
-        SELECT whatsappConversationAmount, whatsappConversationAssignedAgentID, whatsappConversationRecipientPhoneNumber, whatsappConversationCloseComment, whatsappConversationLocalityName
-        FROM WhatsappConversations
-        WHERE 
-          STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW() - INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
-            AND
-          STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
-            AND
-          whatsappConversationIsActive = (?)
-        ;`;
-      } else {
-        selectAgentRankingInformationSQL = 
-        `
-        SELECT whatsappConversationAmount, whatsappConversationAssignedAgentID, whatsappConversationRecipientPhoneNumber, whatsappConversationCloseComment, whatsappConversationLocalityName
-        FROM WhatsappConversations
-        WHERE 
-          STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
-            AND
-          STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
-            AND
-          whatsappConversationIsActive = (?)
-        ;`;
-      }
-  
-      const whatsappConversationIsActive = false;
-      const selectAgentRankingInformationValues = [whatsappConversationIsActive];
-      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAgentRankingInformationSQL, selectAgentRankingInformationValues);
-      
-      var evaluatedNumbers = {};
-      var whatsappSelledConversations = 0;
-      var whatsappNotSelledConversations = 0;
-
-      var informationByLocality = {};
-
-      if (databaseResult.success){
-
-        const sortedDatabaseResult = databaseResult.result.sort((a, b) => b.whatsappConversationAmount - a.whatsappConversationAmount);
-        for (var sortedDatabaseResultIndex in sortedDatabaseResult){
-          const sortedDatabaseResultObject = sortedDatabaseResult[sortedDatabaseResultIndex];
-          const whatsappConversationAmount = sortedDatabaseResultObject.whatsappConversationAmount;
-          const whatsappConversationCloseComment = sortedDatabaseResultObject.whatsappConversationCloseComment;
-
-          const whatsappConversationLocalityName = sortedDatabaseResultObject.whatsappConversationLocalityName;
-
-          const whatsappConversationRecipientPhoneNumber = sortedDatabaseResultObject.whatsappConversationRecipientPhoneNumber;
-
-          if ((whatsappConversationAmount != 0) && (!(whatsappConversationRecipientPhoneNumber in evaluatedNumbers))){
-            whatsappSelledConversations = whatsappSelledConversations + 1;
-            if (whatsappConversationLocalityName in informationByLocality){
-              informationByLocality[whatsappConversationLocalityName]['whatsappSelledConversations'] = informationByLocality[whatsappConversationLocalityName]['whatsappSelledConversations'] + 1;
-              informationByLocality[whatsappConversationLocalityName]['amount'] = informationByLocality[whatsappConversationLocalityName]['amount'] + whatsappConversationAmount;
-            } else {
-              informationByLocality[whatsappConversationLocalityName] = 
-              {
-                'whatsappSelledConversations': 1,
-                'whatsappNotSelledConversations': 0,
-                'amount': whatsappConversationAmount
-              }
-            }
-          }
-          if ((whatsappConversationAmount == 0) && (!(whatsappConversationRecipientPhoneNumber in evaluatedNumbers))){
-
-            if (whatsappConversationCloseComment == 'Venta perdida' || whatsappConversationCloseComment == 'Venta para otro día' || whatsappConversationCloseComment == 'Consulta sobre productos' || whatsappConversationCloseComment == 'No contestó'){
-              
+      if ((initialDate == null) && (endDate == null)){
+        var selectAgentRankingInformationSQL = '';
+        var selectAgentRankingInformationValues = [];
+        let currentDate = new Date();
+        currentDate.setHours(currentDate.getHours() - 6);
+        let hourPart = currentDate.toISOString().substring(11, 13);
+        let hour = parseInt(hourPart, 10);
+        if (hour >= 18){
+          selectAgentRankingInformationSQL = 
+          `
+          SELECT whatsappConversationAmount, whatsappConversationAssignedAgentID, whatsappConversationRecipientPhoneNumber, whatsappConversationCloseComment, whatsappConversationLocalityName
+          FROM WhatsappConversations
+          WHERE 
+            STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW() - INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
+              AND
+            STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 6 HOUR, '%Y-%m-%d 06:00:00')
+              AND
+            whatsappConversationIsActive = (?)
+          ;`;
+        } else {
+          selectAgentRankingInformationSQL = 
+          `
+          SELECT whatsappConversationAmount, whatsappConversationAssignedAgentID, whatsappConversationRecipientPhoneNumber, whatsappConversationCloseComment, whatsappConversationLocalityName
+          FROM WhatsappConversations
+          WHERE 
+            STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
+              AND
+            STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= DATE_FORMAT(NOW() + INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
+              AND
+            whatsappConversationIsActive = (?)
+          ;`;
+        }
+        const whatsappConversationIsActive = false;
+        selectAgentRankingInformationValues = [whatsappConversationIsActive];
+        const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAgentRankingInformationSQL, selectAgentRankingInformationValues);
+        var evaluatedNumbers = {};
+        var whatsappSelledConversations = 0;
+        var whatsappNotSelledConversations = 0;
+        var informationByLocality = {};
+        if (databaseResult.success){
+          const sortedDatabaseResult = databaseResult.result.sort((a, b) => b.whatsappConversationAmount - a.whatsappConversationAmount);
+          for (var sortedDatabaseResultIndex in sortedDatabaseResult){
+            const sortedDatabaseResultObject = sortedDatabaseResult[sortedDatabaseResultIndex];
+            const whatsappConversationAmount = sortedDatabaseResultObject.whatsappConversationAmount;
+            const whatsappConversationCloseComment = sortedDatabaseResultObject.whatsappConversationCloseComment;
+            const whatsappConversationLocalityName = sortedDatabaseResultObject.whatsappConversationLocalityName;
+            const whatsappConversationRecipientPhoneNumber = sortedDatabaseResultObject.whatsappConversationRecipientPhoneNumber;
+            if ((whatsappConversationAmount != 0) && (!(whatsappConversationRecipientPhoneNumber in evaluatedNumbers))){
+              whatsappSelledConversations = whatsappSelledConversations + 1;
               if (whatsappConversationLocalityName in informationByLocality){
-                informationByLocality[whatsappConversationLocalityName]['whatsappNotSelledConversations'] = informationByLocality[whatsappConversationLocalityName]['whatsappNotSelledConversations'] + 1;
+                informationByLocality[whatsappConversationLocalityName]['whatsappSelledConversations'] = informationByLocality[whatsappConversationLocalityName]['whatsappSelledConversations'] + 1;
+                informationByLocality[whatsappConversationLocalityName]['amount'] = informationByLocality[whatsappConversationLocalityName]['amount'] + whatsappConversationAmount;
               } else {
                 informationByLocality[whatsappConversationLocalityName] = 
                 {
-                  'whatsappSelledConversations': 0,
-                  'whatsappNotSelledConversations': 1,
-                  'amount': 0
+                  'whatsappSelledConversations': 1,
+                  'whatsappNotSelledConversations': 0,
+                  'amount': whatsappConversationAmount
                 }
               }
             }
-          }
-
-          if (whatsappConversationRecipientPhoneNumber in evaluatedNumbers){
-            if (whatsappConversationCloseComment != 'Vuelve a escribir'){
+            if ((whatsappConversationAmount == 0) && (!(whatsappConversationRecipientPhoneNumber in evaluatedNumbers))){
               if (whatsappConversationCloseComment == 'Venta perdida' || whatsappConversationCloseComment == 'Venta para otro día' || whatsappConversationCloseComment == 'Consulta sobre productos' || whatsappConversationCloseComment == 'No contestó'){
-                whatsappNotSelledConversations = whatsappNotSelledConversations + 1;
                 if (whatsappConversationLocalityName in informationByLocality){
                   informationByLocality[whatsappConversationLocalityName]['whatsappNotSelledConversations'] = informationByLocality[whatsappConversationLocalityName]['whatsappNotSelledConversations'] + 1;
                 } else {
@@ -1038,47 +1012,151 @@ module.exports = {
                     'amount': 0
                   }
                 }
+              }
+            }
+            if (whatsappConversationRecipientPhoneNumber in evaluatedNumbers){
+              if (whatsappConversationCloseComment != 'Vuelve a escribir'){
+                if (whatsappConversationCloseComment == 'Venta perdida' || whatsappConversationCloseComment == 'Venta para otro día' || whatsappConversationCloseComment == 'Consulta sobre productos' || whatsappConversationCloseComment == 'No contestó'){
+                  whatsappNotSelledConversations = whatsappNotSelledConversations + 1;
+                  if (whatsappConversationLocalityName in informationByLocality){
+                    informationByLocality[whatsappConversationLocalityName]['whatsappNotSelledConversations'] = informationByLocality[whatsappConversationLocalityName]['whatsappNotSelledConversations'] + 1;
+                  } else {
+                    informationByLocality[whatsappConversationLocalityName] = 
+                    {
+                      'whatsappSelledConversations': 0,
+                      'whatsappNotSelledConversations': 1,
+                      'amount': 0
+                    }
+                  }
+                } else {
+                  whatsappSelledConversations = whatsappSelledConversations + 1;
+                  if (whatsappConversationLocalityName in informationByLocality){
+                    informationByLocality[whatsappConversationLocalityName]['whatsappSelledConversations'] = informationByLocality[whatsappConversationLocalityName]['whatsappSelledConversations'] + 1;
+                    informationByLocality[whatsappConversationLocalityName]['amount'] = informationByLocality[whatsappConversationLocalityName]['amount'] + whatsappConversationAmount;
+                  } else {
+                    informationByLocality[whatsappConversationLocalityName] = 
+                    {
+                      'whatsappSelledConversations': 1,
+                      'whatsappNotSelledConversations': 0,
+                      'amount': whatsappConversationAmount
+                    }
+                  }
+                }
+              }
+            }
+            evaluatedNumbers[whatsappConversationRecipientPhoneNumber] = 'true';
+          }
+          const result = 
+          {
+            success: true, 
+            result: 
+            {
+              'total': 
+              {
+              'whatsappTotalConversations': whatsappSelledConversations + whatsappNotSelledConversations,
+              'whatsappSelledConversations': whatsappSelledConversations,
+              'whatsappNotSelledConversations': whatsappNotSelledConversations
+              },
+              'localities': informationByLocality
+            }
+          }
+          selectTodayInformationPromiseResolve(JSON.stringify(result))
+        } else {
+          selectTodayInformationPromiseResolve(JSON.stringify({success: false}))
+        }
+      } else {
+        
+        const conditions = [];
+            
+        if (initialDate != null){
+          initialDate = new Date(initialDate);
+          initialDate.setHours(initialDate.getHours() + 6);
+          initialDate = initialDate.toString();
+          initialDate = initialDate.replace('GMT-0600', 'GMT+0000');
+          conditions.push(`STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %H:%i:%s GMT+0000') >= STR_TO_DATE('${initialDate}', '%a %b %d %Y %H:%i:%s GMT+0000')`);
+        }
+        if (endDate != null){
+          endDate = new Date(endDate);
+          endDate.setHours(endDate.getHours() + 6);
+          endDate = endDate.toString();
+          endDate = endDate.replace('GMT-0600', 'GMT+0000');
+          conditions.push(`STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %H:%i:%s GMT+0000') <= STR_TO_DATE('${endDate}', '%a %b %d %Y %H:%i:%s GMT+0000')`);
+        }
+        const whereClause = conditions.length > 0 ? `AND ${conditions.join(' AND ')}` : '';
+        var selectAgentRankingInformationSQL = 
+        `
+        SELECT whatsappConversationAmount, whatsappConversationAssignedAgentID, whatsappConversationRecipientPhoneNumber, whatsappConversationCloseComment, whatsappConversationLocalityName
+        FROM WhatsappConversations
+        WHERE whatsappConversationIsActive = (?)
+        `;
+        selectAgentRankingInformationSQL = selectAgentRankingInformationSQL + whereClause;
+        const whatsappConversationIsActive = false;
+        selectAgentRankingInformationValues = [whatsappConversationIsActive];
+        const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAgentRankingInformationSQL, selectAgentRankingInformationValues);
+        var evaluatedNumbers = {};
+        var whatsappSelledConversations = 0;
+        var whatsappNotSelledConversations = 0;
+        var informationByLocality = {};
+        if (databaseResult.success){
+          const sortedDatabaseResult = databaseResult.result.sort((a, b) => b.whatsappConversationAmount - a.whatsappConversationAmount);
+          var whatsappTotalSells = 0;
+          for (var sortedDatabaseResultIndex in sortedDatabaseResult){
+            const sortedDatabaseResultObject = sortedDatabaseResult[sortedDatabaseResultIndex];
+            const whatsappConversationAmount = sortedDatabaseResultObject.whatsappConversationAmount;
+            const whatsappConversationCloseComment = sortedDatabaseResultObject.whatsappConversationCloseComment;
+            const whatsappConversationLocalityName = sortedDatabaseResultObject.whatsappConversationLocalityName;
+            if ((whatsappConversationAmount != 0)){
+              whatsappTotalSells = whatsappTotalSells + whatsappConversationAmount;
+              whatsappSelledConversations = whatsappSelledConversations + 1;
+              if (whatsappConversationLocalityName in informationByLocality){
+                informationByLocality[whatsappConversationLocalityName]['whatsappSelledConversations'] = informationByLocality[whatsappConversationLocalityName]['whatsappSelledConversations'] + 1;
+                informationByLocality[whatsappConversationLocalityName]['amount'] = informationByLocality[whatsappConversationLocalityName]['amount'] + whatsappConversationAmount;
               } else {
-                whatsappSelledConversations = whatsappSelledConversations + 1;
+                informationByLocality[whatsappConversationLocalityName] = 
+                {
+                  'whatsappSelledConversations': 1,
+                  'whatsappNotSelledConversations': 0,
+                  'amount': whatsappConversationAmount
+                }
+              }
+            } else {
+              if (whatsappConversationCloseComment == 'Venta perdida' || whatsappConversationCloseComment == 'Venta para otro día' || whatsappConversationCloseComment == 'Consulta sobre productos' || whatsappConversationCloseComment == 'No contestó'){
+                if (whatsappConversationLocalityName != 'King Vape Center'){
+                  whatsappNotSelledConversations = whatsappNotSelledConversations + 1;
+                }
                 if (whatsappConversationLocalityName in informationByLocality){
-                  informationByLocality[whatsappConversationLocalityName]['whatsappSelledConversations'] = informationByLocality[whatsappConversationLocalityName]['whatsappSelledConversations'] + 1;
-                  informationByLocality[whatsappConversationLocalityName]['amount'] = informationByLocality[whatsappConversationLocalityName]['amount'] + whatsappConversationAmount;
+                  informationByLocality[whatsappConversationLocalityName]['whatsappNotSelledConversations'] = informationByLocality[whatsappConversationLocalityName]['whatsappNotSelledConversations'] + 1;
                 } else {
                   informationByLocality[whatsappConversationLocalityName] = 
                   {
-                    'whatsappSelledConversations': 1,
-                    'whatsappNotSelledConversations': 0,
-                    'amount': whatsappConversationAmount
+                    'whatsappSelledConversations': 0,
+                    'whatsappNotSelledConversations': 1,
+                    'amount': 0
                   }
                 }
               }
             }
           }
-
-          
-          evaluatedNumbers[whatsappConversationRecipientPhoneNumber] = 'true';
-        }
-
-        const result = 
-        {
-          success: true, 
-          result: 
+          const result = 
           {
-            'total': 
+            success: true, 
+            result: 
             {
-            'whatsappTotalConversations': whatsappSelledConversations + whatsappNotSelledConversations,
-            'whatsappSelledConversations': whatsappSelledConversations,
-            'whatsappNotSelledConversations': whatsappNotSelledConversations
-            },
-            'localities': informationByLocality
+              'total': 
+              {
+              'whatsappTotalConversations': whatsappSelledConversations + whatsappNotSelledConversations,
+              'whatsappSelledConversations': whatsappSelledConversations,
+              'whatsappNotSelledConversations': whatsappNotSelledConversations,
+              'whatsappTotalSells': whatsappTotalSells
+              },
+              'localities': informationByLocality
+            }
           }
+          selectTodayInformationPromiseResolve(JSON.stringify(result))
+        } else {
+          selectTodayInformationPromiseResolve(JSON.stringify({success: false}))
         }
-
-        selectTodayInformationPromiseResolve(JSON.stringify(result))
-      } else {
-        selectTodayInformationPromiseResolve(JSON.stringify({success: false}))
       }
-      ;
     });
   },
 
