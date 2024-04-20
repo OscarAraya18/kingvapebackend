@@ -25,6 +25,7 @@ module.exports = {
         sendWhatsappMessagePromiseResolve({success: true, result: whatsappMessageID});
       })
       .catch((error) => {
+        console.log(error);
         sendWhatsappMessagePromiseResolve({success: false, result: error});
       });  
     });

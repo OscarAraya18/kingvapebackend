@@ -704,7 +704,7 @@ module.exports = {
 
       if (endDate != ''){
         endDate = new Date(endDate);
-        endDate.setHours(endDate.getHours() + 6);
+        endDate.setHours(endDate.getHours() + 30);
         endDate = endDate.toString();
         endDate = endDate.replace('GMT-0600', 'GMT+0000');
         conditions.push(`STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %H:%i:%s GMT+0000') <= STR_TO_DATE('${endDate}', '%a %b %d %Y %H:%i:%s GMT+0000')`);
@@ -859,7 +859,7 @@ module.exports = {
 
       if (endDate != ''){
         endDate = new Date(endDate);
-        endDate.setHours(endDate.getHours() + 6);
+        endDate.setHours(endDate.getHours() + 30);
         endDate = endDate.toString();
         endDate = endDate.replace('GMT-0600', 'GMT+0000');
         conditions.push(`STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %H:%i:%s GMT+0000') <= STR_TO_DATE('${endDate}', '%a %b %d %Y %H:%i:%s GMT+0000')`);
@@ -1073,7 +1073,6 @@ module.exports = {
           initialDate.setHours(initialDate.getHours() + 6);
           initialDate = initialDate.toString();
           initialDate = initialDate.replace('GMT-0600', 'GMT+0000');
-          console.log(initialDate);
           conditions.push(`STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %H:%i:%s GMT+0000') >= STR_TO_DATE('${initialDate}', '%a %b %d %Y %H:%i:%s GMT+0000')`);
         }
         if (endDate != null){
@@ -1081,7 +1080,6 @@ module.exports = {
           endDate.setHours(endDate.getHours() + 30);
           endDate = endDate.toString();
           endDate = endDate.replace('GMT-0600', 'GMT+0000');
-          console.log(endDate);
           conditions.push(`STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %H:%i:%s GMT+0000') <= STR_TO_DATE('${endDate}', '%a %b %d %Y %H:%i:%s GMT+0000')`);
         }
         const whereClause = conditions.length > 0 ? `AND ${conditions.join(' AND ')}` : '';
@@ -1176,7 +1174,7 @@ module.exports = {
 
       if (endDate != ''){
         endDate = new Date(endDate);
-        endDate.setHours(endDate.getHours() + 6);
+        endDate.setHours(endDate.getHours() + 30);
         endDate = endDate.toString();
         endDate = endDate.replace('GMT-0600', 'GMT+0000');
         conditions.push(`STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %H:%i:%s GMT+0000') <= STR_TO_DATE('${endDate}', '%a %b %d %Y %H:%i:%s GMT+0000')`);

@@ -174,7 +174,7 @@ module.exports = {
 
       if (endDate != ''){
         endDate = new Date(endDate);
-        endDate.setHours(endDate.getHours() + 6);
+        endDate.setHours(endDate.getHours() + 30);
         endDate = endDate.toString();
         endDate = endDate.replace('GMT-0600', 'GMT+0000');
         conditions.push(`STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %H:%i:%s GMT+0000') <= STR_TO_DATE('${endDate}', '%a %b %d %Y %H:%i:%s GMT+0000')`);
@@ -182,17 +182,19 @@ module.exports = {
 
       if (recipientPhoneNumber != '') conditions.push(`whatsappConversationRecipientPhoneNumber = '${recipientPhoneNumber}'`);
       
-      if (agentName != null) conditions.push(`agentName = '${agentName}'`);
+      if (agentName != null) conditions.push(`WhatsappConversations.whatsappConversationAssignedAgentID = '${agentName}'`);
 
-      if (store != '') conditions.push(`whatsappConversationRecipientProfileName LIKE '%${store}%'`);
-      
+      if (store != '') conditions.push(`WhatsappConversations.whatsappConversationLocalityName = '${store}'`);
+
+      console.log(store);
+
       if (conversation == 'Vendido'){
         conditions.push(`whatsappConversationAmount != 0`);
       } else if (conversation == 'No vendido') {
         conditions.push(`whatsappConversationAmount = 0`);
       }
 
-      const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+      const whereClause = conditions.length > 0 ? `AND ${conditions.join(' AND ')}` : '';
       
       var selectFilteredConversationsSQL = 
       `
@@ -201,16 +203,25 @@ module.exports = {
         WhatsappConversations.whatsappConversationRecipientPhoneNumber,
         WhatsappConversations.whatsappConversationRecipientProfileName,
         WhatsappConversations.whatsappConversationAmount,
+        WhatsappInvoices.whatsappInvoiceClientLocation as location,
+        WhatsappInvoices.whatsappInvoiceClientName as clientName,
         Agents.agentName,
-        WhatsappConversations.whatsappConversationStartDateTime,
+        Agents.agentColor,
+        Agents.agentFontColor,
+        WhatsappConversations.whatsappConversationEndDateTime,
         WhatsappConversations.whatsappConversationCloseComment,
-        WhatsappConversations.whatsappConversationIsActive
+        WhatsappConversations.whatsappConversationIsActive,
+        Localities.localityColor,
+        Localities.localityName
       FROM WhatsappConversations
       LEFT JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
+      LEFT JOIN Localities ON WhatsappConversations.whatsappConversationLocalityName = Localities.localityID
+      LEFT JOIN WhatsappInvoices ON WhatsappConversations.whatsappConversationID = WhatsappInvoices.whatsappInvoiceWhatsappConversationID
+      WHERE WhatsappConversations.whatsappConversationIsActive=(?) 
       `;
+      const values = [false];
       var selectFilteredConversationsSQL = selectFilteredConversationsSQL + whereClause;      
-      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectFilteredConversationsSQL);
-
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectFilteredConversationsSQL, values);
       selectFilteredConversationsPromiseResolve(JSON.stringify(databaseResult));
     });
   },
@@ -301,6 +312,7 @@ module.exports = {
         WHERE whatsappConversationAssignedAgentID = (?) AND whatsappConversationIsActive = (?)
         `;
         selectRankingFilteredConversationsSQL = selectRankingFilteredConversationsSQL + whereClause;
+        console.log(selectRankingFilteredConversationsSQL);
       }
 
       const selectRankingFilteredConversationsValues = [agentID, 0];
