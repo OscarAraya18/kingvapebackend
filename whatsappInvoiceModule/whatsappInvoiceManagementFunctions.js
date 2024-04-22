@@ -6,9 +6,9 @@ const axios = require('axios');
 
 module.exports = {
 
-  insertWhatsappInvoice: async function(whatsappInvoiceWhatsappConversationID, whatsappInvoiceLocalityID, whatsappInvoiceAgentID, whatsappInvoiceState, whatsappInvoiceCentralDateTime, whatsappInvoiceClientName, whatsappInvoiceClientPhoneNumber, whatsappInvoiceClientLocation, whatsappInvoiceClientLocationURL, whatsappInvoiceAmount, whatsappInvoiceShippingMethod, whatsappInvoicePaymentMethod, whatsappInvoicePaymentState, whatsappInvoiceLocationNote, whatsappInvoiceShippingNote, whatsappInvoiceProducts){
+  insertWhatsappInvoice: async function(whatsappInvoiceWhatsappConversationID, whatsappInvoiceLocalityID, whatsappInvoiceAgentID, whatsappInvoiceState, whatsappInvoiceCentralDateTime, whatsappInvoiceClientName, whatsappInvoiceClientPhoneNumber, whatsappInvoiceClientLocation, whatsappInvoiceClientLocationURL, whatsappInvoiceAmount, whatsappInvoiceShippingMethod, whatsappInvoicePaymentMethod, whatsappInvoicePaymentState, whatsappInvoiceLocationNote, whatsappInvoiceShippingNote, whatsappInvoiceProducts, whatsappInvoiceIsForToday){
     return new Promise(async (insertWhatsappInvoicePromiseResolve) => {
-      const insertWhatsappInvoiceSQL = `INSERT INTO WhatsappInvoices (whatsappInvoiceWhatsappConversationID, whatsappInvoiceLocalityID, whatsappInvoiceAgentID, whatsappInvoiceState, whatsappInvoiceCentralDateTime, whatsappInvoiceClientName, whatsappInvoiceClientPhoneNumber, whatsappInvoiceClientLocation, whatsappInvoiceClientLocationURL, whatsappInvoiceAmount, whatsappInvoiceShippingMethod, whatsappInvoicePaymentMethod, whatsappInvoicePaymentState, whatsappInvoiceLocationNote, whatsappInvoiceShippingNote, whatsappInvoiceProducts) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);`;
+      const insertWhatsappInvoiceSQL = `INSERT INTO WhatsappInvoices (whatsappInvoiceWhatsappConversationID, whatsappInvoiceLocalityID, whatsappInvoiceAgentID, whatsappInvoiceState, whatsappInvoiceCentralDateTime, whatsappInvoiceClientName, whatsappInvoiceClientPhoneNumber, whatsappInvoiceClientLocation, whatsappInvoiceClientLocationURL, whatsappInvoiceAmount, whatsappInvoiceShippingMethod, whatsappInvoicePaymentMethod, whatsappInvoicePaymentState, whatsappInvoiceLocationNote, whatsappInvoiceShippingNote, whatsappInvoiceProducts, whatsappInvoiceIsForToday) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);`;
       const insertWhatsappInvoiceValues = [whatsappInvoiceWhatsappConversationID, whatsappInvoiceLocalityID, whatsappInvoiceAgentID, whatsappInvoiceState, whatsappInvoiceCentralDateTime, whatsappInvoiceClientName, whatsappInvoiceClientPhoneNumber, JSON.stringify(whatsappInvoiceClientLocation), whatsappInvoiceClientLocationURL, whatsappInvoiceAmount, whatsappInvoiceShippingMethod, whatsappInvoicePaymentMethod, whatsappInvoicePaymentState, whatsappInvoiceLocationNote, whatsappInvoiceShippingNote, JSON.stringify(whatsappInvoiceProducts)];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(insertWhatsappInvoiceSQL, insertWhatsappInvoiceValues);
       insertWhatsappInvoicePromiseResolve(JSON.stringify(databaseResult));      
@@ -45,6 +45,7 @@ module.exports = {
           WhatsappInvoices.whatsappInvoiceNotShippedReason,
           WhatsappInvoices.whatsappInvoiceHasBeenUpdated,
           WhatsappInvoices.whatsappInvoiceUpdatedField,
+          WhatsappInvoices.whatsappInvoiceIsForToday,
           Agents.agentName,
           LocalityAgents.localityAgentName,
           Localities.localityName
@@ -91,6 +92,7 @@ module.exports = {
           WhatsappInvoices.whatsappInvoiceNotShippedReason,
           WhatsappInvoices.whatsappInvoiceHasBeenUpdated,
           WhatsappInvoices.whatsappInvoiceUpdatedField,
+          WhatsappInvoices.whatsappInvoiceIsForToday,
           Agents.agentName,
           LocalityAgents.localityAgentName,
           Localities.localityName
@@ -137,6 +139,7 @@ module.exports = {
         WhatsappInvoices.whatsappInvoiceNotShippedReason,
         WhatsappInvoices.whatsappInvoiceHasBeenUpdated,
         WhatsappInvoices.whatsappInvoiceUpdatedField,
+        WhatsappInvoices.whatsappInvoiceIsForToday,
         Agents.agentName,
         LocalityAgents.localityAgentName,
         Localities.localityName
