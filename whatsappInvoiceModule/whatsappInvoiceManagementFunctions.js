@@ -95,6 +95,7 @@ module.exports = {
           WhatsappInvoices.whatsappInvoiceIsForToday,
           Agents.agentName,
           LocalityAgents.localityAgentName,
+          LocalityAgents.localityAgentColor,
           Localities.localityName
         FROM WhatsappInvoices 
         LEFT JOIN Agents ON WhatsappInvoices.whatsappInvoiceAgentID = Agents.agentID
