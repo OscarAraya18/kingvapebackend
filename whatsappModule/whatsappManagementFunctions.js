@@ -745,7 +745,7 @@ module.exports = {
       if (httpRequest['body']['entry'][0]['changes'][0]['value']['messages'][0].type != 'reaction'){
         const whatsappConversationRecipientPhoneNumber = httpRequest['body']['entry'][0]['changes'][0]['value']['messages'][0]['from'];
         
-        const blockedNumbers = ['50683315852', '50663768669', '50672015751', '50670931575', '50683392320', '50685178027'];
+        const blockedNumbers = ['50683315852', '50663768669', '50672015751', '50670931575', '50683392320', '50685178027', '50660694075'];
 
         if (!(whatsappConversationRecipientPhoneNumber in blockedNumbers)){   
                
@@ -1332,6 +1332,37 @@ module.exports = {
     });
   },
 
+  sendReportMessage: async function(whatsappConversationRecipientPhoneNumber, whatsappConversationCloseComment, whatsappConversationAmount){
+    return new Promise(async (sendReportMessagePromiseResolve) => {
+      const selectApplicationNotificationSQL = `SELECT notification FROM Application;`;
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectApplicationNotificationSQL);
+      if (databaseResult.success){
+        if (databaseResult.result[0].notification){
+          sendWhatsappMessageData =
+          {
+            'messaging_product': 'whatsapp', 
+            'to': '50660694075', 
+            'type': 'text',
+            'text': 
+            {
+              'body':
+              `
+              NÚMERO DE TELÉFONO: ${whatsappConversationRecipientPhoneNumber} \n
+              RESULTADO: ${whatsappConversationCloseComment} \n
+              CANTIDAD: ${whatsappConversationAmount}
+              `
+            }
+          };
+          sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
+          sendReportMessage(JSON.stringify({success: true}));
+        }
+      } else {
+        sendReportMessage(JSON.stringify({success: false}));
+      }
+    });
+  },
+
+
   closeWhatsappConversation: async function(websocketConnection, whatsappConversationRecipientPhoneNumber, whatsappConversationCloseComment, whatsappConversationAmount, whatsappConversationProducts, whatsappTextMessageBody, whatsappConversationLocalityName, sendAgentEndMessage){
     return new Promise(async (closeWhatsappConversationPromiseResolve) => {
       const selectOrCreateActiveWhatsappConversationIDResult = await whatsappDatabaseFunctions.selectOrCreateActiveWhatsappConversationID(whatsappConversationRecipientPhoneNumber);
@@ -1358,6 +1389,13 @@ module.exports = {
           };
           sendWhatsappMessageResult = await this.sendWhatsappMessage(sendWhatsappMessageData);
         }
+
+        try {
+          this.sendReportMessage(whatsappConversationRecipientPhoneNumber, whatsappConversationCloseComment, whatsappConversationAmount);
+        } catch {
+          
+        }
+
         websocketConnection.sendWebsocketMessage('/updateRanking', {success: true});
         closeWhatsappConversationPromiseResolve(JSON.stringify({success: true, result: whatsappConversationID}));
       } else {
