@@ -186,8 +186,6 @@ module.exports = {
 
       if (store != '') conditions.push(`WhatsappConversations.whatsappConversationLocalityName = '${store}'`);
 
-      console.log(store);
-
       if (conversation == 'Vendido'){
         conditions.push(`whatsappConversationAmount != 0`);
       } else if (conversation == 'No vendido') {

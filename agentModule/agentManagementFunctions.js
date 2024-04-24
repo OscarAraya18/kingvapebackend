@@ -612,6 +612,19 @@ module.exports = {
     });
   },
 
+  selectApplicationNotification: async function(){
+    return new Promise(async (selectApplicationNotificationPromiseResolve) => {
+      const selectApplicationNotificationSQL = `SELECT notification FROM Application;`;
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectApplicationNotificationSQL);
+      if (databaseResult.result[0]){
+        selectApplicationNotificationPromiseResolve(JSON.stringify({success: true, result: databaseResult.result[0].notification}));
+      } else {
+        selectApplicationNotificationPromiseResolve(JSON.stringify({success: false}));
+      }
+    });
+  },
+
+
   updateApplicationStatus: async function(websocketConnection, active){
     return new Promise(async (updateApplicationStatusPromiseResolve) => {
       const updateApplicationStatusSQL = `UPDATE Application SET active=(?);`;
@@ -622,6 +635,19 @@ module.exports = {
         updateApplicationStatusPromiseResolve(JSON.stringify({success: true, result: active}));
       } else {
         updateApplicationStatusPromiseResolve(JSON.stringify({success: false}));
+      }
+    });
+  },
+
+  updateApplicationNotification: async function(notification){
+    return new Promise(async (updateApplicationNotificationPromiseResolve) => {
+      const updateApplicationNotificationSQL = `UPDATE Application SET notification=(?);`;
+      const updateApplicationNotificationValues = [notification];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(updateApplicationNotificationSQL, updateApplicationNotificationValues);
+      if (databaseResult.success){
+        updateApplicationNotificationPromiseResolve(JSON.stringify({success: true}));
+      } else {
+        updateApplicationNotificationPromiseResolve(JSON.stringify({success: false}));
       }
     });
   },

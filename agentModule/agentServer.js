@@ -177,6 +177,11 @@ backendAgentHttpRequestServer.post('/selectApplicationStatus', async (httpReques
   httpResponse.end(selectApplicationStatusResult);
 });
 
+backendAgentHttpRequestServer.post('/selectApplicationNotification', async (httpRequest, httpResponse) => {
+  const selectApplicationNotificationResult = await agentManagementFunctions.selectApplicationNotification();
+  httpResponse.end(selectApplicationNotificationResult);
+});
+
 backendAgentHttpRequestServer.post('/updateApplicationStatus', async (httpRequest, httpResponse) => {
   const httpRequestQuery = httpRequest.body;
   var active = false;
@@ -184,6 +189,17 @@ backendAgentHttpRequestServer.post('/updateApplicationStatus', async (httpReques
     active = true;
   }
   const updateApplicationStatusResult = await agentManagementFunctions.updateApplicationStatus(websocketConnection, active);
+  httpResponse.end(updateApplicationStatusResult);
+});
+
+
+backendAgentHttpRequestServer.post('/updateApplicationNotification', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  var notification = false;
+  if (httpRequestQuery.notification == 'DECLINE NOTIFICATIONS'){
+    notification = true;
+  }
+  const updateApplicationStatusResult = await agentManagementFunctions.updateApplicationNotification(notification);
   httpResponse.end(updateApplicationStatusResult);
 });
 
