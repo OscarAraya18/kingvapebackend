@@ -21,7 +21,7 @@ module.exports = {
       LEFT JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
       LEFT JOIN (
         SELECT
-          COUNT (whatsappGeneralMessageID),
+          COUNT (whatsappGeneralMessageID) AS whatsappGeneralMessageAmount,
           whatsappGeneralMessageWhatsappConversationID,
           whatsappGeneralMessageOwnerPhoneNumber,
           MAX(whatsappGeneralMessageIndex) AS whatsappLastGeneralMessageIndex
@@ -30,6 +30,8 @@ module.exports = {
       ) WhatsappGeneralMessagesIndexTable ON WhatsappConversations.whatsappConversationID = WhatsappGeneralMessagesIndexTable.whatsappGeneralMessageWhatsappConversationID
       LEFT JOIN WhatsappGeneralMessages ON WhatsappGeneralMessages.whatsappGeneralMessageWhatsappConversationID = WhatsappGeneralMessagesIndexTable.whatsappGeneralMessageWhatsappConversationID AND WhatsappGeneralMessages.whatsappGeneralMessageIndex = WhatsappGeneralMessagesIndexTable.whatsappLastGeneralMessageIndex
       WHERE 
+        WhatsappGeneralMessagesIndexTable.whatsappGeneralMessageAmount > 0 
+        AND
         WhatsappConversations.whatsappConversationIsActive = (?)
       `;
       const whatsappConversationIsActive = true;
