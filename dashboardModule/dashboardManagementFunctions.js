@@ -21,10 +21,12 @@ module.exports = {
       LEFT JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
       LEFT JOIN (
         SELECT
+          COUNT (whatsappGeneralMessageID) AS whatsappGeneralMessageAmount,
           whatsappGeneralMessageWhatsappConversationID,
           whatsappGeneralMessageOwnerPhoneNumber,
           MAX(whatsappGeneralMessageIndex) AS whatsappLastGeneralMessageIndex
         FROM WhatsappGeneralMessages
+        WHERE whatsappGeneralMessageAmount > 0
         GROUP BY whatsappGeneralMessageWhatsappConversationID
       ) WhatsappGeneralMessagesIndexTable ON WhatsappConversations.whatsappConversationID = WhatsappGeneralMessagesIndexTable.whatsappGeneralMessageWhatsappConversationID
       LEFT JOIN WhatsappGeneralMessages ON WhatsappGeneralMessages.whatsappGeneralMessageWhatsappConversationID = WhatsappGeneralMessagesIndexTable.whatsappGeneralMessageWhatsappConversationID AND WhatsappGeneralMessages.whatsappGeneralMessageIndex = WhatsappGeneralMessagesIndexTable.whatsappLastGeneralMessageIndex

@@ -288,10 +288,10 @@ module.exports = {
             WHERE whatsappImageMessageID=(?)
             `;
 
-            console.log(whatsappImageMessageID);
             const selectCurrentWhatsappImageMessageValues = [whatsappImageMessageID];
             const selectCurrentWhatsappImageMessageResult = await databaseManagementFunctions.executeDatabaseSQL(selectCurrentWhatsappImageMessageSQL, selectCurrentWhatsappImageMessageValues);
             if (selectCurrentWhatsappImageMessageResult.success){
+              console.log('Comprimiendo ' + whatsappImageMessageID);
               const whatsappImageMessageFile = selectCurrentWhatsappImageMessageResult.result[0].whatsappImageMessageFile;
               const whatsappImageMessageCaption = selectCurrentWhatsappImageMessageResult.result[0].whatsappImageMessageCaption;
               const whatsappImageMessageType = selectCurrentWhatsappImageMessageResult.result[0].whatsappImageMessageType;
