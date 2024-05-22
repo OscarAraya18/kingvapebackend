@@ -652,6 +652,36 @@ module.exports = {
     });
   },
 
+  updateApplicationLive: async function(live){
+    return new Promise(async (updateApplicationLivePromiseResolve) => {
+      const updateApplicationLiveSQL = `UPDATE Application SET live=(?);`;
+      const updateApplicationLiveValues = [live];
+      const updateApplicationLiveResult = await databaseManagementFunctions.executeDatabaseSQL(updateApplicationLiveSQL, updateApplicationLiveValues);
+      if (updateApplicationLiveResult.success){
+        updateApplicationLivePromiseResolve(JSON.stringify({success: true}));
+      } else {
+        updateApplicationLivePromiseResolve(JSON.stringify({success: false}));
+      }
+    });
+  },
+
+  selectApplicationLive: async function(){
+    return new Promise(async (selectApplicationLivePromiseResolve) => {
+      const selectApplicationLiveSQL = `SELECT live FROM Application;`;
+      const selectApplicationLiveResult = await databaseManagementFunctions.executeDatabaseSQL(selectApplicationLiveSQL);
+      if (selectApplicationLiveResult.success){
+        if (selectApplicationLiveResult.result.length == 1){
+          const live = selectApplicationLiveResult.result[0].live;
+          selectApplicationLivePromiseResolve(JSON.stringify({success: true, result: live}));
+        } else {
+          selectApplicationLivePromiseResolve(JSON.stringify({success: false}));
+        }
+      } else {
+        selectApplicationLivePromiseResolve(JSON.stringify({success: false}));
+      }
+    });
+  },
+
   selectFavoriteImages: async function(){
     return new Promise(async (selectFavoriteImagesPromiseResolve) => {
       const selectFavoriteImagesSQL = `SELECT * FROM WhatsappFavoriteImages ORDER BY whatsappFavoriteImageName;`;

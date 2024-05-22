@@ -204,6 +204,19 @@ backendAgentHttpRequestServer.post('/updateApplicationNotification', async (http
 });
 
 
+backendAgentHttpRequestServer.post('/updateApplicationLive', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const live = httpRequestQuery.live;
+  const updateApplicationLiveResult = await agentManagementFunctions.updateApplicationLive(live);
+  httpResponse.end(updateApplicationLiveResult);
+});
+
+backendAgentHttpRequestServer.post('/selectApplicationLive', async (httpRequest, httpResponse) => {
+  const selectApplicationLiveResult = await agentManagementFunctions.selectApplicationLive();
+  httpResponse.end(selectApplicationLiveResult);
+});
+
+
 backendAgentHttpRequestServer.post('/selectFavoriteImages', async (httpRequest, httpResponse) => {
   const selectFavoriteImagesResult = await agentManagementFunctions.selectFavoriteImages();
   httpResponse.end(selectFavoriteImagesResult);
