@@ -172,7 +172,7 @@ module.exports = {
         initialDate.setHours(initialDate.getHours() + 6);
         initialDate = initialDate.toString();
         initialDate = initialDate.replace('GMT-0600', 'GMT+0000');
-        conditions.push(`STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %H:%i:%s GMT+0000') >= STR_TO_DATE('${initialDate}', '%a %b %d %Y %H:%i:%s GMT+0000')`);
+        conditions.push(`STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %H:%i:%s GMT+0000') >= STR_TO_DATE('${initialDate}', '%a %b %d %Y %H:%i:%s GMT+0000')`);
       }
 
       if (endDate != ''){
@@ -180,7 +180,7 @@ module.exports = {
         endDate.setHours(endDate.getHours() + 30);
         endDate = endDate.toString();
         endDate = endDate.replace('GMT-0600', 'GMT+0000');
-        conditions.push(`STR_TO_DATE(whatsappConversationStartDateTime, '%a %b %d %Y %H:%i:%s GMT+0000') <= STR_TO_DATE('${endDate}', '%a %b %d %Y %H:%i:%s GMT+0000')`);
+        conditions.push(`STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %H:%i:%s GMT+0000') <= STR_TO_DATE('${endDate}', '%a %b %d %Y %H:%i:%s GMT+0000')`);
       }
 
       if (recipientPhoneNumber != '') conditions.push(`whatsappConversationRecipientPhoneNumber = '${recipientPhoneNumber}'`);
@@ -206,6 +206,8 @@ module.exports = {
         WhatsappConversations.whatsappConversationAmount,
         WhatsappInvoices.whatsappInvoiceClientLocation as location,
         WhatsappInvoices.whatsappInvoiceClientName as clientName,
+        LocalityAgents.localityAgentName,
+        LocalityAgents.localityAgentColor,
         Agents.agentName,
         Agents.agentColor,
         Agents.agentFontColor,
@@ -218,6 +220,7 @@ module.exports = {
       LEFT JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
       LEFT JOIN Localities ON WhatsappConversations.whatsappConversationLocalityName = Localities.localityID
       LEFT JOIN WhatsappInvoices ON WhatsappConversations.whatsappConversationID = WhatsappInvoices.whatsappInvoiceWhatsappConversationID
+      LEFT JOIN LocalityAgents ON WhatsappInvoices.whatsappInvoiceLocalityAgentID = LocalityAgents.localityAgentID
       WHERE WhatsappConversations.whatsappConversationIsActive=(?) 
       `;
       const values = [false];
