@@ -56,7 +56,7 @@ module.exports = {
         WHERE WhatsappInvoices.whatsappInvoiceState!=(?) AND WhatsappInvoices.whatsappInvoiceState!=(?)
         ORDER BY 
           WhatsappInvoices.whatsappInvoiceIsForToday DESC,
-          WhatsappInvoices.whatsappInvoiceID ASC;
+          WhatsappInvoices.whatsappInvoiceID DESC;
       `;
       const selectAllActiveWhatsappInvoiceValues = ['E', 'X'];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAllActiveWhatsappInvoiceSQL, selectAllActiveWhatsappInvoiceValues);
@@ -106,7 +106,7 @@ module.exports = {
         WHERE WhatsappInvoices.whatsappInvoiceState!=(?) AND WhatsappInvoices.whatsappInvoiceState!=(?) AND WhatsappInvoices.whatsappInvoiceState!=(?) AND WhatsappInvoices.whatsappInvoiceLocalityID=(?)
         ORDER BY 
           WhatsappInvoices.whatsappInvoiceIsForToday DESC,
-          WhatsappInvoices.whatsappInvoiceID ASC;
+          WhatsappInvoices.whatsappInvoiceID DESC;
       `;
       const selectAllActiveWhatsappInvoiceValues = ['E', 'X', 'C', localityID];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAllActiveWhatsappInvoiceSQL, selectAllActiveWhatsappInvoiceValues);
@@ -155,7 +155,7 @@ module.exports = {
       WHERE WhatsappInvoices.whatsappInvoiceState=(?) AND WhatsappInvoices.whatsappInvoiceLocalityAgentID=(?)
       ORDER BY 
         WhatsappInvoices.whatsappInvoiceIsForToday DESC,
-        WhatsappInvoices.whatsappInvoiceID ASC;
+        WhatsappInvoices.whatsappInvoiceID DESC;
       `;
       const selectAllActiveWhatsappInvoiceFromLocalityAgentValues = ['R', localityAgentID];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAllActiveWhatsappInvoiceFromLocalityAgentSQL, selectAllActiveWhatsappInvoiceFromLocalityAgentValues);
