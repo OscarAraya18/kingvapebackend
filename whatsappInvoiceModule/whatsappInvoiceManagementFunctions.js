@@ -54,7 +54,9 @@ module.exports = {
           LEFT JOIN LocalityAgents ON WhatsappInvoices.whatsappInvoiceLocalityAgentID = LocalityAgents.localityAgentID
           LEFT JOIN Localities ON WhatsappInvoices.whatsappInvoiceLocalityID = Localities.localityID
         WHERE WhatsappInvoices.whatsappInvoiceState!=(?) AND WhatsappInvoices.whatsappInvoiceState!=(?)
-        ORDER BY WhatsappInvoices.whatsappInvoiceID DESC;
+        ORDER BY 
+          WhatsappInvoices.whatsappInvoiceIsForToday DESC,
+          WhatsappInvoices.whatsappInvoiceID ASC;
       `;
       const selectAllActiveWhatsappInvoiceValues = ['E', 'X'];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAllActiveWhatsappInvoiceSQL, selectAllActiveWhatsappInvoiceValues);
@@ -102,7 +104,9 @@ module.exports = {
         LEFT JOIN LocalityAgents ON WhatsappInvoices.whatsappInvoiceLocalityAgentID = LocalityAgents.localityAgentID
         LEFT JOIN Localities ON WhatsappInvoices.whatsappInvoiceLocalityID = Localities.localityID
         WHERE WhatsappInvoices.whatsappInvoiceState!=(?) AND WhatsappInvoices.whatsappInvoiceState!=(?) AND WhatsappInvoices.whatsappInvoiceState!=(?) AND WhatsappInvoices.whatsappInvoiceLocalityID=(?)
-        ORDER BY WhatsappInvoices.whatsappInvoiceID DESC;
+        ORDER BY 
+          WhatsappInvoices.whatsappInvoiceIsForToday DESC,
+          WhatsappInvoices.whatsappInvoiceID ASC;
       `;
       const selectAllActiveWhatsappInvoiceValues = ['E', 'X', 'C', localityID];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAllActiveWhatsappInvoiceSQL, selectAllActiveWhatsappInvoiceValues);
@@ -149,7 +153,9 @@ module.exports = {
       LEFT JOIN LocalityAgents ON WhatsappInvoices.whatsappInvoiceLocalityAgentID = LocalityAgents.localityAgentID
       LEFT JOIN Localities ON WhatsappInvoices.whatsappInvoiceLocalityID = Localities.localityID
       WHERE WhatsappInvoices.whatsappInvoiceState=(?) AND WhatsappInvoices.whatsappInvoiceLocalityAgentID=(?)
-      ORDER BY WhatsappInvoices.whatsappInvoiceID DESC;
+      ORDER BY 
+        WhatsappInvoices.whatsappInvoiceIsForToday DESC,
+        WhatsappInvoices.whatsappInvoiceID ASC;
       `;
       const selectAllActiveWhatsappInvoiceFromLocalityAgentValues = ['R', localityAgentID];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAllActiveWhatsappInvoiceFromLocalityAgentSQL, selectAllActiveWhatsappInvoiceFromLocalityAgentValues);
