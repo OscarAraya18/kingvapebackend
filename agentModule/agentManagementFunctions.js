@@ -1042,6 +1042,7 @@ module.exports = {
             const whatsappConversationCloseComment = sortedDatabaseResultObject.whatsappConversationCloseComment;
             const whatsappConversationLocalityName = sortedDatabaseResultObject.whatsappConversationLocalityName;
             const whatsappConversationRecipientPhoneNumber = sortedDatabaseResultObject.whatsappConversationRecipientPhoneNumber;
+            
             if ((whatsappConversationAmount != 0) && (!(whatsappConversationRecipientPhoneNumber in evaluatedNumbers))){
               whatsappSelledConversations = whatsappSelledConversations + 1;
               if (whatsappConversationLocalityName in informationByLocality){
@@ -1056,8 +1057,10 @@ module.exports = {
                 }
               }
             }
+            
             if ((whatsappConversationAmount == 0) && (!(whatsappConversationRecipientPhoneNumber in evaluatedNumbers))){
               if (whatsappConversationCloseComment == 'Venta perdida' || whatsappConversationCloseComment == 'Venta para otro día' || whatsappConversationCloseComment == 'Consulta sobre productos' || whatsappConversationCloseComment == 'No contestó'){
+                whatsappNotSelledConversations = whatsappNotSelledConversations + 1;
                 if (whatsappConversationLocalityName in informationByLocality){
                   informationByLocality[whatsappConversationLocalityName]['whatsappNotSelledConversations'] = informationByLocality[whatsappConversationLocalityName]['whatsappNotSelledConversations'] + 1;
                 } else {
@@ -1070,6 +1073,7 @@ module.exports = {
                 }
               }
             }
+            
             if (whatsappConversationRecipientPhoneNumber in evaluatedNumbers){
               if (whatsappConversationCloseComment != 'Vuelve a escribir'){
                 if (whatsappConversationCloseComment == 'Venta perdida' || whatsappConversationCloseComment == 'Venta para otro día' || whatsappConversationCloseComment == 'Consulta sobre productos' || whatsappConversationCloseComment == 'No contestó'){
@@ -1085,7 +1089,6 @@ module.exports = {
                     }
                   }
                 } else {
-                  whatsappSelledConversations = whatsappSelledConversations + 1;
                   if (whatsappConversationLocalityName in informationByLocality){
                     informationByLocality[whatsappConversationLocalityName]['whatsappSelledConversations'] = informationByLocality[whatsappConversationLocalityName]['whatsappSelledConversations'] + 1;
                     informationByLocality[whatsappConversationLocalityName]['amount'] = informationByLocality[whatsappConversationLocalityName]['amount'] + whatsappConversationAmount;
