@@ -975,7 +975,7 @@ module.exports = {
         if (hour >= 18){
           selectAgentRankingInformationSQL = 
           `
-          SELECT whatsappConversationAmount, whatsappConversationAssignedAgentID, whatsappConversationRecipientPhoneNumber, whatsappConversationCloseComment, whatsappConversationLocalityName
+          SELECT whatsappConversationEndDateTime, whatsappConversationID, whatsappConversationAmount, whatsappConversationAssignedAgentID, whatsappConversationRecipientPhoneNumber, whatsappConversationCloseComment, whatsappConversationLocalityName
           FROM WhatsappConversations
           WHERE 
             STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW() - INTERVAL 1 DAY, '%Y-%m-%d 06:00:00')
@@ -987,7 +987,7 @@ module.exports = {
         } else {
           selectAgentRankingInformationSQL = 
           `
-          SELECT whatsappConversationAmount, whatsappConversationAssignedAgentID, whatsappConversationRecipientPhoneNumber, whatsappConversationCloseComment, whatsappConversationLocalityName
+          SELECT whatsappConversationEndDateTime, whatsappConversationID, whatsappConversationAmount, whatsappConversationAssignedAgentID, whatsappConversationRecipientPhoneNumber, whatsappConversationCloseComment, whatsappConversationLocalityName
           FROM WhatsappConversations
           WHERE 
             STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= DATE_FORMAT(NOW(), '%Y-%m-%d 06:00:00')
@@ -1012,6 +1012,7 @@ module.exports = {
             const whatsappConversationCloseComment = sortedDatabaseResultObject.whatsappConversationCloseComment;
             const whatsappConversationLocalityName = sortedDatabaseResultObject.whatsappConversationLocalityName;
             const whatsappConversationRecipientPhoneNumber = sortedDatabaseResultObject.whatsappConversationRecipientPhoneNumber;
+            
             if ((whatsappConversationAmount != 0) && (!(whatsappConversationRecipientPhoneNumber in evaluatedNumbers))){
               whatsappSelledConversations = whatsappSelledConversations + 1;
               if (whatsappConversationLocalityName in informationByLocality){
@@ -1028,6 +1029,7 @@ module.exports = {
             }
             if ((whatsappConversationAmount == 0) && (!(whatsappConversationRecipientPhoneNumber in evaluatedNumbers))){
               if (whatsappConversationCloseComment == 'Venta perdida' || whatsappConversationCloseComment == 'Venta para otro día' || whatsappConversationCloseComment == 'Consulta sobre productos' || whatsappConversationCloseComment == 'No contestó'){
+                whatsappNotSelledConversations = whatsappNotSelledConversations + 1;
                 if (whatsappConversationLocalityName in informationByLocality){
                   informationByLocality[whatsappConversationLocalityName]['whatsappNotSelledConversations'] = informationByLocality[whatsappConversationLocalityName]['whatsappNotSelledConversations'] + 1;
                 } else {
@@ -1055,7 +1057,6 @@ module.exports = {
                     }
                   }
                 } else {
-                  whatsappSelledConversations = whatsappSelledConversations + 1;
                   if (whatsappConversationLocalityName in informationByLocality){
                     informationByLocality[whatsappConversationLocalityName]['whatsappSelledConversations'] = informationByLocality[whatsappConversationLocalityName]['whatsappSelledConversations'] + 1;
                     informationByLocality[whatsappConversationLocalityName]['amount'] = informationByLocality[whatsappConversationLocalityName]['amount'] + whatsappConversationAmount;

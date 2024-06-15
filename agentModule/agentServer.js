@@ -254,6 +254,7 @@ backendAgentHttpRequestServer.post('/selectTodayInformation', async (httpRequest
   const initialDate = httpRequestQuery.initialDate;
   const endDate = httpRequestQuery.endDate;
   const selectBarChartInformationResult = await agentManagementFunctions.selectTodayInformation(initialDate, endDate);
+  console.log(selectBarChartInformationResult)
   httpResponse.end(selectBarChartInformationResult);
 });
 
