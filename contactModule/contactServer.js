@@ -112,6 +112,16 @@ backendContactHttpRequestServer.post('/updateWhatsappFeedback', async (httpReque
 });
 
 
+
+backendContactHttpRequestServer.get('/compressAudio', async (httpRequest, httpResponse) => {
+  try {
+    const compressResult = await contactsManagementFunctions.compressAudio();
+    httpResponse.end(compressResult);
+  } catch (e) {
+    console.log(e);
+  }
+});
+
 backendContactHttpRequestServer.get('/compress', async (httpRequest, httpResponse) => {
   try {
     const compressResult = await contactsManagementFunctions.compress();
