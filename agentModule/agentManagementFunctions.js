@@ -1287,7 +1287,7 @@ module.exports = {
     });
   },
 
-  selectThisMonthTopSell: async function(){
+  selectThisMonthTopSell: async function(){ 
     return new Promise(async (selectThisMonthTopSellPromiseResolve) => {
         let currentDate = new Date();
         currentDate.setHours(currentDate.getHours() - 6);
