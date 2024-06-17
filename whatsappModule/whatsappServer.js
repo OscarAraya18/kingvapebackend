@@ -178,6 +178,13 @@ backendWhatsappHttpRequestServer.post('/closeWhatsappConversation', async (httpR
   httpResponse.end(closeWhatsappConversationResult);
 });
 
+backendWhatsappHttpRequestServer.post('/closeWhatsappDuplicateConversation', async (httpRequest, httpResponse) => {
+  const httpRequestQuery = httpRequest.body;
+  const whatsappConversationID = httpRequestQuery.whatsappConversationID;
+  const closeWhatsappDuplicateConversationResult = await whatsappManagementFunctions.closeWhatsappDuplicateConversation(whatsappConversationID);
+  httpResponse.end(closeWhatsappDuplicateConversationResult);
+});
+
 backendWhatsappHttpRequestServer.post('/requestTransferWhatsappConversation', async (httpRequest, httpResponse) => {
   const httpRequestQuery = httpRequest.body;
   const currentAgentName = httpRequestQuery.currentAgentName;

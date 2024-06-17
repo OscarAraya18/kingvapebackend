@@ -256,6 +256,15 @@ module.exports = {
       closeWhatsappConversationPromiseResolve(databaseResult);
     });
   }, 
+
+  closeWhatsappDuplicateConversation: async function(whatsappConversationID){
+    return new Promise (async (closeWhatsappDuplicateConversationPromiseResolve) => {
+      const closeWhatsappDuplicateConversationSQL = `UPDATE WhatsappConversations SET whatsappConversationIsActive=(?), whatsappConversationCloseComment=(?) WHERE whatsappConversationID=(?);`;
+      const closeWhatsappDuplicateConversationValues = [false, 'Duplicado', whatsappConversationID];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(closeWhatsappDuplicateConversationSQL, closeWhatsappDuplicateConversationValues);
+      closeWhatsappDuplicateConversationPromiseResolve(databaseResult);
+    });
+  }, 
   
   createWhatsappConversation: async function(whatsappConversationRecipientPhoneNumber){
     return new Promise (async (createWhatsappConversationPromiseResolve) => {

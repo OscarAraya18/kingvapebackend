@@ -1363,6 +1363,13 @@ module.exports = {
       }
     });
   },
+
+  closeWhatsappDuplicateConversation: async function(whatsappConversationID){
+    return new Promise(async (closeWhatsappDuplicateConversationPromiseResolve) => {
+      const closeWhatsappDuplicateConversationResult = await whatsappDatabaseFunctions.closeWhatsappDuplicateConversation(whatsappConversationID);
+      closeWhatsappDuplicateConversationPromiseResolve(JSON.stringify(closeWhatsappDuplicateConversationResult));
+    });
+  },
   
   selectAllWhatsappPendingConversation: async function(){
     return new Promise(async (selectAllWhatsappPendingConversationPromiseResolve) => {
