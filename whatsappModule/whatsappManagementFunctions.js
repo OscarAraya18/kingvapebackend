@@ -746,7 +746,7 @@ module.exports = {
         console.log(whatsappConversationRecipientPhoneNumber)
         const blockedNumbers = ['50683315852', '50663768669', '50672015751', '50670931575', '50683392320', '50685178027', '50664801051', '50660694075'];
 
-        if (!(whatsappConversationRecipientPhoneNumber in blockedNumbers)){   
+        if (!blockedNumbers.includes(whatsappConversationRecipientPhoneNumber)){   
           console.log(blockedNumbers);
           console.log(!(whatsappConversationRecipientPhoneNumber in blockedNumbers))
           const whatsappGeneralMessageID = httpRequest['body']['entry'][0]['changes'][0]['value']['messages'][0]['id'];
