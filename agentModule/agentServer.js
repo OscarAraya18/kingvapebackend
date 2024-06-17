@@ -283,6 +283,11 @@ backendAgentHttpRequestServer.get('/selectTodayTopSell', async (httpRequest, htt
   httpResponse.end(selectTodayTopSellResult);
 });
 
+backendAgentHttpRequestServer.get('/selectThisMonthTopSell', async (httpRequest, httpResponse) => {
+  const selectThisMonthTopSellResult = await agentManagementFunctions.selectThisMonthTopSell();
+  httpResponse.end(selectThisMonthTopSellResult);
+});
+
 backendAgentHttpRequestServer.post('/selectFilteredTodayTopSell', async (httpRequest, httpResponse) => {
   const httpRequestQuery = httpRequest.body;
   const initialDate = httpRequestQuery.initialDate;
