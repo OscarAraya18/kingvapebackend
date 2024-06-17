@@ -743,12 +743,8 @@ module.exports = {
     try { 
       if (httpRequest['body']['entry'][0]['changes'][0]['value']['messages'][0].type != 'reaction'){
         const whatsappConversationRecipientPhoneNumber = httpRequest['body']['entry'][0]['changes'][0]['value']['messages'][0]['from'];
-        console.log(whatsappConversationRecipientPhoneNumber)
-        const blockedNumbers = ['50683315852', '50663768669', '50672015751', '50670931575', '50683392320', '50685178027', '50664801051', '50660694075'];
-
+        const blockedNumbers = ['50683315852', '50663768669', '50672015751', '50670931575', '50683392320', '50685178027', '50664801051'];
         if (!blockedNumbers.includes(whatsappConversationRecipientPhoneNumber)){   
-          console.log(blockedNumbers);
-          console.log(!(whatsappConversationRecipientPhoneNumber in blockedNumbers))
           const whatsappGeneralMessageID = httpRequest['body']['entry'][0]['changes'][0]['value']['messages'][0]['id'];
           const whatsappMessageInformation = httpRequest['body']['entry'][0]['changes'][0]['value']['messages'][0];
           const receiveWhatsappStoreMessageResult = await this.receiveWhatsappStoreMessage(websocketConnection, whatsappConversationRecipientPhoneNumber, whatsappGeneralMessageID, whatsappMessageInformation);
