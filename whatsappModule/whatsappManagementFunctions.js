@@ -24,8 +24,7 @@ module.exports = {
         const whatsappMessageID = response.data.messages[0].id;
         sendWhatsappMessagePromiseResolve({success: true, result: whatsappMessageID});
       })
-      .catch((error) => {
-        console.log(error);
+      .catch( (error) => {
         sendWhatsappMessagePromiseResolve({success: false, result: error});
       });  
     });
@@ -745,7 +744,7 @@ module.exports = {
       if (httpRequest['body']['entry'][0]['changes'][0]['value']['messages'][0].type != 'reaction'){
         const whatsappConversationRecipientPhoneNumber = httpRequest['body']['entry'][0]['changes'][0]['value']['messages'][0]['from'];
         
-        const blockedNumbers = ['50683315852', '50663768669', '50672015751', '50670931575', '50683392320', '50685178027', '50664801051'];
+        const blockedNumbers = ['50683315852', '50663768669', '50672015751', '50670931575', '50683392320', '50685178027', '50664801051', '50660694075'];
 
         if (!(whatsappConversationRecipientPhoneNumber in blockedNumbers)){   
                
