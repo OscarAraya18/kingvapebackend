@@ -329,7 +329,6 @@ module.exports = {
       const transactionUsed = true;
       const selectInvoiceInformationValues = [transactionUsed, transactionStore]
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectInvoiceInformationSQL, selectInvoiceInformationValues);
-      console.log(databaseResult);
       if (databaseResult.success){
         var rows = [];
         for (var transactionIndex in databaseResult.result){

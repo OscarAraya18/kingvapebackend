@@ -316,7 +316,6 @@ module.exports = {
         WHERE whatsappConversationAssignedAgentID = (?) AND whatsappConversationIsActive = (?)
         `;
         selectRankingFilteredConversationsSQL = selectRankingFilteredConversationsSQL + whereClause;
-        console.log(selectRankingFilteredConversationsSQL);
       }
 
       const selectRankingFilteredConversationsValues = [agentID, 0];
