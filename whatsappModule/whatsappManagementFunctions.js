@@ -768,20 +768,6 @@ module.exports = {
               const createWhatsappGeneralMessageResult = await whatsappDatabaseFunctions.createWhatsappGeneralMessage(whatsappConversationID, whatsappGeneralMessageID, whatsappGeneralMessageRepliedMessageID, whatsappGeneralMessageOwnerPhoneNumber);
               if (createWhatsappGeneralMessageResult.success){
 
-                /* ENVIO DE MENSAJES OFFLINE */
-                if (selectOrCreateActiveWhatsappConversationIDResult.result.whatsappConversationAssignedAgentID == null){
-                  var httpDataToSendWhatsappTextMessage =
-                  {
-                    'messaging_product': 'whatsapp', 
-                    'to': whatsappConversationRecipientPhoneNumber, 
-                    'type': 'text',
-                    'text': {'body': 'En este momento todos nuestros agentes de ventas se encuentran fuera de línea. Estimado cliente, te atenderemos tan pronto como sea posible. Gracias por tu mensaje!'}
-                  };
-                  httpDataToSendWhatsappTextMessage = JSON.stringify(httpDataToSendWhatsappTextMessage);
-                  const sendWhatsappMessageResult = await this.sendWhatsappMessage(httpDataToSendWhatsappTextMessage);
-                }
-                /* ENVIO DE MENSAJES OFFLINE */
-
                 const whatsappGeneralMessageIndex = createWhatsappGeneralMessageResult.result.whatsappGeneralMessageIndex;
                 const whatsappGeneralMessageCreationDateTime = createWhatsappGeneralMessageResult.result.whatsappGeneralMessageCreationDateTime;
               
