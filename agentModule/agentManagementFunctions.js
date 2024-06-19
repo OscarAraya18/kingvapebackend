@@ -1294,23 +1294,25 @@ module.exports = {
 
         let startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
         let startOfMonthStr = startOfMonth.toISOString().substring(0, 10) + ' 06:00:00';
+        currentDate.setHours(currentDate.getHours() + 6);
         let nowStr = currentDate.toISOString().substring(0, 19).replace('T', ' ');
 
-        var selectThisMonthTopSellSQL = `
-        SELECT 
+        var selectThisMonthTopSellSQL = 
+        `
+          SELECT 
             Agents.agentName,
             SUM(WhatsappConversations.whatsappConversationAmount) as totalSalesAmount
-        FROM WhatsappConversations
-        JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
-        WHERE 
+          FROM WhatsappConversations
+          JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
+          WHERE 
             STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= ?
             AND
             STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= ?
             AND
             WhatsappConversations.whatsappConversationIsActive = (?)
-        GROUP BY Agents.agentID, Agents.agentName
-        ORDER BY totalSalesAmount DESC
-        LIMIT 1
+          GROUP BY Agents.agentID, Agents.agentName
+          ORDER BY totalSalesAmount DESC
+          LIMIT 1
         `;
 
         const whatsappConversationIsActive = false;
