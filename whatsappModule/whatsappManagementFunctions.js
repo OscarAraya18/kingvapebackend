@@ -743,7 +743,7 @@ module.exports = {
     try { 
       if (httpRequest['body']['entry'][0]['changes'][0]['value']['messages'][0].type != 'reaction'){
         const whatsappConversationRecipientPhoneNumber = httpRequest['body']['entry'][0]['changes'][0]['value']['messages'][0]['from'];
-        const blockedNumbers = ['50683315852', '50663768669', '50672015751', '50670931575', '50683392320', '50685178027', '50664801051', '50670522158'];
+        const blockedNumbers = ['50683315852', '50663768669', '50672015751', '50670931575', '50683392320', '50685178027', '50664801051', '50670522158', '50664280561'];
         if (!blockedNumbers.includes(whatsappConversationRecipientPhoneNumber)){   
           const whatsappGeneralMessageID = httpRequest['body']['entry'][0]['changes'][0]['value']['messages'][0]['id'];
           const whatsappMessageInformation = httpRequest['body']['entry'][0]['changes'][0]['value']['messages'][0];
