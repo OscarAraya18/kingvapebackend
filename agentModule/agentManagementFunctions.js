@@ -171,14 +171,26 @@ module.exports = {
   */
   selectAgents: async function (){
     return new Promise(async (selectAgentsPromiseResolve) => {
-      const selectAllAgentsSQL = `SELECT * FROM Agents WHERE agentIsActive=(?);`;
+      const selectAllAgentsSQL = `
+        SELECT 
+          Agents.agentID,
+          Agents.agentName,
+          Agents.agentColor,
+          Agents.agentFontColor,
+          Agents.agentUsername,
+          Agents.agentPassword,
+          Agents.agentType,
+          Agents.agentStatus,
+          Agents.agentIsActive,
+          Agents.agentIsWorking,
+          Agents.agentStartMessage,
+          Agents.agentEndMessage
+        FROM Agents WHERE agentIsActive=(?);
+       `;
       const agentIsActive = true;
       const selectAllAgentsValues = [agentIsActive];
       const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectAllAgentsSQL, selectAllAgentsValues);
       if (databaseResult.success){
-        for (var agent in databaseResult.result){
-          databaseResult.result[agent].agentProfileImage = Buffer.from(databaseResult.result[agent].agentProfileImage).toString('base64');
-        }
         selectAgentsPromiseResolve(JSON.stringify(databaseResult));
       } else {
         selectAgentsPromiseResolve(JSON.stringify(databaseResult));
@@ -1289,44 +1301,42 @@ module.exports = {
 
   selectThisMonthTopSell: async function(){ 
     return new Promise(async (selectThisMonthTopSellPromiseResolve) => {
-        let currentDate = new Date();
-        currentDate.setHours(currentDate.getHours() - 6);
+      let currentDate = new Date();
+      currentDate.setHours(currentDate.getHours() - 6);
 
-        let startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-        let startOfMonthStr = startOfMonth.toISOString().substring(0, 10) + ' 06:00:00';
-        currentDate.setHours(currentDate.getHours() + 6);
-        let nowStr = currentDate.toISOString().substring(0, 19).replace('T', ' ');
+      let startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+      let startOfMonthStr = startOfMonth.toISOString().substring(0, 10) + ' 06:00:00';
+      currentDate.setHours(currentDate.getHours() + 6);
+      let nowStr = currentDate.toISOString().substring(0, 19).replace('T', ' ');
 
-        var selectThisMonthTopSellSQL = 
-        `
-          SELECT 
-            Agents.agentName,
-            SUM(WhatsappConversations.whatsappConversationAmount) as totalSalesAmount
-          FROM WhatsappConversations
-          JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
-          WHERE 
-            STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= ?
-            AND
-            STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= ?
-            AND
-            WhatsappConversations.whatsappConversationIsActive = (?)
-          GROUP BY Agents.agentID, Agents.agentName
-          ORDER BY totalSalesAmount DESC
-          LIMIT 1
-        `;
-
-        const whatsappConversationIsActive = false;
-        const selectThisMonthTopSellValues = [startOfMonthStr, nowStr, whatsappConversationIsActive];
-        const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectThisMonthTopSellSQL, selectThisMonthTopSellValues);
-        
-        if (databaseResult.success){
-            const result = 
-            {
-                success: true, 
-                result: databaseResult.result[0] || null
-            };
-            selectThisMonthTopSellPromiseResolve(JSON.stringify(result));
-        }
+      var selectThisMonthTopSellSQL = 
+      `
+        SELECT 
+          Agents.agentName,
+          SUM(WhatsappConversations.whatsappConversationAmount) as totalSalesAmount
+        FROM WhatsappConversations
+        JOIN Agents ON WhatsappConversations.whatsappConversationAssignedAgentID = Agents.agentID
+        WHERE 
+          STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') >= ?
+          AND
+          STR_TO_DATE(whatsappConversationEndDateTime, '%a %b %d %Y %T GMT+0000') <= ?
+          AND
+          WhatsappConversations.whatsappConversationIsActive = (?)
+        GROUP BY Agents.agentID, Agents.agentName
+        ORDER BY totalSalesAmount DESC
+        LIMIT 1
+      `;
+      const whatsappConversationIsActive = false;
+      const selectThisMonthTopSellValues = [startOfMonthStr, nowStr, whatsappConversationIsActive];
+      const databaseResult = await databaseManagementFunctions.executeDatabaseSQL(selectThisMonthTopSellSQL, selectThisMonthTopSellValues);
+      if (databaseResult.success){
+        const result = 
+        {
+          success: true, 
+          result: databaseResult.result[0] || null
+        };
+        selectThisMonthTopSellPromiseResolve(JSON.stringify(result));
+      }
     });
   },
 
